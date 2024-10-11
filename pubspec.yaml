@@ -1,12 +1,12 @@
 name: somato
 description: A food delivery app for college canteens.
 
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
 version: 1.0.0+1
 
 environment:
-  sdk: '>=2.19.0 <4.0.0'
+  sdk: ">=2.19.0 <4.0.0"
 
 dependencies:
   flutter:
@@ -17,6 +17,8 @@ dependencies:
   flutter_svg: ^2.0.5
   animate_do: ^3.0.2
   flutter_staggered_animations: ^1.1.1
+  firebase_core: ^3.6.0
+  firebase_auth: ^5.3.1 # Upgrade to the latest version that is compatible with firebase_core
 
 dev_dependencies:
   flutter_test:
