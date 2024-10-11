@@ -3,8 +3,19 @@ import 'package:provider/provider.dart';
 import 'models/cart_model.dart';
 import 'models/theme_model.dart';
 import 'screens/login_page.dart';
+import 'package:firebase_core/firebase_core.dart';  // Firebase import
+import 'firebase_options.dart';  // Generated file with Firebase options
 
-void main() {
+void main() async {
+  // Ensure that plugin services are initialized before running the app
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize Firebase with default options
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
+  // Run the app with providers for state management
   runApp(
     MultiProvider(
       providers: [
@@ -38,7 +49,7 @@ class MyApp extends StatelessWidget {
                     secondary: Colors.redAccent,
                   ),
                 ),
-          home: LoginPage(),
+          home: LoginPage(), // Change this to your login page
           debugShowCheckedModeBanner: false,
         );
       },
