@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:animate_do/animate_do.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'registration_page.dart';
 import 'menu_page.dart';
 
@@ -13,8 +14,11 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
   final _formKey = GlobalKey<FormState>();
   String _email = '';
   String _password = '';
+  bool _isLoading = false;
   late AnimationController _backgroundAnimationController;
   late Animation<double> _backgroundAnimation;
+
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   @override
   void initState() {
@@ -30,6 +34,46 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
   void dispose() {
     _backgroundAnimationController.dispose();
     super.dispose();
+  }
+
+  Future<void> _login() async {
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
+      setState(() {
+        _isLoading = true;
+      });
+
+      try {
+        UserCredential userCredential = await _auth.signInWithEmailAndPassword(
+          email: _email,
+          password: _password,
+        );
+
+        // Login successful
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => MenuPage()),
+        );
+      } on FirebaseAuthException catch (e) {
+        String errorMessage = 'An error occurred. Please try again.';
+        if (e.code == 'user-not-found') {
+          errorMessage = 'No user found for that email.';
+        } else if (e.code == 'wrong-password') {
+          errorMessage = 'Wrong password provided.';
+        }
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(errorMessage)),
+        );
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('An error occurred. Please try again.')),
+        );
+      } finally {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
   }
 
   @override
@@ -63,7 +107,7 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                   FadeInDown(
                     duration: Duration(milliseconds: 1500),
                     child: SvgPicture.asset(
-                      'assets/images/somaito_logo.webp',
+                      'assets/images/somaito_logo.svg',
                       height: 120,
                     ),
                   ),
@@ -111,19 +155,12 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                                 onSaved: (value) => _password = value!,
                               ),
                               SizedBox(height: 30),
-                              ElevatedButton(
-                                child: Text('Login'),
-                                onPressed: () {
-                                  if (_formKey.currentState!.validate()) {
-                                    _formKey.currentState!.save();
-                                    // TODO: Implement actual login logic
-                                    Navigator.pushReplacement(
-                                      context,
-                                      MaterialPageRoute(builder: (context) => MenuPage()),
-                                    );
-                                  }
-                                },
-                              ),
+                              _isLoading
+                                ? CircularProgressIndicator()
+                                : ElevatedButton(
+                                    child: Text('Login'),
+                                    onPressed: _login,
+                                  ),
                             ],
                           ),
                         ),
