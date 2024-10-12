@@ -41,21 +41,20 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyBFk5xbL0nPOBQY4i_LVwKZOYbTr1yOZWY',
-    appId: '1:506953076147:web:3e15c91b3aaced6bde8fc6',
-    messagingSenderId: '506953076147',
-    projectId: 'somato3',
-    authDomain: 'somato3.firebaseapp.com',
-    storageBucket: 'somato3.appspot.com',
-    measurementId: 'G-SMKTTVBQX7',
+    apiKey: 'AIzaSyDmoPa8E2wyjvy0c3xgbNEHQifkQYeMs70',
+    appId: '1:739108990298:android:ca59556fa7ab4e1a71d763',
+    messagingSenderId: '739108990298',
+    projectId: 'somato-81238',
+    authDomain: 'somato-81238.firebaseapp.com',
+    storageBucket: 'somato-81238.appspot.com',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyCxM1Dntm1-z2KKQOsdYpTfFZRP0k69DLg',
-    appId: '1:506953076147:android:b5d529c632a9fd7dde8fc6',
-    messagingSenderId: '506953076147',
-    projectId: 'somato3',
-    storageBucket: 'somato3.appspot.com',
+    apiKey: 'AIzaSyDmoPa8E2wyjvy0c3xgbNEHQifkQYeMs70',
+    appId: '1:739108990298:android:ca59556fa7ab4e1a71d763',
+    messagingSenderId: '739108990298',
+    projectId: 'somato-81238',
+    storageBucket: 'somato-81238.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
@@ -77,13 +76,12 @@ class DefaultFirebaseOptions {
   );
 
   static const FirebaseOptions windows = FirebaseOptions(
-    apiKey: 'AIzaSyBFk5xbL0nPOBQY4i_LVwKZOYbTr1yOZWY',
-    appId: '1:506953076147:web:5ac5f0ecbf4edfa0de8fc6',
-    messagingSenderId: '506953076147',
-    projectId: 'somato3',
-    authDomain: 'somato3.firebaseapp.com',
-    storageBucket: 'somato3.appspot.com',
-    measurementId: 'G-EY2F6ZN49Y',
+    apiKey: 'AIzaSyDmoPa8E2wyjvy0c3xgbNEHQifkQYeMs70',
+    appId: '1:739108990298:android:ca59556fa7ab4e1a71d763',
+    messagingSenderId: '739108990298',
+    projectId: 'somato-81238',
+    authDomain: 'somato-81238.firebaseapp.com',
+    storageBucket: 'somato-81238.appspot.com',
   );
 
 }

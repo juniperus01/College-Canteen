@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart'; // Import FirebaseAuth
+import 'package:cloud_firestore/cloud_firestore.dart'; // Import Firestore
 import 'menu_page.dart';
 
 class RegistrationPage extends StatefulWidget {
@@ -17,7 +18,10 @@ class _RegistrationPageState extends State<RegistrationPage> {
   // Initialize FirebaseAuth instance
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  // Function to register user with Firebase
+  // Initialize Firestore instance
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  // Function to register user with Firebase and store their information in Firestore
   Future<void> _register() async {
     setState(() {
       _isLoading = true; // Show loading spinner while registering
@@ -31,18 +35,31 @@ class _RegistrationPageState extends State<RegistrationPage> {
         password: _password,
       );
 
-      // Update user's display name
-      await userCredential.user!.updateDisplayName(_name);
+      // Get the user after registration
+      User? user = userCredential.user;
 
-      // Registration successful, navigate to the MenuPage
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Registration successful!')),
-      );
+      if (user != null) {
+        // Update user's display name
+        await user.updateDisplayName(_name);
 
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => MenuPage()),
-      );
+        // Store the user's information in Firestore
+        await _firestore.collection('users').doc(user.uid).set({
+          'fullName': _name,
+          'email': _email,
+          'createdAt': FieldValue.serverTimestamp(), // Add creation timestamp
+        });
+
+        // Registration successful, show a success message
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Registration successful!')),
+        );
+
+        // Navigate to the MenuPage
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => MenuPage()),
+        );
+      }
     } on FirebaseAuthException catch (e) {
       String message = 'An error occurred. Please try again.';
       if (e.code == 'email-already-in-use') {
@@ -51,6 +68,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
         message = 'The password is too weak.';
       }
 
+      // Show error message
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(message)),
       );
@@ -98,6 +116,9 @@ class _RegistrationPageState extends State<RegistrationPage> {
                     if (value == null || value.isEmpty) {
                       return 'Please enter your email';
                     }
+                    if (!value.contains('@')) {
+                      return 'Please enter a valid email';
+                    }
                     return null;
                   },
                   onSaved: (value) => _email = value!,
@@ -125,9 +146,9 @@ class _RegistrationPageState extends State<RegistrationPage> {
                     ? CircularProgressIndicator() // Show loading indicator
                     : ElevatedButton(
                         child: Text(
-                              'Register',
-                              style: TextStyle(color: Colors.white), // Set text color to white
-                            ),
+                          'Register',
+                          style: TextStyle(color: Colors.white), // Set text color to white
+                        ),
                         onPressed: () {
                           if (_formKey.currentState!.validate()) {
                             _formKey.currentState!.save();

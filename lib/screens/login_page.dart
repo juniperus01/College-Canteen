@@ -37,16 +37,28 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
           MaterialPageRoute(builder: (context) => MenuPage()),
         );
       } on FirebaseAuthException catch (e) {
-        String errorMessage = 'An error occurred. Please try again.';
-        if (e.code == 'user-not-found') {
-          errorMessage = 'No user found for that email.';
-        } else if (e.code == 'wrong-password') {
-          errorMessage = 'Wrong password provided.';
-        }
-        // ignore: use_build_context_synchronously
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(errorMessage)),
-        );
+          String errorMessage = 'An error occurred. Please try again.';
+
+          // Handling specific error codes
+          switch (e.code) {
+            case 'invalid-email':
+              errorMessage = 'The email address is not valid.';
+              break;
+            case 'user-not-found':
+              errorMessage = 'No user found with this email.';
+              break;
+            case 'wrong-password':
+              errorMessage = 'The password is incorrect.';
+              break;
+            case 'invalid-credential':
+              errorMessage = 'The email or password provided is invalid.';
+              break;
+            default:
+              errorMessage = 'An unknown error occurred.';
+          }
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(errorMessage)),
+          );
       } catch (e) {
         // ignore: use_build_context_synchronously
         ScaffoldMessenger.of(context).showSnackBar(
