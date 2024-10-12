@@ -2,12 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'category_menu_page.dart';
 import 'cart_page.dart';
-import 'profile_page.dart';
+import './User_Profile/profile_screen.dart';
 import 'order_history_page.dart';
 import 'advanced_search_page.dart';
 import '../models/theme_model.dart';
 
 class MenuPage extends StatefulWidget {
+  final String fullName;
+  final String email;
+
+  MenuPage({required this.fullName, required this.email}); // Accept parameters
+
   @override
   _MenuPageState createState() => _MenuPageState();
 }
@@ -15,11 +20,14 @@ class MenuPage extends StatefulWidget {
 class _MenuPageState extends State<MenuPage> {
   int _selectedIndex = 0;
 
-  final List<Widget> _pages = [
-    MenuPageContent(),
-    OrderHistoryPage(),
-    ProfilePage(),
-  ];
+  final List<Widget> _pages = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _pages.add(MenuPageContent());
+    _pages.add(UserProfilePage(fullName: widget.fullName, email: widget.email)); // Pass user data to UserProfilePage
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,10 +42,6 @@ class _MenuPageState extends State<MenuPage> {
                 label: 'Home',
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.history),
-                label: 'Past Orders',
-              ),
-              BottomNavigationBarItem(
                 icon: Icon(Icons.person),
                 label: 'Profile',
               ),
@@ -47,6 +51,10 @@ class _MenuPageState extends State<MenuPage> {
             onTap: (index) {
               setState(() {
                 _selectedIndex = index;
+                // Update UserProfilePage with the user data when switching tabs
+                if (index == 1) {
+                  _pages[1] = UserProfilePage(fullName: widget.fullName, email: widget.email);
+                }
               });
             },
           ),
@@ -85,13 +93,11 @@ class MenuPageContent extends StatelessWidget {
             expandedHeight: 200.0,
             floating: false,
             pinned: true,
-            backgroundColor: Colors.red, // Set the background color of the title bar to red
+            backgroundColor: Colors.red,
             flexibleSpace: FlexibleSpaceBar(
               title: Text(
                 'Somato Menu',
-                style: TextStyle(
-                  color: Colors.white, // Set the title text color to white
-                ),
+                style: TextStyle(color: Colors.white),
               ),
               background: Image.asset(
                 'assets/images/food_background.webp',
@@ -100,7 +106,7 @@ class MenuPageContent extends StatelessWidget {
             ),
             actions: [
               IconButton(
-                icon: Icon(Icons.shopping_cart, color: Colors.white), // Set cart icon color to white
+                icon: Icon(Icons.shopping_cart, color: Colors.white),
                 onPressed: () {
                   Navigator.push(
                     context,

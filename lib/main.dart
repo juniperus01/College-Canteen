@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'models/cart_model.dart';
 import 'models/theme_model.dart';
-import 'screens/login_page.dart';
+import './screens/login_page.dart';
 import 'package:firebase_core/firebase_core.dart';  // Firebase import
 import 'firebase_options.dart';  // Generated file with Firebase options
 

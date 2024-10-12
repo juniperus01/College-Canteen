@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart'; // Import FirebaseAuth
 import 'package:cloud_firestore/cloud_firestore.dart'; // Import Firestore
-import 'menu_page.dart';
+import 'package:somato/screens/User_Profile/profile_screen.dart';
+import 'menu_page.dart'; // Import your MenuPage
+import './User_Profile/profile_screen.dart'; // Import your UserProfilePage
 
 class RegistrationPage extends StatefulWidget {
   @override
@@ -15,46 +17,41 @@ class _RegistrationPageState extends State<RegistrationPage> {
   String _password = '';
   bool _isLoading = false;
 
-  // Initialize FirebaseAuth and Firestore instances
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  // Function to register user with Firebase and store their information in Firestore
   Future<void> _register() async {
     setState(() {
-      _isLoading = true; // Show loading spinner while registering
+      _isLoading = true;
     });
 
     try {
-      // Create user with email and password
-      UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
+      UserCredential userCredential =
+          await _auth.createUserWithEmailAndPassword(
         email: _email,
         password: _password,
       );
 
-      // Get the user after registration
       User? user = userCredential.user;
 
       if (user != null) {
-        // Update user's display name
         await user.updateDisplayName(_name);
 
-        // Store the user's information in Firestore
         await _firestore.collection('users').doc(user.uid).set({
           'fullName': _name,
           'email': _email,
-          'createdAt': FieldValue.serverTimestamp(), // Add creation timestamp
+          'createdAt': FieldValue.serverTimestamp(),
         });
 
-        // Show a success message
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Registration successful!')),
-        );
-
-        // Navigate to the MenuPage
+        // After registration, navigate to MenuPage
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => MenuPage()),
+          MaterialPageRoute(
+            builder: (context) => MenuPage(
+              fullName: _name,
+              email: _email
+            ),
+          ),
         );
       }
     } on FirebaseAuthException catch (e) {
@@ -65,16 +62,16 @@ class _RegistrationPageState extends State<RegistrationPage> {
         message = 'The password is too weak.';
       }
 
-      // Show error message
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(message)),
       );
     } finally {
       setState(() {
-        _isLoading = false; // Hide loading spinner after registration
+        _isLoading = false;
       });
     }
   }
+
 
   @override
   Widget build(BuildContext context) {

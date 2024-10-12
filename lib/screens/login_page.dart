@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:animate_do/animate_do.dart';
@@ -10,13 +11,14 @@ class LoginPage extends StatefulWidget {
   _LoginPageState createState() => _LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMixin {
+class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   String _email = '';
   String _password = '';
   bool _isLoading = false;
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   Future<void> _login() async {
     if (_formKey.currentState!.validate()) {
@@ -32,35 +34,44 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
         );
 
         // Login successful
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => MenuPage()),
-        );
-      } on FirebaseAuthException catch (e) {
-          String errorMessage = 'An error occurred. Please try again.';
+        User? user = userCredential.user;
+        if (user != null) {
+          DocumentSnapshot userDoc = await _firestore.collection('users').doc(user.uid).get();
 
-          // Handling specific error codes
-          switch (e.code) {
-            case 'invalid-email':
-              errorMessage = 'The email address is not valid.';
-              break;
-            case 'user-not-found':
-              errorMessage = 'No user found with this email.';
-              break;
-            case 'wrong-password':
-              errorMessage = 'The password is incorrect.';
-              break;
-            case 'invalid-credential':
-              errorMessage = 'The email or password provided is invalid.';
-              break;
-            default:
-              errorMessage = 'An unknown error occurred.';
-          }
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(errorMessage)),
+          String name = userDoc['fullName'];
+          String userEmail = userDoc['email'];
+
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => MenuPage(fullName: name, email: userEmail),
+            ),
           );
+        }
+      } on FirebaseAuthException catch (e) {
+        String errorMessage = 'An error occurred. Please try again.';
+
+        // Handling specific error codes
+        switch (e.code) {
+          case 'invalid-email':
+            errorMessage = 'The email address is not valid.';
+            break;
+          case 'invalid-credential':
+            errorMessage = 'The email address or password is not valid.';
+            break;
+          case 'user-not-found':
+            errorMessage = 'No user found with this email.';
+            break;
+          case 'wrong-password':
+            errorMessage = 'The password is incorrect.';
+            break;
+          default:
+            errorMessage = 'An unknown error occurred.';
+        }
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(errorMessage)),
+        );
       } catch (e) {
-        // ignore: use_build_context_synchronously
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('An error occurred. Please try again.')),
         );
@@ -136,11 +147,11 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                               ),
                               const SizedBox(height: 30),
                               _isLoading
-                                ? const CircularProgressIndicator()
-                                : ElevatedButton(
-                                    onPressed: _login,
-                                    child: const Text('Login'),
-                                  ),
+                                  ? const CircularProgressIndicator()
+                                  : ElevatedButton(
+                                      onPressed: _login,
+                                      child: const Text('Login'),
+                                    ),
                             ],
                           ),
                         ),
