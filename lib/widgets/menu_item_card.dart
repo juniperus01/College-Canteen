@@ -11,7 +11,7 @@ class MenuItemCard extends StatelessWidget {
   Widget build(BuildContext context) {
     // Use null-aware operators to handle missing data
     final String name = item['name'] ?? 'Unnamed Item';  // Provide a default name
-    final String image = item['image'] ?? 'assets/images/dosa.webp';  // Provide a default image
+    final String image = item['image'] ?? 'assets/images/default_image.jpg';  // Provide a default image
     final double price = item['price'] != null ? item['price'].toDouble() : 0.0;  // Default price
 
     return Card(

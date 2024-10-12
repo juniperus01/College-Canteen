@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart'; // Import FirebaseAuth
 import 'package:cloud_firestore/cloud_firestore.dart'; // Import Firestore
 import 'package:somato/screens/User_Profile/profile_screen.dart';
+import 'package:somato/screens/login_page.dart';
 import 'menu_page.dart'; // Import your MenuPage
 import './User_Profile/profile_screen.dart'; // Import your UserProfilePage
 
@@ -47,9 +48,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => MenuPage(
-              fullName: _name,
-              email: _email
+            builder: (context) => LoginPage(
             ),
           ),
         );

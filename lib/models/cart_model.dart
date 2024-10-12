@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class CartModel extends ChangeNotifier {
   List<Map<String, dynamic>> _items = [];
 
   List<Map<String, dynamic>> get items => _items;
+
+  int get itemCount => _items.length; // Get the number of items in the cart
 
   void addItem(Map<String, dynamic> item, BuildContext context) {
     _items.add(item);
@@ -18,6 +21,31 @@ class CartModel extends ChangeNotifier {
   }
 
   double get totalPrice => _items.fold(0, (sum, item) => sum + (item['price'] as num));
+
+  Future<void> placeOrder(BuildContext context, String userId) async {
+    if (_items.isEmpty) return;
+
+    // Prepare order data
+    final orderData = {
+      'items': _items.map((item) => item['name']).toList(),
+      'totalPrice': totalPrice,
+      'userId': userId,
+      'timestamp': FieldValue.serverTimestamp(),
+    };
+
+    try {
+      // Save the order to Firestore
+      await FirebaseFirestore.instance.collection('orders').add(orderData);
+      _showNotification(context, 'Order Placed Successfully!');
+    } catch (e) {
+      print('Error placing order: $e');
+      _showNotification(context, 'Failed to place order!');
+      return;
+    }
+
+    // Clear the cart after successful order placement
+    clearCart(context);
+  }
 
   void clearCart(BuildContext context) {
     _items.clear();

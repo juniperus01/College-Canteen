@@ -49,12 +49,14 @@ class CartPage extends StatelessWidget {
             ElevatedButton(
               onPressed: cart.items.isEmpty
                   ? null
-                  : () {
-                      // Show notification and clear cart
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Order placed successfully!')),
-                      );
-                      cart.clearCart(context); // Pass BuildContext to clearCart method
+                  : () async {
+                      // Replace with actual user ID logic
+                      final String userId = "YOUR_USER_ID";
+                      
+                      // Place the order and handle the result
+                      await cart.placeOrder(context, userId);
+                      
+                      // Navigate back after placing the order
                       Navigator.pop(context);
                     },
               child: Text('Place Order'),
