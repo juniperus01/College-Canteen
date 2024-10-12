@@ -15,10 +15,8 @@ class _RegistrationPageState extends State<RegistrationPage> {
   String _password = '';
   bool _isLoading = false;
 
-  // Initialize FirebaseAuth instance
+  // Initialize FirebaseAuth and Firestore instances
   final FirebaseAuth _auth = FirebaseAuth.instance;
-
-  // Initialize Firestore instance
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   // Function to register user with Firebase and store their information in Firestore
@@ -29,8 +27,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
 
     try {
       // Create user with email and password
-      UserCredential userCredential =
-          await _auth.createUserWithEmailAndPassword(
+      UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
         email: _email,
         password: _password,
       );
@@ -49,7 +46,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
           'createdAt': FieldValue.serverTimestamp(), // Add creation timestamp
         });
 
-        // Registration successful, show a success message
+        // Show a success message
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Registration successful!')),
         );
@@ -157,8 +154,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.red,
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 50, vertical: 15),
+                          padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
                         ),
                       ),
               ],
