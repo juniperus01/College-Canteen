@@ -4,7 +4,6 @@ import 'category_menu_page.dart';
 import 'cart_page.dart';
 import './User_Profile/profile_screen.dart';
 import 'order_history_page.dart';
-import 'advanced_search_page.dart';
 import '../models/theme_model.dart';
 
 class MenuPage extends StatefulWidget {
@@ -58,17 +57,6 @@ class _MenuPageState extends State<MenuPage> {
               });
             },
           ),
-          floatingActionButton: FloatingActionButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => AdvancedSearchPage()),
-              );
-            },
-            child: Icon(Icons.search),
-            backgroundColor: Theme.of(context).primaryColor,
-          ),
-          floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         );
       },
     );
