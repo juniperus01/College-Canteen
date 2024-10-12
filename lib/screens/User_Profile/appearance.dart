@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:somato/models/theme_model.dart';
 
 
 class AppearanceSettings extends StatefulWidget {
@@ -7,10 +9,12 @@ class AppearanceSettings extends StatefulWidget {
 }
 
 class _AppearanceSettingsState extends State<AppearanceSettings> {
-  String _selectedTheme = 'Light'; // Default theme
-
   @override
   Widget build(BuildContext context) {
+    // Access the ThemeModel from Provider
+    final themeModel = Provider.of<ThemeModel>(context);
+    String _selectedTheme = themeModel.isDark ? 'Dark' : 'Light';
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Appearance'),
@@ -28,6 +32,12 @@ class _AppearanceSettingsState extends State<AppearanceSettings> {
                 onChanged: (value) {
                   setState(() {
                     _selectedTheme = value!;
+                    if (_selectedTheme == 'Light') {
+                      // If the current theme is dark, toggle it to light
+                      if (themeModel.isDark) {
+                        themeModel.toggleTheme();
+                      }
+                    }
                   });
                 },
               ),
@@ -40,6 +50,12 @@ class _AppearanceSettingsState extends State<AppearanceSettings> {
                 onChanged: (value) {
                   setState(() {
                     _selectedTheme = value!;
+                    if (_selectedTheme == 'Dark') {
+                      // If the current theme is light, toggle it to dark
+                      if (!themeModel.isDark) {
+                        themeModel.toggleTheme();
+                      }
+                    }
                   });
                 },
               ),

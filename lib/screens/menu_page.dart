@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'category_menu_page.dart';
-import 'cart_page.dart';
-import './User_Profile/profile_screen.dart';
-import 'order_history_page.dart';
+
 import '../models/theme_model.dart';
+import './User_Profile/profile_screen.dart';
+import 'cart_page.dart';
+import 'category_menu_page.dart';
 
 class MenuPage extends StatefulWidget {
   final String fullName;
@@ -28,6 +28,7 @@ class _MenuPageState extends State<MenuPage> {
     _pages.add(UserProfilePage(fullName: widget.fullName, email: widget.email)); // Pass user data to UserProfilePage
   }
 
+  
   @override
   Widget build(BuildContext context) {
     return Consumer<ThemeModel>(
@@ -65,11 +66,11 @@ class _MenuPageState extends State<MenuPage> {
 
 class MenuPageContent extends StatelessWidget {
   final List<Map<String, String>> categories = [
-    {'title': 'Dosa', 'image': 'assets/images/dosa.webp', 'description': 'Crispy South Indian crepes'},
-    {'title': 'Chats', 'image': 'assets/images/chaats.webp', 'description': 'Savory street food snacks'},
-    {'title': 'Snacks', 'image': 'assets/images/snacks.webp', 'description': 'Quick bites and appetizers'},
-    {'title': 'Beverages', 'image': 'assets/images/beverages.webp', 'description': 'Refreshing drinks'},
-    {'title': 'Frankies', 'image': 'assets/images/franky.webp', 'description': 'Indian-style wraps'},
+    {'title': 'dosa', 'image': 'assets/images/dosa.webp', 'description': 'Crispy South Indian crepes'},
+    {'title': 'chat', 'image': 'assets/images/chaats.webp', 'description': 'Savory street food snacks'},
+    {'title': 'snacks', 'image': 'assets/images/snacks.webp', 'description': 'Quick bites and appetizers'},
+    // {'title': 'Beverages', 'image': 'assets/images/beverages.webp', 'description': 'Refreshing drinks'},
+    // {'title': 'Frankies', 'image': 'assets/images/franky.webp', 'description': 'Indian-style wraps'},
   ];
 
   @override
@@ -150,7 +151,7 @@ class MenuPageContent extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  categories[index]['title']!,
+                                  capitalize(categories[index]['title']!),
                                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                                 ),
                                 SizedBox(height: 4),
@@ -174,4 +175,12 @@ class MenuPageContent extends StatelessWidget {
       ),
     );
   }
+  
+  String capitalize(String input) {
+    if (input.isEmpty) {
+      return input;
+    }
+    return input[0].toUpperCase() + input.substring(1).toLowerCase();
+  }
+
 }

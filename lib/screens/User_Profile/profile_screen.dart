@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:somato/screens/User_Profile/apperance.dart';
+import 'package:somato/screens/User_Profile/appearance.dart';
 import 'package:somato/screens/User_Profile/edit_profile.dart';
 import 'package:somato/screens/User_Profile/food_orders.dart';
 import 'package:somato/screens/User_Profile/money_settings.dart';
