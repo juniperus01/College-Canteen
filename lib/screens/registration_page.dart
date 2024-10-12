@@ -124,7 +124,10 @@ class _RegistrationPageState extends State<RegistrationPage> {
                 _isLoading
                     ? CircularProgressIndicator() // Show loading indicator
                     : ElevatedButton(
-                        child: Text('Register'),
+                        child: Text(
+                              'Register',
+                              style: TextStyle(color: Colors.white), // Set text color to white
+                            ),
                         onPressed: () {
                           if (_formKey.currentState!.validate()) {
                             _formKey.currentState!.save();

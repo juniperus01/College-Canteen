@@ -15,26 +15,8 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
   String _email = '';
   String _password = '';
   bool _isLoading = false;
-  late AnimationController _backgroundAnimationController;
-  late Animation<double> _backgroundAnimation;
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
-
-  @override
-  void initState() {
-    super.initState();
-    _backgroundAnimationController = AnimationController(
-      vsync: this,
-      duration: Duration(seconds: 10),
-    )..repeat(reverse: true);
-    _backgroundAnimation = Tween<double>(begin: -50, end: 50).animate(_backgroundAnimationController);
-  }
-
-  @override
-  void dispose() {
-    _backgroundAnimationController.dispose();
-    super.dispose();
-  }
 
   Future<void> _login() async {
     if (_formKey.currentState!.validate()) {
@@ -61,12 +43,14 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
         } else if (e.code == 'wrong-password') {
           errorMessage = 'Wrong password provided.';
         }
+        // ignore: use_build_context_synchronously
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(errorMessage)),
         );
       } catch (e) {
+        // ignore: use_build_context_synchronously
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('An error occurred. Please try again.')),
+          const SnackBar(content: Text('An error occurred. Please try again.')),
         );
       } finally {
         setState(() {
@@ -79,55 +63,39 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.red, // Set the background color to red
       body: Stack(
         children: [
-          AnimatedBuilder(
-            animation: _backgroundAnimationController,
-            builder: (context, child) {
-              return Transform.translate(
-                offset: Offset(_backgroundAnimation.value, 0),
-                child: Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [Color(0xFFFF5252), Color(0xFFFF8A80)],
-                    ),
-                  ),
-                ),
-              );
-            },
-          ),
           SingleChildScrollView(
-            child: Container(
+            child: SizedBox(
               height: MediaQuery.of(context).size.height,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   FadeInDown(
-                    duration: Duration(milliseconds: 1500),
+                    duration: const Duration(milliseconds: 1500),
                     child: SvgPicture.asset(
-                      'assets/images/somaito_logo.svg',
+                      'assets/images/somaito_logo.webp',
                       height: 120,
                     ),
                   ),
-                  SizedBox(height: 50),
+                  const SizedBox(height: 50),
                   FadeInUp(
-                    duration: Duration(milliseconds: 1500),
+                    duration: const Duration(milliseconds: 1500),
                     child: Card(
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20),
                       ),
                       elevation: 8,
-                      margin: EdgeInsets.symmetric(horizontal: 20),
+                      margin: const EdgeInsets.symmetric(horizontal: 20),
                       child: Padding(
-                        padding: EdgeInsets.all(20),
+                        padding: const EdgeInsets.all(20),
                         child: Form(
                           key: _formKey,
                           child: Column(
                             children: [
                               TextFormField(
-                                decoration: InputDecoration(
+                                decoration: const InputDecoration(
                                   labelText: 'Email',
                                   prefixIcon: Icon(Icons.email, color: Color(0xFFFF5252)),
                                 ),
@@ -139,9 +107,9 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                                 },
                                 onSaved: (value) => _email = value!,
                               ),
-                              SizedBox(height: 20),
+                              const SizedBox(height: 20),
                               TextFormField(
-                                decoration: InputDecoration(
+                                decoration: const InputDecoration(
                                   labelText: 'Password',
                                   prefixIcon: Icon(Icons.lock, color: Color(0xFFFF5252)),
                                 ),
@@ -154,12 +122,12 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                                 },
                                 onSaved: (value) => _password = value!,
                               ),
-                              SizedBox(height: 30),
+                              const SizedBox(height: 30),
                               _isLoading
-                                ? CircularProgressIndicator()
+                                ? const CircularProgressIndicator()
                                 : ElevatedButton(
-                                    child: Text('Login'),
                                     onPressed: _login,
+                                    child: const Text('Login'),
                                   ),
                             ],
                           ),
@@ -167,12 +135,12 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                       ),
                     ),
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   FadeInUp(
-                    duration: Duration(milliseconds: 1500),
-                    delay: Duration(milliseconds: 500),
+                    duration: const Duration(milliseconds: 1500),
+                    delay: const Duration(milliseconds: 500),
                     child: TextButton(
-                      child: Text(
+                      child: const Text(
                         'Don\'t have an account? Sign Up',
                         style: TextStyle(color: Colors.white),
                       ),

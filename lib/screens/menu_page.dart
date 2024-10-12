@@ -85,8 +85,14 @@ class MenuPageContent extends StatelessWidget {
             expandedHeight: 200.0,
             floating: false,
             pinned: true,
+            backgroundColor: Colors.red, // Set the background color of the title bar to red
             flexibleSpace: FlexibleSpaceBar(
-              title: Text('Somaito Menu'),
+              title: Text(
+                'Somato Menu',
+                style: TextStyle(
+                  color: Colors.white, // Set the title text color to white
+                ),
+              ),
               background: Image.asset(
                 'assets/images/food_background.webp',
                 fit: BoxFit.cover,
@@ -94,7 +100,7 @@ class MenuPageContent extends StatelessWidget {
             ),
             actions: [
               IconButton(
-                icon: Icon(Icons.shopping_cart),
+                icon: Icon(Icons.shopping_cart, color: Colors.white), // Set cart icon color to white
                 onPressed: () {
                   Navigator.push(
                     context,
@@ -104,6 +110,7 @@ class MenuPageContent extends StatelessWidget {
               ),
             ],
           ),
+
           SliverPadding(
             padding: EdgeInsets.all(16.0),
             sliver: SliverGrid(

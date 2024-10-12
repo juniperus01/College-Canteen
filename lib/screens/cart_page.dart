@@ -28,7 +28,8 @@ class CartPage extends StatelessWidget {
                     trailing: IconButton(
                       icon: Icon(Icons.remove_circle),
                       onPressed: () {
-                        cart.removeItem(index);
+                        // Pass BuildContext to removeItem method
+                        cart.removeItem(index, context);
                       },
                     ),
                   ),
@@ -49,10 +50,11 @@ class CartPage extends StatelessWidget {
               onPressed: cart.items.isEmpty
                   ? null
                   : () {
+                      // Show notification and clear cart
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text('Order placed successfully!')),
                       );
-                      cart.clearCart();
+                      cart.clearCart(context); // Pass BuildContext to clearCart method
                       Navigator.pop(context);
                     },
               child: Text('Place Order'),

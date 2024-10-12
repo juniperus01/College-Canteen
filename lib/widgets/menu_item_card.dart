@@ -42,22 +42,20 @@ class MenuItemCard extends StatelessWidget {
                 ],
               ),
             ),
-           ElevatedButton(
-  onPressed: () {
-    Provider.of<CartModel>(context, listen: false).addItem(item);
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('${item['name']} added to cart')),
-    );
-  },
-  child: Text('Add'),
-  style: ElevatedButton.styleFrom(
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(20),
-    ),
-    backgroundColor: Colors.red,
-    foregroundColor: Colors.white,
-  ),
-),
+            ElevatedButton(
+              onPressed: () {
+                // Pass BuildContext to addItem method and show notification
+                Provider.of<CartModel>(context, listen: false).addItem(item, context);
+              },
+              child: Text('Add'),
+              style: ElevatedButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                backgroundColor: Colors.red,
+                foregroundColor: Colors.white,
+              ),
+            ),
           ],
         ),
       ),

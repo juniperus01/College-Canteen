@@ -9,11 +9,11 @@ class CategoryMenuPage extends StatelessWidget {
 
   // Dummy data for menu items
   final List<Map<String, dynamic>> menuItems = [
-    {'name': 'Item 1', 'price': 50.0, 'time': '10 min', 'image': 'assets/images/item1.png'},
-    {'name': 'Item 2', 'price': 60.0, 'time': '15 min', 'image': 'assets/images/item2.png'},
-    {'name': 'Item 3', 'price': 70.0, 'time': '12 min', 'image': 'assets/images/item3.png'},
-    {'name': 'Item 4', 'price': 80.0, 'time': '18 min', 'image': 'assets/images/item4.png'},
-    {'name': 'Item 5', 'price': 90.0, 'time': '20 min', 'image': 'assets/images/item5.png'},
+    {'name': 'Item 1', 'price': 50.0, 'time': '10 min', 'image': 'assets/images/dosa.webp'},
+    {'name': 'Item 2', 'price': 60.0, 'time': '15 min', 'image': 'assets/images/beverages.webp'},
+    {'name': 'Item 3', 'price': 70.0, 'time': '12 min', 'image': 'assets/images/chaats.webp'},
+    {'name': 'Item 4', 'price': 80.0, 'time': '18 min', 'image': 'assets/images/franky.webp'},
+    {'name': 'Item 5', 'price': 90.0, 'time': '20 min', 'image': 'assets/images/snacks.webp'},
   ];
 
   @override
