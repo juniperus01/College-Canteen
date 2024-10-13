@@ -77,6 +77,9 @@ class _MenuPageContentState extends State<MenuPageContent> {
     {'title': 'dosa', 'image': 'assets/images/dosa.jpg', 'description': 'Crispy South Indian crepes'},
     {'title': 'chat', 'image': 'assets/images/chat.jpeg', 'description': 'Savory street food snacks'},
     {'title': 'snacks', 'image': 'assets/images/snacks.png', 'description': 'Quick bites and appetizers'},
+    {'title': 'franky', 'image': 'assets/images/franky.webp', 'description': 'Indian-style wraps'},
+    {'title': 'hot_Items', 'image': 'assets/images/franky.webp', 'description': 'Tea and Coffee'},
+    {'title': 'sandwiches', 'image': 'assets/images/franky.webp', 'description': 'Tea and Coffee'},
   ];
 
   List<Map<String, String>> filteredCategories = [];
