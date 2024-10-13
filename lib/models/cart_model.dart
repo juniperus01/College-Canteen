@@ -6,12 +6,37 @@ class CartModel extends ChangeNotifier {
 
   List<Map<String, dynamic>> get items => _items;
 
-  int get itemCount => _items.length; // Get the number of items in the cart
+  int get itemCount => _items.length;
 
   void addItem(Map<String, dynamic> item, BuildContext context) {
-    _items.add(item);
+    // Check if the item already exists in the cart
+    final existingItemIndex = _items.indexWhere((existingItem) => existingItem['name'] == item['name']);
+
+    if (existingItemIndex >= 0) {
+      // If the item exists, increment the quantity
+      _items[existingItemIndex]['quantity']++;
+    } else {
+      // If it doesn't exist, add it to the cart with quantity 1
+      _items.add({
+        'name': item['name'],
+        'price': item['price'],
+        'quantity': 1,
+      });
+    }
     notifyListeners();
-    _showNotification(context, 'Item added to cart!'); // Show notification
+    _showNotification(context, 'Item added to cart!');
+  }
+
+  void decreaseQuantity(int index, BuildContext context) {
+    if (_items[index]['quantity'] > 1) {
+      // If quantity is more than 1, decrement it
+      _items[index]['quantity']--;
+      _showNotification(context, 'Item removed from cart!');
+    } else {
+      // If quantity is 1, remove the item
+      removeItem(index, context);
+    }
+    notifyListeners();
   }
 
   void removeItem(int index, BuildContext context) {
@@ -20,7 +45,7 @@ class CartModel extends ChangeNotifier {
     _showNotification(context, 'Item removed from cart!'); // Show notification
   }
 
-  double get totalPrice => _items.fold(0, (sum, item) => sum + (item['price'] as num));
+  double get totalPrice => _items.fold(0, (sum, item) => sum + (item['price'] as num) * item['quantity']);
 
   Future<void> placeOrder(BuildContext context, String userEmail) async {
     if (_items.isEmpty) return;

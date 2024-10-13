@@ -5,9 +5,7 @@ import '../models/cart_model.dart';
 class CartPage extends StatelessWidget {
   final String email;
 
-  CartPage({
-    required this.email,
-  });
+  CartPage({required this.email});
 
   @override
   Widget build(BuildContext context) {
@@ -29,14 +27,31 @@ class CartPage extends StatelessWidget {
                     borderRadius: BorderRadius.circular(15),
                   ),
                   child: ListTile(
+                    contentPadding: EdgeInsets.all(16.0),
                     title: Text(cart.items[index]['name']),
                     subtitle: Text('Price: ₹${cart.items[index]['price']}'),
-                    trailing: IconButton(
-                      icon: Icon(Icons.remove_circle),
-                      onPressed: () {
-                        // Pass BuildContext to removeItem method
-                        cart.removeItem(index, context);
-                      },
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        _buildIconButton(
+                          icon: Icons.remove,
+                          onPressed: () {
+                            cart.decreaseQuantity(index, context);
+                          },
+                        ),
+                        SizedBox(width: 10),
+                        Text(
+                          '${cart.items[index]['quantity']}',
+                          style: TextStyle(fontSize: 20),
+                        ),
+                        SizedBox(width: 10),
+                        _buildIconButton(
+                          icon: Icons.add,
+                          onPressed: () {
+                            cart.addItem(cart.items[index], context);
+                          },
+                        ),
+                      ],
                     ),
                   ),
                 );
@@ -56,17 +71,27 @@ class CartPage extends StatelessWidget {
               onPressed: cart.items.isEmpty
                   ? null
                   : () async {
-                      
-                      // Place the order and handle the result
                       await cart.placeOrder(context, email);
-                      
-                      // Navigate back after placing the order
                       Navigator.pop(context);
                     },
               child: Text('Place Order'),
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  // Helper method to build plus and minus buttons
+  Widget _buildIconButton({required IconData icon, required VoidCallback onPressed}) {
+    return Container(
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: Colors.red, // Red background for the button
+      ),
+      child: IconButton(
+        icon: Icon(icon, color: Colors.white), // White icon color
+        onPressed: onPressed,
       ),
     );
   }
