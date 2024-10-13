@@ -5,15 +5,19 @@ import 'cart_page.dart';
 
 class CategoryMenuPage extends StatefulWidget {
   final String category;
+  final String user_email;
 
-  CategoryMenuPage({required this.category});
+  CategoryMenuPage({required this.category, required this.user_email});
 
   @override
-  _CategoryMenuPageState createState() => _CategoryMenuPageState();
+  _CategoryMenuPageState createState() => _CategoryMenuPageState(email: user_email);
 }
 
 class _CategoryMenuPageState extends State<CategoryMenuPage> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final String email;
+
+  _CategoryMenuPageState({required this.email});
   List<Map<String, dynamic>> menuItems = [];
   bool _isLoading = true;
 
@@ -52,7 +56,7 @@ class _CategoryMenuPageState extends State<CategoryMenuPage> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => CartPage()),
+                MaterialPageRoute(builder: (context) => CartPage(email: email)),
               );
             },
           ),

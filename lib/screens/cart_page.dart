@@ -3,6 +3,12 @@ import 'package:provider/provider.dart';
 import '../models/cart_model.dart';
 
 class CartPage extends StatelessWidget {
+  final String email;
+
+  CartPage({
+    required this.email,
+  });
+
   @override
   Widget build(BuildContext context) {
     final cart = Provider.of<CartModel>(context);
@@ -50,11 +56,9 @@ class CartPage extends StatelessWidget {
               onPressed: cart.items.isEmpty
                   ? null
                   : () async {
-                      // Replace with actual user ID logic
-                      final String userId = "YOUR_USER_ID";
                       
                       // Place the order and handle the result
-                      await cart.placeOrder(context, userId);
+                      await cart.placeOrder(context, email);
                       
                       // Navigate back after placing the order
                       Navigator.pop(context);

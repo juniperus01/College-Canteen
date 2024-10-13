@@ -1,17 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:provider/provider.dart';
-import 'package:somato/models/cart_model.dart'; // Ensure you have the CartModel imported
 
 class PastOrdersPage extends StatefulWidget {
+  final String email;
+
+  PastOrdersPage({required this.email});
+  
   @override
-  _PastOrdersPageState createState() => _PastOrdersPageState();
+  _PastOrdersPageState createState() => _PastOrdersPageState(email: email);
 }
 
 class _PastOrdersPageState extends State<PastOrdersPage> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   List<Map<String, dynamic>> pastOrders = [];
   bool _isLoading = true;
+
+  final String email;
+
+  _PastOrdersPageState({required this.email});
 
   @override
   void initState() {
@@ -21,12 +27,14 @@ class _PastOrdersPageState extends State<PastOrdersPage> {
 
   Future<void> _fetchPastOrders() async {
     try {
-      // Assuming you have a 'past_orders' collection in Firestore
-      QuerySnapshot snapshot = await _firestore.collection('past_orders').get();
+      QuerySnapshot snapshot = await _firestore
+          .collection('orders')
+          .where('user_email', isEqualTo: email) // Fetch only the orders of the current user
+          .get();
 
       setState(() {
         pastOrders = snapshot.docs.map((doc) => doc.data() as Map<String, dynamic>).toList();
-        _isLoading = false; // Data fetching is complete
+        _isLoading = false;
       });
     } catch (e) {
       print('Error fetching past orders: $e');
@@ -43,13 +51,16 @@ class _PastOrdersPageState extends State<PastOrdersPage> {
         title: Text('Past Orders'),
       ),
       body: _isLoading
-          ? Center(child: CircularProgressIndicator()) // Show loading indicator while fetching data
+          ? Center(child: CircularProgressIndicator())
           : pastOrders.isEmpty
-              ? Center(child: Text('No past orders available')) // Show message if no orders found
+              ? Center(child: Text('No past orders available'))
               : ListView.builder(
                   padding: EdgeInsets.all(16.0),
                   itemCount: pastOrders.length,
                   itemBuilder: (context, index) {
+                    final order = pastOrders[index];
+                    final items = List<String>.from(order['items']); // Ensure items are a list of strings
+
                     return Card(
                       elevation: 4,
                       shape: RoundedRectangleBorder(
@@ -60,12 +71,10 @@ class _PastOrdersPageState extends State<PastOrdersPage> {
                         subtitle: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            ...pastOrders[index]['items'].map<Widget>((item) {
-                              return Text('${item['name']} - ₹${item['price']}');
-                            }).toList(),
+                            ...items.map((item) => Text(item)).toList(),
                             SizedBox(height: 4),
-                            Text('Total: ₹${pastOrders[index]['totalPrice']}'),
-                            Text('Order Date: ${pastOrders[index]['orderDate'].toDate().toString()}'),
+                            Text('Total: ₹${order['totalPrice']}'),
+                            Text('Order Date: ${order['timestamp'].toDate()}'), // Assuming timestamp is a Firestore Timestamp
                           ],
                         ),
                       ),

@@ -22,14 +22,14 @@ class CartModel extends ChangeNotifier {
 
   double get totalPrice => _items.fold(0, (sum, item) => sum + (item['price'] as num));
 
-  Future<void> placeOrder(BuildContext context, String userId) async {
+  Future<void> placeOrder(BuildContext context, String userEmail) async {
     if (_items.isEmpty) return;
 
     // Prepare order data
     final orderData = {
       'items': _items.map((item) => item['name']).toList(),
       'totalPrice': totalPrice,
-      'userId': userId,
+      'user_email': userEmail,
       'timestamp': FieldValue.serverTimestamp(),
     };
 

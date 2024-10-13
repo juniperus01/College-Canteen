@@ -20,12 +20,14 @@ class _MenuPageState extends State<MenuPage> {
   int _selectedIndex = 0;
 
   final List<Widget> _pages = [];
+  
 
   @override
   void initState() {
     super.initState();
-    _pages.add(MenuPageContent());
+    _pages.add(MenuPageContent(user_email: widget.email));
     _pages.add(UserProfilePage(fullName: widget.fullName, email: widget.email)); // Pass user data to UserProfilePage
+    _pages.add(CartPage(email: widget.email));
   }
 
   
@@ -65,6 +67,12 @@ class _MenuPageState extends State<MenuPage> {
 }
 
 class MenuPageContent extends StatelessWidget {
+  final String user_email;
+
+  MenuPageContent({
+    required this.user_email,
+  });
+
   final List<Map<String, String>> categories = [
     {'title': 'dosa', 'image': 'assets/images/dosa.webp', 'description': 'Crispy South Indian crepes'},
     {'title': 'chat', 'image': 'assets/images/chaats.webp', 'description': 'Savory street food snacks'},
@@ -99,7 +107,7 @@ class MenuPageContent extends StatelessWidget {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => CartPage()),
+                    MaterialPageRoute(builder: (context) => CartPage(email: user_email)),
                   );
                 },
               ),
@@ -124,6 +132,7 @@ class MenuPageContent extends StatelessWidget {
                         MaterialPageRoute(
                           builder: (context) => CategoryMenuPage(
                             category: categories[index]['title']!,
+                            user_email: user_email,
                           ),
                         ),
                       );
