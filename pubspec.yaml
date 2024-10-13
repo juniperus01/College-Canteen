@@ -38,7 +38,7 @@ flutter:
 
   assets:
     - assets/images/
-    - assets/images/somaito_logo.webp
+    - assets/images/somato_logo.webp
     - assets/images/food_background.webp
     - assets/images/dosa.jpg
     - assets/images/chat.jpeg
