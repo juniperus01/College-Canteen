@@ -74,9 +74,9 @@ class MenuPageContent extends StatefulWidget {
 
 class _MenuPageContentState extends State<MenuPageContent> {
   final List<Map<String, String>> categories = [
-    {'title': 'dosa', 'image': 'assets/images/dosa.webp', 'description': 'Crispy South Indian crepes'},
-    {'title': 'chat', 'image': 'assets/images/chaats.webp', 'description': 'Savory street food snacks'},
-    {'title': 'snacks', 'image': 'assets/images/snacks.webp', 'description': 'Quick bites and appetizers'},
+    {'title': 'dosa', 'image': 'assets/images/dosa.jpg', 'description': 'Crispy South Indian crepes'},
+    {'title': 'chat', 'image': 'assets/images/chat.jpeg', 'description': 'Savory street food snacks'},
+    {'title': 'snacks', 'image': 'assets/images/snacks.png', 'description': 'Quick bites and appetizers'},
   ];
 
   List<Map<String, String>> filteredCategories = [];
