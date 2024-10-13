@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:somato/screens/User_Profile/appearance.dart';
 import 'package:somato/screens/User_Profile/edit_profile.dart';
+import 'package:somato/screens/User_Profile/expense_tracker.dart';
 import 'package:somato/screens/User_Profile/past_orders.dart';
 import 'package:somato/screens/User_Profile/money_settings.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -64,11 +65,20 @@ class UserProfilePage extends StatelessWidget {
               },
             ),
             ListTile(
-              title: Text('Food Orders'),
+              title: Text('Past Orders'),
               onTap: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => PastOrdersPage(email: email,)),
+                );
+              },
+            ),
+            ListTile(
+              title: Text('Track Expenses'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ExpenseTrackerPage(email: email,)),
                 );
               },
             ),
