@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../widgets/menu_item_card.dart';
+import '../widgets/custom_search_bar.dart';
 import 'cart_page.dart';
 
 class CategoryMenuPage extends StatefulWidget {
@@ -16,10 +17,12 @@ class CategoryMenuPage extends StatefulWidget {
 class _CategoryMenuPageState extends State<CategoryMenuPage> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final String email;
-
   _CategoryMenuPageState({required this.email});
+
   List<Map<String, dynamic>> menuItems = [];
+  List<Map<String, dynamic>> filteredMenuItems = [];
   bool _isLoading = true;
+  TextEditingController _searchController = TextEditingController();
 
   @override
   void initState() {
@@ -30,12 +33,12 @@ class _CategoryMenuPageState extends State<CategoryMenuPage> {
   Future<void> _fetchMenuItems() async {
     try {
       QuerySnapshot snapshot = await _firestore
-          .collection(widget.category) // Fetch items from the specific category collection
+          .collection(widget.category)
           .get();
-
       setState(() {
         menuItems = snapshot.docs.map((doc) => doc.data() as Map<String, dynamic>).toList();
-        _isLoading = false; // Data fetching is complete
+        filteredMenuItems = menuItems;
+        _isLoading = false;
       });
     } catch (e) {
       print('Error fetching menu items: $e');
@@ -43,6 +46,16 @@ class _CategoryMenuPageState extends State<CategoryMenuPage> {
         _isLoading = false;
       });
     }
+  }
+
+  void _filterMenuItems(String query) {
+    setState(() {
+      filteredMenuItems = menuItems
+          .where((item) =>
+              item['name'].toString().toLowerCase().contains(query.toLowerCase()) ||
+              item['description'].toString().toLowerCase().contains(query.toLowerCase()))
+          .toList();
+    });
   }
 
   @override
@@ -62,17 +75,31 @@ class _CategoryMenuPageState extends State<CategoryMenuPage> {
           ),
         ],
       ),
-      body: _isLoading
-          ? Center(child: CircularProgressIndicator()) // Show loading indicator while fetching data
-          : menuItems.isEmpty
-              ? Center(child: Text('No items available')) // Show message if no items found
-              : ListView.builder(
-                  padding: EdgeInsets.all(16.0),
-                  itemCount: menuItems.length,
-                  itemBuilder: (context, index) {
-                    return MenuItemCard(item: menuItems[index]);
-                  },
-                ),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: CustomSearchBar(
+              controller: _searchController,
+              onChanged: _filterMenuItems,
+              hintText: 'Search in ${capitalize(widget.category)}...',
+            ),
+          ),
+          Expanded(
+            child: _isLoading
+                ? Center(child: CircularProgressIndicator())
+                : filteredMenuItems.isEmpty
+                    ? Center(child: Text('No items available'))
+                    : ListView.builder(
+                        padding: EdgeInsets.all(16.0),
+                        itemCount: filteredMenuItems.length,
+                        itemBuilder: (context, index) {
+                          return MenuItemCard(item: filteredMenuItems[index]);
+                        },
+                      ),
+          ),
+        ],
+      ),
     );
   }
 
