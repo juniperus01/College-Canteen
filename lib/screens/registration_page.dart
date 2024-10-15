@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart'; // Import FirebaseAuth
-import 'menu_page.dart';
+import 'package:cloud_firestore/cloud_firestore.dart'; // Import Firestore
+import 'package:somato/screens/User_Profile/profile_screen.dart';
+import 'package:somato/screens/login_page.dart';
+import 'menu_page.dart'; // Import your MenuPage
+import './User_Profile/profile_screen.dart'; // Import your UserProfilePage
 
 class RegistrationPage extends StatefulWidget {
   @override
@@ -14,35 +18,41 @@ class _RegistrationPageState extends State<RegistrationPage> {
   String _password = '';
   bool _isLoading = false;
 
-  // Initialize FirebaseAuth instance
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  // Function to register user with Firebase
   Future<void> _register() async {
     setState(() {
-      _isLoading = true; // Show loading spinner while registering
+      _isLoading = true;
     });
 
     try {
-      // Create user with email and password
       UserCredential userCredential =
           await _auth.createUserWithEmailAndPassword(
         email: _email,
         password: _password,
       );
 
-      // Update user's display name
-      await userCredential.user!.updateDisplayName(_name);
+      User? user = userCredential.user;
 
-      // Registration successful, navigate to the MenuPage
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Registration successful!')),
-      );
+      if (user != null) {
+        await user.updateDisplayName(_name);
 
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => MenuPage()),
-      );
+        await _firestore.collection('users').doc(user.uid).set({
+          'fullName': _name,
+          'email': _email,
+          'createdAt': FieldValue.serverTimestamp(),
+        });
+
+        // After registration, navigate to MenuPage
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => LoginPage(
+            ),
+          ),
+        );
+      }
     } on FirebaseAuthException catch (e) {
       String message = 'An error occurred. Please try again.';
       if (e.code == 'email-already-in-use') {
@@ -56,10 +66,11 @@ class _RegistrationPageState extends State<RegistrationPage> {
       );
     } finally {
       setState(() {
-        _isLoading = false; // Hide loading spinner after registration
+        _isLoading = false;
       });
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -98,6 +109,9 @@ class _RegistrationPageState extends State<RegistrationPage> {
                     if (value == null || value.isEmpty) {
                       return 'Please enter your email';
                     }
+                    if (!value.contains('@')) {
+                      return 'Please enter a valid email';
+                    }
                     return null;
                   },
                   onSaved: (value) => _email = value!,
@@ -124,7 +138,10 @@ class _RegistrationPageState extends State<RegistrationPage> {
                 _isLoading
                     ? CircularProgressIndicator() // Show loading indicator
                     : ElevatedButton(
-                        child: Text('Register'),
+                        child: Text(
+                          'Register',
+                          style: TextStyle(color: Colors.white), // Set text color to white
+                        ),
                         onPressed: () {
                           if (_formKey.currentState!.validate()) {
                             _formKey.currentState!.save();
@@ -133,8 +150,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.red,
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 50, vertical: 15),
+                          padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
                         ),
                       ),
               ],
