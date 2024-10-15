@@ -46,7 +46,12 @@ class _ExpenseTrackerPageState extends State<ExpenseTrackerPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+<<<<<<< HEAD
         title: Text('Track your Expenses'),
+=======
+        title: Text('Track your Expenses',
+        style: TextStyle(color: Colors.white)),
+>>>>>>> risha
         backgroundColor: Colors.red,
       ),
       body: _isLoading

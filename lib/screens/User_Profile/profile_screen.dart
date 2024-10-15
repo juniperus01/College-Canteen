@@ -22,9 +22,16 @@ class UserProfilePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+<<<<<<< HEAD
         title: Text('Profile'),
         backgroundColor: Colors.red,
       ),
+=======
+        title:  Text(
+        'Profile',
+        style: TextStyle(color: Colors.white), // Correctly placed within the Text widget
+      ),backgroundColor: Colors.red,),
+>>>>>>> risha
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(

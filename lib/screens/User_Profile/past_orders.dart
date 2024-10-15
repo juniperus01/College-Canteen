@@ -48,8 +48,13 @@ class _PastOrdersPageState extends State<PastOrdersPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+<<<<<<< HEAD
         title: Text('Past Orders'),
       ),
+=======
+        title: Text('Past Orders', style: TextStyle(color: Colors.white)),
+       backgroundColor: Colors.red),
+>>>>>>> risha
       body: _isLoading
           ? Center(child: CircularProgressIndicator())
           : pastOrders.isEmpty
