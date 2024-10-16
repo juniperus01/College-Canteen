@@ -77,15 +77,9 @@ class _MenuPageContentState extends State<MenuPageContent> {
     {'title': 'dosa', 'image': 'assets/images/dosa.jpg', 'description': 'Crispy South Indian crepes'},
     {'title': 'chat', 'image': 'assets/images/chat.jpeg', 'description': 'Savory street food snacks'},
     {'title': 'snacks', 'image': 'assets/images/snacks.png', 'description': 'Quick bites and appetizers'},
-<<<<<<< HEAD
-    {'title': 'franky', 'image': 'assets/images/franky.webp', 'description': 'Indian-style wraps'},
-    {'title': 'hot_Items', 'image': 'assets/images/franky.webp', 'description': 'Tea and Coffee'},
-    {'title': 'sandwiches', 'image': 'assets/images/franky.webp', 'description': 'Tea and Coffee'},
-=======
     {'title': 'franky', 'image': 'assets/images/franky.jpeg.png', 'description': 'Indian-style wraps'},
     {'title': 'hot_Items', 'image': 'assets/images/chai.jpeg', 'description': 'Tea and Coffee'},
     {'title': 'sandwiches', 'image': 'assets/images/sandwhich.jpeg', 'description': 'Sandwiches'},
->>>>>>> risha
   ];
 
   List<Map<String, String>> filteredCategories = [];
@@ -116,23 +110,12 @@ class _MenuPageContentState extends State<MenuPageContent> {
             expandedHeight: 200.0,
             floating: false,
             pinned: true,
-<<<<<<< HEAD
-            backgroundColor: Colors.red,
-=======
             backgroundColor: Colors.red, // Set the background color for SliverAppBar
->>>>>>> risha
             flexibleSpace: FlexibleSpaceBar(
               title: Text(
                 'Somato Menu',
                 style: TextStyle(color: Colors.white),
               ),
-<<<<<<< HEAD
-              background: Image.asset(
-                'assets/images/food_background.webp',
-                fit: BoxFit.cover,
-              ),
-=======
->>>>>>> risha
             ),
             actions: [
               IconButton(

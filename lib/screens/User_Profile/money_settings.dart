@@ -5,12 +5,8 @@ class MoneySettingsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-<<<<<<< HEAD
-        title: Text('Money'),
-=======
         title: Text('Money',
         style: TextStyle(color: Colors.white)),
->>>>>>> risha
         backgroundColor: Colors.red,
       ),
       body: Padding(

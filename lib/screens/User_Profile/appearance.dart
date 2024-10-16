@@ -17,13 +17,9 @@ class _AppearanceSettingsState extends State<AppearanceSettings> {
 
     return Scaffold(
       appBar: AppBar(
-<<<<<<< HEAD
-        title: Text('Appearance'),
-=======
         title: Text('Appearance',
         style: TextStyle(color: Colors.white),
         ),
->>>>>>> risha
         backgroundColor: Colors.red,
       ),
       body: Padding(
