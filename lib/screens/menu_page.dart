@@ -73,6 +73,16 @@ class MenuPageContent extends StatefulWidget {
 }
 
 class _MenuPageContentState extends State<MenuPageContent> {
+  // Map to link collection names to menu titles
+  final Map<String, String> categoryTitles = {
+    'dosa': 'Dosa',
+    'chat': 'Chat',
+    'snacks': 'Snacks',
+    'franky': 'Franky',
+    'hot_Items': 'Hot Items',
+    'sandwiches': 'Sandwiches',
+  };
+
   final List<Map<String, String>> categories = [
     {'title': 'dosa', 'image': 'assets/images/dosa.jpg', 'description': 'Crispy South Indian crepes'},
     {'title': 'chat', 'image': 'assets/images/chat.jpeg', 'description': 'Savory street food snacks'},

@@ -6,14 +6,14 @@ class PastOrdersPage extends StatefulWidget {
   final String email;
 
   PastOrdersPage({required this.email});
-  
+
   @override
   _PastOrdersPageState createState() => _PastOrdersPageState(email: email);
 }
 
 class _PastOrdersPageState extends State<PastOrdersPage> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  Map<String, List<Map<String, dynamic>>> groupedOrders = {};
+  List<Map<String, dynamic>> orders = [];
   bool _isLoading = true;
 
   final String email;
@@ -35,17 +35,10 @@ class _PastOrdersPageState extends State<PastOrdersPage> {
           .get();
 
       setState(() {
-        // Group the orders by date
-        for (var doc in snapshot.docs) {
-          Map<String, dynamic> orderData = doc.data() as Map<String, dynamic>;
-          String formattedDate = _formatDate(orderData['timestamp']); // Format date as '26 Oct 2024'
-
-          if (!groupedOrders.containsKey(formattedDate)) {
-            groupedOrders[formattedDate] = [];
-          }
-          groupedOrders[formattedDate]!.add(orderData);
-        }
-
+        // Directly populate the orders list
+        orders = snapshot.docs
+            .map((doc) => doc.data() as Map<String, dynamic>)
+            .toList();
         _isLoading = false;
       });
     } catch (e) {
@@ -58,7 +51,7 @@ class _PastOrdersPageState extends State<PastOrdersPage> {
 
   String _formatDate(Timestamp timestamp) {
     DateTime date = timestamp.toDate();
-    return DateFormat('d MMM yyyy').format(date); // Format date as '26 Oct 2024'
+    return DateFormat('d MMM yyyy, hh:mm a').format(date); // Format date as '26 Oct 2024, 12:30 PM'
   }
 
   @override
@@ -70,18 +63,16 @@ class _PastOrdersPageState extends State<PastOrdersPage> {
       ),
       body: _isLoading
           ? Center(child: CircularProgressIndicator())
-          : groupedOrders.isEmpty
+          : orders.isEmpty
               ? Center(child: Text('No past orders available'))
               : ListView.builder(
                   padding: EdgeInsets.all(16.0),
-                  itemCount: groupedOrders.keys.length,
+                  itemCount: orders.length,
                   itemBuilder: (context, index) {
-                    final dateKey = groupedOrders.keys.elementAt(index);
-                    final ordersForDate = groupedOrders[dateKey]!;
-
-                    // Calculate total price for this date
-                    double totalPriceForDate = ordersForDate.fold(
-                        0.0, (sum, order) => sum + (order['totalPrice'] as double));
+                    final order = orders[index];
+                    final items = List<String>.from(order['items']);
+                    final formattedDate = _formatDate(order['timestamp']);
+                    final double totalPrice = order['totalPrice'];
 
                     return Card(
                       elevation: 4,
@@ -91,7 +82,7 @@ class _PastOrdersPageState extends State<PastOrdersPage> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          // Date heading with red background and white font, left-aligned
+                          // Date and time heading with red background and white font, left-aligned
                           Container(
                             padding: EdgeInsets.all(8.0),
                             decoration: BoxDecoration(
@@ -102,7 +93,7 @@ class _PastOrdersPageState extends State<PastOrdersPage> {
                               ),
                             ),
                             child: Text(
-                              dateKey,
+                              formattedDate,
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 16,
@@ -117,29 +108,20 @@ class _PastOrdersPageState extends State<PastOrdersPage> {
                               subtitle: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  // Display all orders for this date
-                                  ...ordersForDate.map((order) {
-                                    final items = List<String>.from(order['items']);
-                                    return Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        ...items.map((item) => Row(
-                                              children: [
-                                                Icon(Icons.fastfood, color: Colors.grey), // Food icon
-                                                SizedBox(width: 8),
-                                                Text(item),
-                                              ],
-                                            )).toList(),
-                                        SizedBox(height: 4),
-                                      ],
-                                    );
-                                  }).toList(),
+                                  // Display all items in the order
+                                  ...items.map((item) => Row(
+                                        children: [
+                                          Icon(Icons.fastfood, color: Colors.grey), // Food icon
+                                          SizedBox(width: 8),
+                                          Text(item),
+                                        ],
+                                      )).toList(),
                                   SizedBox(height: 4),
                                 ],
                               ),
                             ),
                           ),
-                          // Total Price with red background and white font at the bottom
+                          // Total Price with grey background and red font at the bottom
                           Container(
                             padding: EdgeInsets.all(8.0),
                             decoration: BoxDecoration(
@@ -150,7 +132,7 @@ class _PastOrdersPageState extends State<PastOrdersPage> {
                               ),
                             ),
                             child: Text(
-                              'Total : ₹${totalPriceForDate.toStringAsFixed(2)}',
+                              'Total: ₹${totalPrice.toStringAsFixed(2)}',
                               style: TextStyle(
                                 color: Colors.red,
                                 fontSize: 16,

@@ -62,7 +62,11 @@ class _CategoryMenuPageState extends State<CategoryMenuPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('${capitalize(widget.category)} Menu'),
+        backgroundColor: Colors.red, // Set background to red
+        title: Text(
+          '${capitalize(widget.category)} Menu',
+          style: TextStyle(color: Colors.white), // Set text to white
+        ),
         actions: [
           IconButton(
             icon: Icon(Icons.shopping_cart),
