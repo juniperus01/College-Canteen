@@ -10,8 +10,9 @@ import '../widgets/custom_search_bar.dart';
 class MenuPage extends StatefulWidget {
   final String fullName;
   final String email;
+  final String role;
 
-  MenuPage({required this.fullName, required this.email});
+  MenuPage({required this.fullName, required this.email, required this.role});
 
   @override
   _MenuPageState createState() => _MenuPageState();
@@ -24,7 +25,7 @@ class _MenuPageState extends State<MenuPage> {
   @override
   void initState() {
     super.initState();
-    _pages.add(MenuPageContent(user_email: widget.email));
+    _pages.add(MenuPageContent(user_email: widget.email, user_role: widget.role,));
     _pages.add(UserProfilePage(fullName: widget.fullName, email: widget.email));
     _pages.add(CartPage(email: widget.email));
   }
@@ -65,8 +66,9 @@ class _MenuPageState extends State<MenuPage> {
 
 class MenuPageContent extends StatefulWidget {
   final String user_email;
+  final String user_role;
 
-  MenuPageContent({required this.user_email});
+  MenuPageContent({required this.user_email, required this.user_role});
 
   @override
   _MenuPageContentState createState() => _MenuPageContentState();
@@ -128,15 +130,17 @@ class _MenuPageContentState extends State<MenuPageContent> {
               ),
             ),
             actions: [
-              IconButton(
-                icon: Icon(Icons.shopping_cart, color: Colors.white),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => CartPage(email: widget.user_email)),
-                  );
-                },
-              ),
+              // Show cart icon only if the user role is not Admin
+              if (widget.user_role != 'admin')
+                IconButton(
+                  icon: Icon(Icons.shopping_cart, color: Colors.white),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => CartPage(email: widget.user_email)),
+                    );
+                  },
+                ),
             ],
           ),
           SliverToBoxAdapter(
@@ -168,6 +172,7 @@ class _MenuPageContentState extends State<MenuPageContent> {
                           builder: (context) => CategoryMenuPage(
                             category: filteredCategories[index]['title']!,
                             user_email: widget.user_email,
+                            user_role: widget.user_role,
                           ),
                         ),
                       );

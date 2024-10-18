@@ -53,19 +53,12 @@ class _LoginPageState extends State<LoginPage> {
           // Check if user wants to log in with the correct role
           if (userRole == role) {
             // Redirect to respective pages based on the role
-            if (role == 'customer') {
-              Navigator.pushReplacement(
+            Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => MenuPage(email: user.email!, fullName: userName), // Passing name to MenuPage
+                  builder: (context) => MenuPage(email: user.email!, fullName: userName, role: userRole,), // Passing name to MenuPage
                 ),
-              );
-            } else if (role == 'admin') {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => AdminPage(email: user.email!)), // Admin page
-              );
-            }
+            );
           } else {
             // Error message if role does not match selected option
             if (userRole == 'customer') {

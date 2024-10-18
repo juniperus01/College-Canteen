@@ -7,17 +7,18 @@ import 'cart_page.dart';
 class CategoryMenuPage extends StatefulWidget {
   final String category;
   final String user_email;
+  final String user_role;
 
-  CategoryMenuPage({required this.category, required this.user_email});
+  CategoryMenuPage({required this.category, required this.user_email, required this.user_role});
 
   @override
-  _CategoryMenuPageState createState() => _CategoryMenuPageState(email: user_email);
+  _CategoryMenuPageState createState() => _CategoryMenuPageState(email: user_email, role: user_role);
 }
 
 class _CategoryMenuPageState extends State<CategoryMenuPage> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final String email;
-  _CategoryMenuPageState({required this.email});
+  final String email, role;
+  _CategoryMenuPageState({required this.email, required this.role});
 
   List<Map<String, dynamic>> menuItems = [];
   List<Map<String, dynamic>> filteredMenuItems = [];
