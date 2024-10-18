@@ -1,8 +1,10 @@
-import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+
+import 'admin_page.dart'; // For Admin
+import 'menu_page.dart'; // For Customer
 import 'registration_page.dart';
-import 'menu_page.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -14,11 +16,22 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _isLoading = false;
+  String _loginRole = 'customer'; // By default, user logs in as customer
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  Future<void> _login() async {
+  // Fetch the role and name (customer/admin) from Firestore
+  Future<Map<String, dynamic>> _fetchUserDetails(String uid) async {
+    DocumentSnapshot userDoc = await _firestore.collection('users').doc(uid).get();
+    return {
+      'role': userDoc['role'],   // Assuming Firestore stores 'role' as a field
+      'name': userDoc['fullName'],   // Assuming Firestore stores 'name' as a field
+    };
+  }
+
+  // Login method that checks the user role and navigates accordingly
+  Future<void> _login(String role) async {
     if (_formKey.currentState!.validate()) {
       setState(() {
         _isLoading = true;
@@ -32,25 +45,62 @@ class _LoginPageState extends State<LoginPage> {
 
         User? user = userCredential.user;
         if (user != null) {
-          DocumentSnapshot userDoc = await _firestore.collection('users').doc(user.uid).get();
+          // Fetch user role and name
+          Map<String, dynamic> userDetails = await _fetchUserDetails(user.uid);
+          String userRole = userDetails['role'];
+          String userName = userDetails['name'];
 
-          String name = userDoc['fullName'];
-          String userEmail = userDoc['email'];
+          // Check if user wants to log in with the correct role
+          if (userRole == role) {
+            // Redirect to respective pages based on the role
+            if (role == 'customer') {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => MenuPage(email: user.email!, fullName: userName), // Passing name to MenuPage
+                ),
+              );
+            } else if (role == 'admin') {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => AdminPage(email: user.email!)), // Admin page
+              );
+            }
+          } else {
+            // Error message if role does not match selected option
+            if (userRole == 'customer') {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    'Please login as Customer',
+                    style: TextStyle(color: Colors.red),  // White text
+                  ),
+                  backgroundColor: Colors.white,
+                  duration: Duration(seconds: 1),  // Red background
+                ),
+              );
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    'Please login as Admin',
+                    style: TextStyle(color: Colors.red),  // White text
+                  ),
+                  backgroundColor: Colors.white,
+                  duration: Duration(seconds: 1),  // Red background
+                ),
+              );
+            }
 
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => MenuPage(fullName: name, email: userEmail),
-            ),
-          );
+          }
         }
       } on FirebaseAuthException catch (e) {
-        String errorMessage = 'An error occurred. Please try again.';
-        // Handle specific error cases here
+        String errorMessage = 'An error occurred from firbase. Please try again.';
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(errorMessage)));
       } catch (e) {
+        print('Error: $e');
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('An error occurred. Please try again.')),
+          SnackBar(content: Text('An error occurred generic. Please try again.')),
         );
       } finally {
         setState(() {
@@ -148,21 +198,54 @@ class _LoginPageState extends State<LoginPage> {
                             },
                           ),
                           SizedBox(height: 30),
-                          SizedBox(
-                            width: double.infinity,
-                            child: ElevatedButton(
-                              onPressed: _isLoading ? null : _login,
-                              child: _isLoading
-                                  ? CircularProgressIndicator(color: Colors.white)
-                                  : Text('Login', style: TextStyle(fontSize: 16, color: Colors.white)),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Color(0xFFFF5252),
-                                padding: EdgeInsets.symmetric(vertical: 16),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
+                          // Customer/Admin role selection buttons
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              ElevatedButton(
+                                onPressed: _isLoading ? null : () => _login('customer'),
+                                child: _isLoading
+                                    ? CircularProgressIndicator(color: Colors.white)
+                                    : Text(
+                                            'Login as Customer',
+                                            style: TextStyle(color: Colors.white), // White text color
+                                          ),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Color(0xFFFF5252),
+                                  padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
                                 ),
+                                onHover: (isHovered) {
+                                  setState(() {
+                                    _loginRole = 'customer';
+                                  });
+                                },
                               ),
-                            ),
+                              SizedBox(width: 20),
+                              ElevatedButton(
+                                onPressed: _isLoading ? null : () => _login('admin'),
+                                child: _isLoading
+                                    ? CircularProgressIndicator(color: Colors.white)
+                                    : Text(
+                                              'Login as Admin',
+                                              style: TextStyle(color: Colors.white), // White text color
+                                            ),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Color(0xFFFF5252),
+                                  padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                ),
+                                onHover: (isHovered) {
+                                  setState(() {
+                                    _loginRole = 'admin';
+                                  });
+                                },
+                              ),
+                            ],
                           ),
                         ],
                       ),
