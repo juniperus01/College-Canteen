@@ -21,7 +21,8 @@ class _RegistrationPageState extends State<RegistrationPage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  Future<void> _register() async {
+  // Register function with role parameter
+  Future<void> _register(String role) async {
     setState(() {
       _isLoading = true;
     });
@@ -38,18 +39,19 @@ class _RegistrationPageState extends State<RegistrationPage> {
       if (user != null) {
         await user.updateDisplayName(_name);
 
+        // Store user data with selected role
         await _firestore.collection('users').doc(user.uid).set({
           'fullName': _name,
           'email': _email,
+          'role': role, // Store the selected role in Firestore
           'createdAt': FieldValue.serverTimestamp(),
         });
 
-        // After registration, navigate to MenuPage
+        // After registration, navigate to LoginPage
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => LoginPage(
-            ),
+            builder: (context) => LoginPage(),
           ),
         );
       }
@@ -71,16 +73,15 @@ class _RegistrationPageState extends State<RegistrationPage> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-        'Sign Up',
-        style: TextStyle(color: Colors.white), // Set text color to white
-      ),
-      backgroundColor: Colors.red,
+          'Sign Up',
+          style: TextStyle(color: Colors.white), // Set text color to white
+        ),
+        backgroundColor: Colors.red,
       ),
       body: SingleChildScrollView(
         child: Container(
@@ -138,23 +139,48 @@ class _RegistrationPageState extends State<RegistrationPage> {
                   onSaved: (value) => _password = value!,
                 ),
                 SizedBox(height: 30),
+
+                // Role Selection Buttons in a Row
                 _isLoading
                     ? CircularProgressIndicator() // Show loading indicator
-                    : ElevatedButton(
-                        child: Text(
-                          'Register',
-                          style: TextStyle(color: Colors.white), // Set text color to white
-                        ),
-                        onPressed: () {
-                          if (_formKey.currentState!.validate()) {
-                            _formKey.currentState!.save();
-                            _register(); // Call Firebase registration
-                          }
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.red,
-                          padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
-                        ),
+                    : Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          ElevatedButton(
+                            onPressed: () {
+                              if (_formKey.currentState!.validate()) {
+                                _formKey.currentState!.save();
+                                _register('customer'); // Register as customer
+                              }
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.red,
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 30, vertical: 15),
+                            ),
+                            child: Text(
+                              'Register as Customer',
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ),
+                          ElevatedButton(
+                            onPressed: () {
+                              if (_formKey.currentState!.validate()) {
+                                _formKey.currentState!.save();
+                                _register('admin'); // Register as admin
+                              }
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.red,
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 30, vertical: 15),
+                            ),
+                            child: Text(
+                              'Register as Admin',
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ),
+                        ],
                       ),
               ],
             ),
