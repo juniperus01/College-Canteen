@@ -33,11 +33,16 @@ class _CategoryMenuPageState extends State<CategoryMenuPage> {
 
   Future<void> _fetchMenuItems() async {
     try {
-      QuerySnapshot snapshot = await _firestore
-          .collection(widget.category)
-          .get();
+      QuerySnapshot snapshot = await _firestore.collection(widget.category).get();
       setState(() {
-        menuItems = snapshot.docs.map((doc) => doc.data() as Map<String, dynamic>).toList();
+        // Map the Firestore documents into the menuItems list, including document ID
+        menuItems = snapshot.docs.map((doc) {
+          // Add the document ID to the item data
+          Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+          data['id'] = doc.id;  // Set the document ID as 'id'
+          return data;
+        }).toList();
+
         filteredMenuItems = menuItems;
         _isLoading = false;
       });
@@ -68,6 +73,7 @@ class _CategoryMenuPageState extends State<CategoryMenuPage> {
           '${capitalize(widget.category)} Menu',
           style: TextStyle(color: Colors.white), // Set text to white
         ),
+        iconTheme: IconThemeData(color: Colors.white), // Set icon color to white
         actions: [
           IconButton(
             icon: Icon(Icons.shopping_cart),
@@ -82,14 +88,16 @@ class _CategoryMenuPageState extends State<CategoryMenuPage> {
       ),
       body: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: CustomSearchBar(
-              controller: _searchController,
-              onChanged: _filterMenuItems,
-              hintText: 'Search in ${capitalize(widget.category)}...',
+          // Display search bar only for customers
+          if (role == 'customer')
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: CustomSearchBar(
+                controller: _searchController,
+                onChanged: _filterMenuItems,
+                hintText: 'Search in ${capitalize(widget.category)}...',
+              ),
             ),
-          ),
           Expanded(
             child: _isLoading
                 ? Center(child: CircularProgressIndicator())
@@ -99,7 +107,11 @@ class _CategoryMenuPageState extends State<CategoryMenuPage> {
                         padding: EdgeInsets.all(16.0),
                         itemCount: filteredMenuItems.length,
                         itemBuilder: (context, index) {
-                          return MenuItemCard(item: filteredMenuItems[index]);
+                          return MenuItemCard(
+                            category: widget.category,
+                            item: filteredMenuItems[index],
+                            isAdmin: role == 'admin', // Pass user role to the MenuItemCard
+                          );
                         },
                       ),
           ),

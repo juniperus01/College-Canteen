@@ -88,12 +88,26 @@ class _LoginPageState extends State<LoginPage> {
           }
         }
       } on FirebaseAuthException catch (e) {
-        String errorMessage = 'An error occurred from firbase. Please try again.';
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(errorMessage)));
+        String errorMessage = 'Invalid Credentials. Please try again.';
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  content: Text(
+                    errorMessage,
+                    style: TextStyle(color: Colors.red),  // White text
+                  ),
+                  backgroundColor: Colors.white,
+                  duration: Duration(seconds: 1),  // Red background
+                ),
+              );
       } catch (e) {
-        print('Error: $e');
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('An error occurred generic. Please try again.')),
+          SnackBar(
+                  content: Text(
+                    "An error occured. Please try again!",
+                    style: TextStyle(color: Colors.red),  // White text
+                  ),
+                  backgroundColor: Colors.white,
+                  duration: Duration(seconds: 1),  // Red background
+                ),
         );
       } finally {
         setState(() {
