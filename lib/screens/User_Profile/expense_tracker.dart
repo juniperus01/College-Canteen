@@ -15,7 +15,7 @@ class _ExpenseTrackerPageState extends State<ExpenseTrackerPage> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   Map<String, List<Map<String, dynamic>>> groupedExpenses = {};
   bool _isLoading = true;
-  double _totalMonthlyExpenses = 0.0; // Store total monthly expenses
+  double _totalMonthlyExpenses = 0.0;
 
   @override
   void initState() {
@@ -27,15 +27,14 @@ class _ExpenseTrackerPageState extends State<ExpenseTrackerPage> {
     try {
       QuerySnapshot snapshot = await _firestore
           .collection('orders')
-          .where('user_email', isEqualTo: widget.email) // Fetch only the orders of the current user
-          .orderBy('timestamp', descending: true) // Ensure you have an index on user_email and timestamp
+          .where('user_email', isEqualTo: widget.email)
+          .orderBy('timestamp', descending: true)
           .get();
 
       setState(() {
-        // Group the expenses by date
         for (var doc in snapshot.docs) {
           Map<String, dynamic> orderData = doc.data() as Map<String, dynamic>;
-          String formattedDate = _formatDate(orderData['timestamp']); // Format date
+          String formattedDate = _formatDate(orderData['timestamp']);
 
           if (!groupedExpenses.containsKey(formattedDate)) {
             groupedExpenses[formattedDate] = [];
@@ -43,7 +42,7 @@ class _ExpenseTrackerPageState extends State<ExpenseTrackerPage> {
           groupedExpenses[formattedDate]!.add(orderData);
 
           // Calculate total monthly expenses
-          _totalMonthlyExpenses += (orderData['totalPrice'] as double);
+          _totalMonthlyExpenses += (orderData['totalPrice'] as double? ?? 0.0);
         }
 
         _isLoading = false;
@@ -58,7 +57,7 @@ class _ExpenseTrackerPageState extends State<ExpenseTrackerPage> {
 
   String _formatDate(Timestamp timestamp) {
     DateTime date = timestamp.toDate();
-    return DateFormat('d MMMM yyyy').format(date); // Format date as '26 October 2024'
+    return DateFormat('d MMMM yyyy').format(date);
   }
 
   @override
@@ -70,7 +69,7 @@ class _ExpenseTrackerPageState extends State<ExpenseTrackerPage> {
       ),
       body: Column(
         children: [
-          // Display total expenses of the month below the AppBar
+          // Display total expenses of the month
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Text(
@@ -92,7 +91,7 @@ class _ExpenseTrackerPageState extends State<ExpenseTrackerPage> {
 
                           // Calculate total price for this date
                           double totalPriceForDate = expensesForDate.fold(
-                              0.0, (sum, order) => sum + (order['totalPrice'] as double));
+                              0.0, (sum, order) => sum + (order['totalPrice'] as double? ?? 0.0));
 
                           return Card(
                             elevation: 4,
@@ -102,7 +101,7 @@ class _ExpenseTrackerPageState extends State<ExpenseTrackerPage> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
-                                // Date heading with red background and white font, left-aligned
+                                // Date heading
                                 Container(
                                   padding: EdgeInsets.all(8.0),
                                   decoration: BoxDecoration(
@@ -119,7 +118,6 @@ class _ExpenseTrackerPageState extends State<ExpenseTrackerPage> {
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold,
                                     ),
-                                    textAlign: TextAlign.left, // Left-aligned text
                                   ),
                                 ),
                                 Padding(
@@ -130,18 +128,32 @@ class _ExpenseTrackerPageState extends State<ExpenseTrackerPage> {
                                       children: [
                                         // Display all expenses for this date
                                         ...expensesForDate.map((order) {
-                                          final items = List<String>.from(order['items']);
+                                          // Ensure 'items' is a List of Maps
+                                          final items = (order['items'] as List<dynamic>? ?? []);
+
                                           return Column(
                                             crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
-                                              // Display each item
-                                              ...items.map((item) => Row(
-                                                    children: [
-                                                      Icon(Icons.fastfood, color: Colors.grey), // Food icon
-                                                      SizedBox(width: 8),
-                                                      Text(item),
-                                                    ],
-                                                  )).toList(),
+                                              // Display each item with its quantity and price
+                                              ...items.map((item) {
+                                                final quantity = item['quantity'] ?? 1; // Default to 1 if not provided
+                                                final name = item['name'] ?? 'Unknown Item'; // Default name if not provided
+                                                final price = item['price'] ?? 0.0; // Default price if not provided
+
+                                                return Row(
+                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                  children: [
+                                                    Row(
+                                                      children: [
+                                                        Icon(Icons.fastfood, color: Colors.grey),
+                                                        SizedBox(width: 8),
+                                                        Text(name),
+                                                      ],
+                                                    ),
+                                                    Text('x$quantity'), // Display quantity as x2
+                                                  ],
+                                                );
+                                              }).toList(),
                                               SizedBox(height: 4),
                                             ],
                                           );
@@ -151,7 +163,7 @@ class _ExpenseTrackerPageState extends State<ExpenseTrackerPage> {
                                     ),
                                   ),
                                 ),
-                                // Total Price with red background and white font at the bottom
+                                // Total Price for the date
                                 Container(
                                   padding: EdgeInsets.all(8.0),
                                   decoration: BoxDecoration(
@@ -168,7 +180,7 @@ class _ExpenseTrackerPageState extends State<ExpenseTrackerPage> {
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold,
                                     ),
-                                    textAlign: TextAlign.right, // Right-aligned text
+                                    textAlign: TextAlign.right,
                                   ),
                                 ),
                               ],

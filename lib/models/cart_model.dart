@@ -50,9 +50,13 @@ class CartModel extends ChangeNotifier {
   Future<void> placeOrder(BuildContext context, String userEmail) async {
     if (_items.isEmpty) return;
 
-    // Prepare order data
+    // Prepare order data with quantities
     final orderData = {
-      'items': _items.map((item) => item['name']).toList(),
+      'items': _items.map((item) => {
+        'name': item['name'],
+        'quantity': item['quantity'], // Include quantity here
+        'price': item['price'], // Optionally include the price for reference
+      }).toList(),
       'totalPrice': totalPrice,
       'user_email': userEmail,
       'timestamp': FieldValue.serverTimestamp(),

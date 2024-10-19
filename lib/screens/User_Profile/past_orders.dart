@@ -70,7 +70,7 @@ class _PastOrdersPageState extends State<PastOrdersPage> {
                   itemCount: orders.length,
                   itemBuilder: (context, index) {
                     final order = orders[index];
-                    final items = List<String>.from(order['items']);
+                    final items = List<Map<String, dynamic>>.from(order['items']);
                     final formattedDate = _formatDate(order['timestamp']);
                     final double totalPrice = order['totalPrice'];
 
@@ -109,13 +109,24 @@ class _PastOrdersPageState extends State<PastOrdersPage> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   // Display all items in the order
-                                  ...items.map((item) => Row(
-                                        children: [
-                                          Icon(Icons.fastfood, color: Colors.grey), // Food icon
-                                          SizedBox(width: 8),
-                                          Text(item),
-                                        ],
-                                      )).toList(),
+                                  ...items.map((item) {
+                                    final itemName = item['name'];
+                                    final itemQuantity = item['quantity'] ?? 1; // Default to 1 if quantity is missing
+                                    final itemPrice = item['price'] ?? 0.0; // Default to 0.0 if price is missing
+                                    return Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Icon(Icons.fastfood, color: Colors.grey), // Food icon
+                                            SizedBox(width: 8),
+                                            Text(itemName),
+                                          ],
+                                        ),
+                                        Text('x$itemQuantity', style: TextStyle(color: Colors.grey)), // Quantity on the right
+                                      ],
+                                    );
+                                  }).toList(),
                                   SizedBox(height: 4),
                                 ],
                               ),
