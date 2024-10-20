@@ -30,9 +30,27 @@ class _LoginPageState extends State<LoginPage> {
     };
   }
 
+  // Email validation to ensure it belongs to Somaiya domain
+  bool _isSomaiyaEmail(String email) {
+    return email.endsWith('@somaiya.edu');
+  }
+
   // Login method that checks the user role and navigates accordingly
   Future<void> _login(String role) async {
     if (_formKey.currentState!.validate()) {
+      // Validate email domain
+      if (!_isSomaiyaEmail(_emailController.text)) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(
+            'Please use a Somaiya email address (@somaiya.edu)',
+            style: TextStyle(color: Colors.red), // Red text color
+          ),
+          backgroundColor: Colors.white, // White background
+          duration: Duration(seconds: 2),
+        ));
+        return;
+      }
+
       setState(() {
         _isLoading = true;
       });
@@ -54,61 +72,46 @@ class _LoginPageState extends State<LoginPage> {
           if (userRole == role) {
             // Redirect to respective pages based on the role
             Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => MenuPage(email: user.email!, fullName: userName, role: userRole,), // Passing name to MenuPage
-                ),
+              context,
+              MaterialPageRoute(
+                builder: (context) => MenuPage(
+                  email: user.email!,
+                  fullName: userName,
+                  role: userRole,
+                ), // Passing name to MenuPage
+              ),
             );
           } else {
-            // Error message if role does not match selected option
-            if (userRole == 'customer') {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(
-                    'Please login as Customer',
-                    style: TextStyle(color: Colors.red),  // White text
-                  ),
-                  backgroundColor: Colors.white,
-                  duration: Duration(seconds: 1),  // Red background
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  userRole == 'customer' ? 'Please login as Customer' : 'Please login as Admin',
+                  style: TextStyle(color: Colors.red), // Red text color
                 ),
-              );
-            } else {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(
-                    'Please login as Admin',
-                    style: TextStyle(color: Colors.red),  // White text
-                  ),
-                  backgroundColor: Colors.white,
-                  duration: Duration(seconds: 1),  // Red background
-                ),
-              );
-            }
-
+                backgroundColor: Colors.white, // White background
+                duration: Duration(seconds: 2),
+              ),
+            );
           }
         }
       } on FirebaseAuthException catch (e) {
-        String errorMessage = 'Invalid Credentials. Please try again.';
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  content: Text(
-                    errorMessage,
-                    style: TextStyle(color: Colors.red),  // White text
-                  ),
-                  backgroundColor: Colors.white,
-                  duration: Duration(seconds: 1),  // Red background
-                ),
-              );
+          content: Text(
+            'Invalid Credentials. Please try again.',
+            style: TextStyle(color: Colors.red), // Red text color
+          ),
+          backgroundColor: Colors.white, // White background
+          duration: Duration(seconds: 2),
+        ));
       } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-                  content: Text(
-                    "An error occured. Please try again!",
-                    style: TextStyle(color: Colors.red),  // White text
-                  ),
-                  backgroundColor: Colors.white,
-                  duration: Duration(seconds: 1),  // Red background
-                ),
-        );
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(
+            'An error occurred. Please try again!',
+            style: TextStyle(color: Colors.red), // Red text color
+          ),
+          backgroundColor: Colors.white, // White background
+          duration: Duration(seconds: 2),
+        ));
       } finally {
         setState(() {
           _isLoading = false;
@@ -205,7 +208,6 @@ class _LoginPageState extends State<LoginPage> {
                             },
                           ),
                           SizedBox(height: 30),
-                          // Customer/Admin role selection buttons
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
@@ -214,9 +216,9 @@ class _LoginPageState extends State<LoginPage> {
                                 child: _isLoading
                                     ? CircularProgressIndicator(color: Colors.white)
                                     : Text(
-                                            'Login as Customer',
-                                            style: TextStyle(color: Colors.white), // White text color
-                                          ),
+                                        'Login as Customer',
+                                        style: TextStyle(color: Colors.white), // White text color
+                                      ),
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Color(0xFFFF5252),
                                   padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
@@ -224,11 +226,6 @@ class _LoginPageState extends State<LoginPage> {
                                     borderRadius: BorderRadius.circular(8),
                                   ),
                                 ),
-                                onHover: (isHovered) {
-                                  setState(() {
-                                    _loginRole = 'customer';
-                                  });
-                                },
                               ),
                               SizedBox(width: 20),
                               ElevatedButton(
@@ -236,9 +233,9 @@ class _LoginPageState extends State<LoginPage> {
                                 child: _isLoading
                                     ? CircularProgressIndicator(color: Colors.white)
                                     : Text(
-                                              'Login as Admin',
-                                              style: TextStyle(color: Colors.white), // White text color
-                                            ),
+                                        'Login as Admin',
+                                        style: TextStyle(color: Colors.white), // White text color
+                                      ),
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Color(0xFFFF5252),
                                   padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
@@ -246,11 +243,6 @@ class _LoginPageState extends State<LoginPage> {
                                     borderRadius: BorderRadius.circular(8),
                                   ),
                                 ),
-                                onHover: (isHovered) {
-                                  setState(() {
-                                    _loginRole = 'admin';
-                                  });
-                                },
                               ),
                             ],
                           ),

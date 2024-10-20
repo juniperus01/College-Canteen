@@ -72,7 +72,24 @@ class _CategoryMenuPageState extends State<CategoryMenuPage> {
           '${capitalize(widget.category)} Menu',
           style: TextStyle(color: Colors.white),
         ),
+        iconTheme: IconThemeData(
+          color: Colors.white, // Sets back arrow icon color to white
+        ),
+        actions: [
+          if (role == 'customer') // Show cart icon for customer only
+            IconButton(
+              icon: Icon(Icons.shopping_cart, color: Colors.white), // Cart icon color set to white
+              onPressed: () {
+                // Navigate to the CartPage
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => CartPage(email: email)),
+                );
+              },
+            ),
+        ],
       ),
+
       body: Column(
         children: [
           // Search bar and 'Add Item' button for both customer and admin
