@@ -72,18 +72,6 @@ class _CategoryMenuPageState extends State<CategoryMenuPage> {
           '${capitalize(widget.category)} Menu',
           style: TextStyle(color: Colors.white),
         ),
-        iconTheme: IconThemeData(color: Colors.white),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.shopping_cart),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => CartPage(email: email)),
-              );
-            },
-          ),
-        ],
       ),
       body: Column(
         children: [
@@ -108,7 +96,11 @@ class _CategoryMenuPageState extends State<CategoryMenuPage> {
                       // Show the 'Add New Item' dialog
                       _showAddItemDialog(context, widget.category);
                     },
-                    child: Text('Add Item'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red, // Red background
+                      foregroundColor: Colors.white, // White text
+                    ),
+                    child: Text('Add New Item'),
                   ),
               ],
             ),
@@ -145,7 +137,6 @@ class _CategoryMenuPageState extends State<CategoryMenuPage> {
   void _showAddItemDialog(BuildContext context, String category) {
     final TextEditingController nameController = TextEditingController();
     final TextEditingController priceController = TextEditingController();
-    final TextEditingController estimatedTimeController = TextEditingController(text: '20'); // Placeholder
 
     showDialog(
       context: context,
@@ -166,11 +157,7 @@ class _CategoryMenuPageState extends State<CategoryMenuPage> {
                   decoration: InputDecoration(labelText: 'Price'),
                   keyboardType: TextInputType.number,
                 ),
-                TextField(
-                  controller: estimatedTimeController,
-                  decoration: InputDecoration(labelText: 'Estimated Time'),
-                  keyboardType: TextInputType.number,
-                ),
+                
               ],
             ),
           ),
@@ -181,10 +168,13 @@ class _CategoryMenuPageState extends State<CategoryMenuPage> {
                 await _addItemToFirestore(context, category, {
                   'name': nameController.text,
                   'price': double.tryParse(priceController.text) ?? 0.0,
-                  'estimated_time': estimatedTimeController.text,
                 });
                 Navigator.of(context).pop(); // Close the dialog
               },
+              style: TextButton.styleFrom(
+                backgroundColor: Colors.red, // Red background for the 'Add' button
+                foregroundColor: Colors.white, // White text
+              ),
               child: Text('Add'),
             ),
             TextButton(
@@ -217,8 +207,84 @@ class _CategoryMenuPageState extends State<CategoryMenuPage> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
+        backgroundColor: Colors.red, // Red background
+        behavior: SnackBarBehavior.floating,
         duration: Duration(seconds: 2),
+        action: SnackBarAction(
+          label: 'OK',
+          textColor: Colors.white, // White action text
+          onPressed: () {},
+        ),
       ),
     );
+  }
+
+  void _showModifyItemDialog(BuildContext context, String category, Map<String, dynamic> currentItemData) {
+    final TextEditingController nameController = TextEditingController(text: currentItemData['name']);
+    final TextEditingController priceController = TextEditingController(text: currentItemData['price'].toString());
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Modify Item'),
+          content: Container(
+            width: 400,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: nameController,
+                  decoration: InputDecoration(labelText: 'Name'),
+                ),
+                TextField(
+                  controller: priceController,
+                  decoration: InputDecoration(labelText: 'Price'),
+                  keyboardType: TextInputType.number,
+                ),
+                
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () async {
+                // Modify the item in Firestore
+                await _modifyItemInFirestore(context, category, currentItemData['id'], {
+                  'name': nameController.text,
+                  'price': double.tryParse(priceController.text) ?? 0.0,
+                });
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              style: TextButton.styleFrom(
+                backgroundColor: Colors.red, // Red background for the 'Save' button
+                foregroundColor: Colors.white, // White text
+              ),
+              child: Text('Save'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: Text('Cancel'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _modifyItemInFirestore(BuildContext context, String category, String itemId, Map<String, dynamic> updatedItemData) async {
+    try {
+      CollectionReference collectionRef = FirebaseFirestore.instance.collection(category);
+      await collectionRef.doc(itemId).update(updatedItemData);
+      _showSnackBar(context, 'Item modified successfully!');
+
+      // Fetch the updated menu items list
+      _fetchMenuItems();
+    } catch (e) {
+      print('Error modifying item: $e');
+      _showSnackBar(context, 'Error modifying item: $e');
+    }
   }
 }

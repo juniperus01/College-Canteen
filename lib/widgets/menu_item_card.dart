@@ -67,7 +67,9 @@ class MenuItemCard extends StatelessWidget {
                   ),
                   SizedBox(height: 4),
                   Text('Price: ₹$price'),
-                  Text('Estimated Time: 20'), // You may want to make this dynamic too
+
+                  // ToDO: Dynamically update waiting time using ML model
+                  Text('Estimated Time: 20'),
                 ],
               ),
             ),
@@ -114,7 +116,6 @@ class MenuItemCard extends StatelessWidget {
 
     final TextEditingController nameController = TextEditingController(text: item['name']);
     final TextEditingController priceController = TextEditingController(text: item['price']?.toString() ?? '0');
-    final TextEditingController estimatedTimeController = TextEditingController(text: '20'); // Placeholder
 
     showDialog(
       context: context,
@@ -135,11 +136,7 @@ class MenuItemCard extends StatelessWidget {
                   decoration: InputDecoration(labelText: 'Price'),
                   keyboardType: TextInputType.number,
                 ),
-                TextField(
-                  controller: estimatedTimeController,
-                  decoration: InputDecoration(labelText: 'Estimated Time'),
-                  keyboardType: TextInputType.number,
-                ),
+                
               ],
             ),
           ),
@@ -149,7 +146,6 @@ class MenuItemCard extends StatelessWidget {
                 await _updateItemInFirestore(context, category, itemId, {
                   'name': nameController.text,
                   'price': double.tryParse(priceController.text) ?? item['price'],
-                  'estimated_time': estimatedTimeController.text, // Add estimated time
                 });
                 Navigator.of(context).pop(); // Close the dialog
               },
@@ -220,8 +216,16 @@ class MenuItemCard extends StatelessWidget {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
+        backgroundColor: Colors.red, // Red background
+        behavior: SnackBarBehavior.floating,
         duration: Duration(seconds: 2),
+        action: SnackBarAction(
+          label: 'OK',
+          textColor: Colors.white, // White action text
+          onPressed: () {},
+        ),
       ),
     );
   }
+
 }
