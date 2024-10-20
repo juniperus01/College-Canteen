@@ -7,6 +7,11 @@ import 'menu_page.dart'; // For Customer
 import 'registration_page.dart';
 
 class LoginPage extends StatefulWidget {
+  final bool isInside; // Add the isInside parameter
+
+  // Constructor to accept the isInside value
+  const LoginPage({Key? key, required this.isInside}) : super(key: key);
+
   @override
   _LoginPageState createState() => _LoginPageState();
 }
@@ -78,6 +83,7 @@ class _LoginPageState extends State<LoginPage> {
                   email: user.email!,
                   fullName: userName,
                   role: userRole,
+                  isInside: widget.isInside,
                 ), // Passing name to MenuPage
               ),
             );

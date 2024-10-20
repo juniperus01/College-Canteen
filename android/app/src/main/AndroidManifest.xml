@@ -2,6 +2,10 @@
     package="com.ly_btech_project.somato_flutter_app"> <!-- Add your package name here -->
     
     <uses-permission android:name="android.permission.INTERNET"/>
+    <!-- Add these permissions -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
 
     <application
         android:label="somato_flutter_app"

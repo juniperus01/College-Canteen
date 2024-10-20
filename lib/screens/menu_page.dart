@@ -11,8 +11,9 @@ class MenuPage extends StatefulWidget {
   final String fullName;
   final String email;
   final String role;
+  final bool isInside;
 
-  MenuPage({required this.fullName, required this.email, required this.role});
+  MenuPage({required this.fullName, required this.email, required this.role, required this.isInside});
 
   @override
   _MenuPageState createState() => _MenuPageState();
@@ -25,7 +26,7 @@ class _MenuPageState extends State<MenuPage> {
   @override
   void initState() {
     super.initState();
-    _pages.add(MenuPageContent(user_email: widget.email, user_role: widget.role,));
+    _pages.add(MenuPageContent(user_email: widget.email, user_role: widget.role, isInside: widget.isInside,));
     _pages.add(UserProfilePage(fullName: widget.fullName, email: widget.email));
     _pages.add(CartPage(email: widget.email));
   }
@@ -67,8 +68,9 @@ class _MenuPageState extends State<MenuPage> {
 class MenuPageContent extends StatefulWidget {
   final String user_email;
   final String user_role;
+  final bool isInside;
 
-  MenuPageContent({required this.user_email, required this.user_role});
+  MenuPageContent({required this.user_email, required this.user_role, required this.isInside});
 
   @override
   _MenuPageContentState createState() => _MenuPageContentState();
@@ -84,6 +86,7 @@ class _MenuPageContentState extends State<MenuPageContent> {
     'hot_Items': 'Hot Items',
     'sandwiches': 'Sandwiches',
   };
+  
 
   final List<Map<String, String>> categories = [
     {'title': 'dosa', 'image': 'assets/images/dosa.jpg', 'description': 'Crispy South Indian crepes'},
@@ -104,6 +107,7 @@ class _MenuPageContentState extends State<MenuPageContent> {
   }
 
   void _filterCategories(String query) {
+
     setState(() {
       filteredCategories = categories
           .where((category) =>
@@ -173,6 +177,7 @@ class _MenuPageContentState extends State<MenuPageContent> {
                             category: filteredCategories[index]['title']!,
                             user_email: widget.user_email,
                             user_role: widget.user_role,
+                            isInside: widget.isInside,
                           ),
                         ),
                       );

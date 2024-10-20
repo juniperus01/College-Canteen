@@ -98,7 +98,7 @@ class UserProfilePage extends StatelessWidget {
                 await FirebaseAuth.instance.signOut(); // Log out from Firebase
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (context) => LoginPage()), // Navigate to Login Page
+                  MaterialPageRoute(builder: (context) => LoginPage(isInside: true,)), // Navigate to Login Page
                 );
               },
             ),

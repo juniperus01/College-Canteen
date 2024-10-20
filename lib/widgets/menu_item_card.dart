@@ -6,9 +6,9 @@ import '../models/cart_model.dart';
 class MenuItemCard extends StatelessWidget {
   final String category;
   final Map<String, dynamic> item;
-  final bool isAdmin;
+  final bool isAdmin, isInside;
 
-  MenuItemCard({required this.category, required this.item, required this.isAdmin});
+  MenuItemCard({required this.category, required this.item, required this.isAdmin, required this.isInside});
 
   @override
   Widget build(BuildContext context) {
@@ -88,15 +88,17 @@ class MenuItemCard extends StatelessWidget {
                     ),
                   )
                 : ElevatedButton(
-                    onPressed: () {
-                      Provider.of<CartModel>(context, listen: false).addItem(item, context);
-                    },
+                    onPressed: isInside // Disable button if not inside
+                        ? () {
+                            Provider.of<CartModel>(context, listen: false).addItem(item, context);
+                          }
+                        : null, // Disable the button
                     child: Text('Add'),
                     style: ElevatedButton.styleFrom(
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20),
                       ),
-                      backgroundColor: Colors.red,
+                      backgroundColor: isInside ? Colors.red : Colors.grey, // Change color if disabled
                       foregroundColor: Colors.white,
                     ),
                   ),
@@ -105,7 +107,6 @@ class MenuItemCard extends StatelessWidget {
       ),
     );
   }
-
 
   void _showModifyDialog(BuildContext context, String category, String itemId, Map<String, dynamic> item) {
     // Prevent modification if itemId is null or empty
@@ -136,7 +137,6 @@ class MenuItemCard extends StatelessWidget {
                   decoration: InputDecoration(labelText: 'Price'),
                   keyboardType: TextInputType.number,
                 ),
-                
               ],
             ),
           ),
@@ -227,5 +227,4 @@ class MenuItemCard extends StatelessWidget {
       ),
     );
   }
-
 }

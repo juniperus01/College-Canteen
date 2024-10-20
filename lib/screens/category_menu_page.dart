@@ -8,8 +8,9 @@ class CategoryMenuPage extends StatefulWidget {
   final String category;
   final String user_email;
   final String user_role;
+  final bool isInside;
 
-  CategoryMenuPage({required this.category, required this.user_email, required this.user_role});
+  CategoryMenuPage({required this.category, required this.user_email, required this.user_role, required this.isInside});
 
   @override
   _CategoryMenuPageState createState() => _CategoryMenuPageState(email: user_email, role: user_role);
@@ -92,6 +93,32 @@ class _CategoryMenuPageState extends State<CategoryMenuPage> {
 
       body: Column(
         children: [
+          // Show warning message if the user is outside the campus
+          if (!widget.isInside)
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Container(
+                color: Colors.amberAccent, // Warning background color
+                padding: const EdgeInsets.all(16.0),
+                child: Row(
+                  children: [
+                    Icon(Icons.warning, color: Colors.red, size: 30), // Warning icon
+                    SizedBox(width: 10), // Space between icon and text
+                    Expanded(
+                      child: Text(
+                        "Oops! Please ensure you're inside the campus to order.",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.red,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+
           // Search bar and 'Add Item' button for both customer and admin
           Padding(
             padding: const EdgeInsets.all(16.0),
@@ -122,6 +149,8 @@ class _CategoryMenuPageState extends State<CategoryMenuPage> {
               ],
             ),
           ),
+
+          // Menu items
           Expanded(
             child: _isLoading
                 ? Center(child: CircularProgressIndicator())
@@ -134,7 +163,8 @@ class _CategoryMenuPageState extends State<CategoryMenuPage> {
                           return MenuItemCard(
                             category: widget.category,
                             item: filteredMenuItems[index],
-                            isAdmin: role == 'admin', // Pass user role to MenuItemCard
+                            isAdmin: role == 'admin',
+                            isInside: widget.isInside,
                           );
                         },
                       ),
@@ -174,7 +204,6 @@ class _CategoryMenuPageState extends State<CategoryMenuPage> {
                   decoration: InputDecoration(labelText: 'Price'),
                   keyboardType: TextInputType.number,
                 ),
-                
               ],
             ),
           ),
@@ -234,74 +263,5 @@ class _CategoryMenuPageState extends State<CategoryMenuPage> {
         ),
       ),
     );
-  }
-
-  void _showModifyItemDialog(BuildContext context, String category, Map<String, dynamic> currentItemData) {
-    final TextEditingController nameController = TextEditingController(text: currentItemData['name']);
-    final TextEditingController priceController = TextEditingController(text: currentItemData['price'].toString());
-
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Modify Item'),
-          content: Container(
-            width: 400,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextField(
-                  controller: nameController,
-                  decoration: InputDecoration(labelText: 'Name'),
-                ),
-                TextField(
-                  controller: priceController,
-                  decoration: InputDecoration(labelText: 'Price'),
-                  keyboardType: TextInputType.number,
-                ),
-                
-              ],
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () async {
-                // Modify the item in Firestore
-                await _modifyItemInFirestore(context, category, currentItemData['id'], {
-                  'name': nameController.text,
-                  'price': double.tryParse(priceController.text) ?? 0.0,
-                });
-                Navigator.of(context).pop(); // Close the dialog
-              },
-              style: TextButton.styleFrom(
-                backgroundColor: Colors.red, // Red background for the 'Save' button
-                foregroundColor: Colors.white, // White text
-              ),
-              child: Text('Save'),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
-              },
-              child: Text('Cancel'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  Future<void> _modifyItemInFirestore(BuildContext context, String category, String itemId, Map<String, dynamic> updatedItemData) async {
-    try {
-      CollectionReference collectionRef = FirebaseFirestore.instance.collection(category);
-      await collectionRef.doc(itemId).update(updatedItemData);
-      _showSnackBar(context, 'Item modified successfully!');
-
-      // Fetch the updated menu items list
-      _fetchMenuItems();
-    } catch (e) {
-      print('Error modifying item: $e');
-      _showSnackBar(context, 'Error modifying item: $e');
-    }
   }
 }
