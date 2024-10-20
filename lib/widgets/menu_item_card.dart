@@ -14,25 +14,6 @@ class MenuItemCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        // Add New Item button
-        isAdmin
-            ? Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: ElevatedButton(
-                  onPressed: () {
-                    _showAddItemDialog(context, category);
-                  },
-                  child: Text('Add New Item'),
-                  style: ElevatedButton.styleFrom(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    backgroundColor: Colors.red,
-                    foregroundColor: Colors.white,
-                  ),
-                ),
-              )
-            : SizedBox.shrink(), // Hide the button for non-admin users
         // Existing item card
         _buildMenuItemCard(context),
       ],
@@ -40,7 +21,6 @@ class MenuItemCard extends StatelessWidget {
   }
 
   Widget _buildMenuItemCard(BuildContext context) {
-    // Use null-aware operators to handle missing data
     final String name = item['name'] ?? 'Unnamed Item'; // Default if 'name' is null
     final double price = item['price'] != null ? item['price'].toDouble() : 0.0; // Default price
     final String itemId = item['id'] ?? ''; // Handle null 'id'
@@ -54,7 +34,6 @@ class MenuItemCard extends StatelessWidget {
         padding: const EdgeInsets.all(8.0),
         child: Row(
           children: [
-            // Minus icon enclosed in a red circle for admin
             isAdmin
                 ? Container(
                     decoration: BoxDecoration(
@@ -125,72 +104,6 @@ class MenuItemCard extends StatelessWidget {
     );
   }
 
-  void _showAddItemDialog(BuildContext context, String category) {
-    final TextEditingController nameController = TextEditingController();
-    final TextEditingController priceController = TextEditingController();
-    final TextEditingController estimatedTimeController = TextEditingController(text: '20'); // Placeholder
-
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Add New Item'),
-          content: Container(
-            width: 400,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextField(
-                  controller: nameController,
-                  decoration: InputDecoration(labelText: 'Name'),
-                ),
-                TextField(
-                  controller: priceController,
-                  decoration: InputDecoration(labelText: 'Price'),
-                  keyboardType: TextInputType.number,
-                ),
-                TextField(
-                  controller: estimatedTimeController,
-                  decoration: InputDecoration(labelText: 'Estimated Time'),
-                  keyboardType: TextInputType.number,
-                ),
-              ],
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () async {
-                await _addItemToFirestore(context, category, {
-                  'name': nameController.text,
-                  'price': double.tryParse(priceController.text) ?? 0.0,
-                  'estimated_time': estimatedTimeController.text,
-                });
-                Navigator.of(context).pop(); // Close the dialog
-              },
-              child: Text('Add'),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
-              },
-              child: Text('Cancel'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  Future<void> _addItemToFirestore(BuildContext context, String category, Map<String, dynamic> newItemData) async {
-    try {
-      CollectionReference collectionRef = FirebaseFirestore.instance.collection(category);
-      await collectionRef.add(newItemData);
-      _showSnackBar(context, 'Item added successfully!');
-    } catch (e) {
-      print('Error adding item: $e');
-      _showSnackBar(context, 'Error adding item: $e');
-    }
-  }
 
   void _showModifyDialog(BuildContext context, String category, String itemId, Map<String, dynamic> item) {
     // Prevent modification if itemId is null or empty
