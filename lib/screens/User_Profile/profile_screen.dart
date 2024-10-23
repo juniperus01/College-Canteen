@@ -11,10 +11,13 @@ class UserProfilePage extends StatelessWidget {
   final String fullName;
   final String email;
   final String? imageUrl; // Nullable URL for the user's profile image
+  final bool isInside, locationAbleToTrack;
 
   UserProfilePage({
     required this.fullName,
     required this.email,
+    required this.isInside,
+    required this.locationAbleToTrack,
     this.imageUrl, // Optional parameter
   });
 
@@ -98,7 +101,7 @@ class UserProfilePage extends StatelessWidget {
                 await FirebaseAuth.instance.signOut(); // Log out from Firebase
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (context) => LoginPage(isInside: true,)), // Navigate to Login Page
+                  MaterialPageRoute(builder: (context) => LoginPage(isInside: isInside, locationAbleToTrack: locationAbleToTrack,)), // Navigate to Login Page
                 );
               },
             ),

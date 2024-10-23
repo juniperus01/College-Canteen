@@ -38,14 +38,16 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   final GeofenceManager geofenceManager = GeofenceManager();
   bool isInsideGeofence = false; // Store the isInside value
+  bool locationAbleToTrack = false; // Track if location was able to be fetched
 
   @override
   void initState() {
     super.initState();
     // Call getCurrentLocation to retrieve user's location on app startup
-    geofenceManager.getCurrentLocation((isInside) {
+    geofenceManager.getCurrentLocation((isInside, isLocationAbleToTrack) {
       setState(() {
         isInsideGeofence = isInside; // Update the value of isInside
+        locationAbleToTrack = isLocationAbleToTrack; // Update location tracking status
       });
     });
   }
@@ -71,7 +73,10 @@ class _MyAppState extends State<MyApp> {
                     secondary: Colors.redAccent,
                   ),
                 ),
-          home: LoginPage(isInside: isInsideGeofence), // Pass the isInside value
+          home: LoginPage(
+            isInside: isInsideGeofence,
+            locationAbleToTrack: locationAbleToTrack, // Pass location tracking status
+          ),
           debugShowCheckedModeBanner: false,
         );
       },
@@ -82,7 +87,7 @@ class _MyAppState extends State<MyApp> {
 class GeofenceManager {
   LatLng? userLocation;
 
-  void getCurrentLocation(Function(bool) callback) { // Accept a callback
+  void getCurrentLocation(Function(bool, bool) callback) { // Accept a callback with two parameters
     if (html.window.navigator.geolocation != null) {
       html.window.navigator.geolocation.getCurrentPosition().then((position) {
         final lat = position.coords?.latitude;
@@ -98,19 +103,19 @@ class GeofenceManager {
           // Check if user is inside the geofence and call the callback
           bool isInside = _isInsideGeofence(userLocation!);
           print("Is inside geofence: $isInside"); // Debug print
-          callback(isInside); // Pass isInside to the callback
+          callback(isInside, true); // Pass isInside and true for location tracking
           _notifyUser(isInside);
         } else {
           print("Location coordinates are null.");
-          callback(false); // Pass false if coordinates are null
+          callback(false, false); // Pass false for both if coordinates are null
         }
       }).catchError((error) {
         print('Error getting location: $error');
-        callback(false); // Pass false on error
+        callback(false, false); // Pass false for both on error
       });
     } else {
       print('Geolocation is not supported by this browser.');
-      callback(false); // Pass false if geolocation is not supported
+      callback(false, false); // Pass false for both if geolocation is not supported
     }
   }
 
@@ -118,9 +123,8 @@ class GeofenceManager {
     const LatLng societyCoords = LatLng(19.006657, 73.015872);
     const LatLng somaiyaCoords = LatLng(19.0728, 72.8999);
 
-
-    const LatLng geofenceCenter = somaiyaCoords;
-    const double radius = 200; // Geofence radius in meters
+    const LatLng geofenceCenter = societyCoords;
+    const double radius = 600; // Geofence radius in meters
 
     // Calculate the distance from the geofence center to the user's location
     double distance = _haversineDistance(

@@ -7,6 +7,10 @@ import 'menu_page.dart'; // Import your MenuPage
 import './User_Profile/profile_screen.dart'; // Import your UserProfilePage
 
 class RegistrationPage extends StatefulWidget {
+  final bool isInside, locationAbleToTrack;
+
+  const RegistrationPage({Key? key, required this.isInside, required this.locationAbleToTrack}) : super(key: key);
+
   @override
   _RegistrationPageState createState() => _RegistrationPageState();
 }
@@ -20,6 +24,11 @@ class _RegistrationPageState extends State<RegistrationPage> {
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  // Email validation to ensure it belongs to Somaiya domain
+  bool _isSomaiyaEmail(String email) {
+    return email.endsWith('@somaiya.edu');
+  }
 
   // Register function with role parameter
   Future<void> _register(String role) async {
@@ -51,7 +60,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => LoginPage(isInside: true,),
+            builder: (context) => LoginPage(isInside: widget.isInside, locationAbleToTrack: widget.locationAbleToTrack),
           ),
         );
       }
@@ -115,6 +124,9 @@ class _RegistrationPageState extends State<RegistrationPage> {
                     }
                     if (!value.contains('@')) {
                       return 'Please enter a valid email';
+                    }
+                    if (!_isSomaiyaEmail(value)) {
+                      return 'Please use you Somaiya email address';
                     }
                     return null;
                   },

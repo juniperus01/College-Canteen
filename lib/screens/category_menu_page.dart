@@ -8,9 +8,9 @@ class CategoryMenuPage extends StatefulWidget {
   final String category;
   final String user_email;
   final String user_role;
-  final bool isInside;
+  final bool isInside, locationAbleToTrack;
 
-  CategoryMenuPage({required this.category, required this.user_email, required this.user_role, required this.isInside});
+  CategoryMenuPage({required this.category, required this.user_email, required this.user_role, required this.isInside, required this.locationAbleToTrack});
 
   @override
   _CategoryMenuPageState createState() => _CategoryMenuPageState(email: user_email, role: user_role);
@@ -94,7 +94,7 @@ class _CategoryMenuPageState extends State<CategoryMenuPage> {
       body: Column(
         children: [
           // Show warning message if the user is outside the campus
-          if (!widget.isInside)
+          if (widget.locationAbleToTrack && !widget.isInside)
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Container(
@@ -106,7 +106,31 @@ class _CategoryMenuPageState extends State<CategoryMenuPage> {
                     SizedBox(width: 10), // Space between icon and text
                     Expanded(
                       child: Text(
-                        "Oops! Please ensure you're inside the campus to order.",
+                        "Oops! Please ensure you're inside the campus to place an order.",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.red,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          if (!widget.locationAbleToTrack)
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Container(
+                color: Colors.amberAccent, // Warning background color
+                padding: const EdgeInsets.all(16.0),
+                child: Row(
+                  children: [
+                    Icon(Icons.warning, color: Colors.red, size: 30), // Warning icon
+                    SizedBox(width: 10), // Space between icon and text
+                    Expanded(
+                      child: Text(
+                        "Oops! Please ensure you've enabled your location services.",
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Colors.red,

@@ -7,10 +7,9 @@ import 'menu_page.dart'; // For Customer
 import 'registration_page.dart';
 
 class LoginPage extends StatefulWidget {
-  final bool isInside; // Add the isInside parameter
+  final bool isInside, locationAbleToTrack;
 
-  // Constructor to accept the isInside value
-  const LoginPage({Key? key, required this.isInside}) : super(key: key);
+  const LoginPage({Key? key, required this.isInside, required this.locationAbleToTrack}) : super(key: key);
 
   @override
   _LoginPageState createState() => _LoginPageState();
@@ -84,6 +83,7 @@ class _LoginPageState extends State<LoginPage> {
                   fullName: userName,
                   role: userRole,
                   isInside: widget.isInside,
+                  locationAbleToTrack: widget.locationAbleToTrack,
                 ), // Passing name to MenuPage
               ),
             );
@@ -266,7 +266,7 @@ class _LoginPageState extends State<LoginPage> {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => RegistrationPage()),
+                      MaterialPageRoute(builder: (context) => RegistrationPage(isInside: widget.isInside, locationAbleToTrack: widget.locationAbleToTrack)),
                     );
                   },
                 ),

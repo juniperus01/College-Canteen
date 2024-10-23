@@ -11,9 +11,9 @@ class MenuPage extends StatefulWidget {
   final String fullName;
   final String email;
   final String role;
-  final bool isInside;
+  final bool isInside, locationAbleToTrack;
 
-  MenuPage({required this.fullName, required this.email, required this.role, required this.isInside});
+  MenuPage({required this.fullName, required this.email, required this.role, required this.isInside, required this.locationAbleToTrack});
 
   @override
   _MenuPageState createState() => _MenuPageState();
@@ -26,8 +26,8 @@ class _MenuPageState extends State<MenuPage> {
   @override
   void initState() {
     super.initState();
-    _pages.add(MenuPageContent(user_email: widget.email, user_role: widget.role, isInside: widget.isInside,));
-    _pages.add(UserProfilePage(fullName: widget.fullName, email: widget.email));
+    _pages.add(MenuPageContent(user_email: widget.email, user_role: widget.role, isInside: widget.isInside, locationAbleToTrack: widget.locationAbleToTrack));
+    _pages.add(UserProfilePage(fullName: widget.fullName, email: widget.email, isInside: widget.isInside, locationAbleToTrack: widget.locationAbleToTrack));
     _pages.add(CartPage(email: widget.email));
   }
 
@@ -54,7 +54,7 @@ class _MenuPageState extends State<MenuPage> {
               setState(() {
                 _selectedIndex = index;
                 if (index == 1) {
-                  _pages[1] = UserProfilePage(fullName: widget.fullName, email: widget.email);
+                  _pages[1] = UserProfilePage(fullName: widget.fullName, email: widget.email, isInside: widget.isInside, locationAbleToTrack: widget.locationAbleToTrack);
                 }
               });
             },
@@ -68,9 +68,9 @@ class _MenuPageState extends State<MenuPage> {
 class MenuPageContent extends StatefulWidget {
   final String user_email;
   final String user_role;
-  final bool isInside;
+  final bool isInside, locationAbleToTrack;
 
-  MenuPageContent({required this.user_email, required this.user_role, required this.isInside});
+  MenuPageContent({required this.user_email, required this.user_role, required this.isInside, required this.locationAbleToTrack});
 
   @override
   _MenuPageContentState createState() => _MenuPageContentState();
@@ -178,6 +178,7 @@ class _MenuPageContentState extends State<MenuPageContent> {
                             user_email: widget.user_email,
                             user_role: widget.user_role,
                             isInside: widget.isInside,
+                            locationAbleToTrack: widget.locationAbleToTrack,
                           ),
                         ),
                       );
