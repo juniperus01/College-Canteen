@@ -60,6 +60,7 @@ class CartModel extends ChangeNotifier {
       'totalPrice': totalPrice,
       'user_email': userEmail,
       'timestamp': FieldValue.serverTimestamp(),
+      'status' : "pending",
     };
 
     try {

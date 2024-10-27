@@ -31,6 +31,7 @@ class _PastOrdersPageState extends State<PastOrdersPage> {
       QuerySnapshot snapshot = await _firestore
           .collection('orders')
           .where('user_email', isEqualTo: email) // Fetch only the orders of the current user
+          .where('status', isEqualTo: 'completed') // Filter for completed orders
           .orderBy('timestamp', descending: true) // Sort by timestamp in descending order
           .get();
 

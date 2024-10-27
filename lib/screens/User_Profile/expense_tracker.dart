@@ -28,6 +28,7 @@ class _ExpenseTrackerPageState extends State<ExpenseTrackerPage> {
       QuerySnapshot snapshot = await _firestore
           .collection('orders')
           .where('user_email', isEqualTo: widget.email)
+          .where('status', isEqualTo: 'completed')
           .orderBy('timestamp', descending: true)
           .get();
 
