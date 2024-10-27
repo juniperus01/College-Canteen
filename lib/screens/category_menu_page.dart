@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:async'; // Import Timer package
 import '../widgets/menu_item_card.dart';
 import '../widgets/custom_search_bar.dart';
 import 'cart_page.dart';
@@ -10,7 +11,13 @@ class CategoryMenuPage extends StatefulWidget {
   final String user_role;
   final bool isInside, locationAbleToTrack;
 
-  CategoryMenuPage({required this.category, required this.user_email, required this.user_role, required this.isInside, required this.locationAbleToTrack});
+  CategoryMenuPage({
+    required this.category,
+    required this.user_email,
+    required this.user_role,
+    required this.isInside,
+    required this.locationAbleToTrack,
+  });
 
   @override
   _CategoryMenuPageState createState() => _CategoryMenuPageState(email: user_email, role: user_role);
@@ -25,42 +32,56 @@ class _CategoryMenuPageState extends State<CategoryMenuPage> {
   List<Map<String, dynamic>> filteredMenuItems = [];
   bool _isLoading = true;
   TextEditingController _searchController = TextEditingController();
+  Timer? _timer; // Declare Timer
 
   @override
   void initState() {
     super.initState();
     _fetchMenuItems();
+    _startTimer(); // Start the timer to refresh data
+  }
+
+  void _startTimer() {
+    _timer = Timer.periodic(Duration(seconds: 5), (timer) {
+      _fetchMenuItems(); // Fetch data every 10 seconds
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel(); // Cancel the timer when the widget is disposed
+    super.dispose();
   }
 
   Future<void> _fetchMenuItems() async {
-    try {
-      QuerySnapshot snapshot = await _firestore.collection(widget.category).get();
-      setState(() {
-        // Map the Firestore documents into the menuItems list, including document ID
-        menuItems = snapshot.docs.map((doc) {
-          Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-          data['id'] = doc.id;  // Set the document ID as 'id'
-          return data;
-        }).toList();
+  try {
+    QuerySnapshot snapshot = await _firestore.collection(widget.category).get();
+    setState(() {
+      menuItems = snapshot.docs.map((doc) {
+        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+        data['id'] = doc.id; // Set the document ID as 'id'
+        return data;
+      }).toList();
 
-        filteredMenuItems = menuItems;
-        _isLoading = false;
-      });
-    } catch (e) {
-      print('Error fetching menu items: $e');
-      setState(() {
-        _isLoading = false;
-      });
-    }
+      // Sort the menuItems by price in increasing order
+      menuItems.sort((a, b) => a['name'].compareTo(b['name']));
+
+      filteredMenuItems = menuItems;
+      _isLoading = false;
+    });
+  } catch (e) {
+    print('Error fetching menu items: $e');
+    setState(() {
+      _isLoading = false;
+    });
   }
+}
 
   void _filterMenuItems(String query) {
     setState(() {
-      filteredMenuItems = menuItems
-          .where((item) =>
-              item['name'].toString().toLowerCase().contains(query.toLowerCase()) ||
-              item['description'].toString().toLowerCase().contains(query.toLowerCase()))
-          .toList();
+      filteredMenuItems = menuItems.where((item) =>
+          item['name'].toString().toLowerCase().contains(query.toLowerCase()) ||
+          item['description'].toString().toLowerCase().contains(query.toLowerCase())).toList();
     });
   }
 
@@ -90,7 +111,6 @@ class _CategoryMenuPageState extends State<CategoryMenuPage> {
             ),
         ],
       ),
-
       body: Column(
         children: [
           // Show warning message if the user is outside the campus
@@ -142,7 +162,6 @@ class _CategoryMenuPageState extends State<CategoryMenuPage> {
                 ),
               ),
             ),
-
           // Search bar and 'Add Item' button for both customer and admin
           Padding(
             padding: const EdgeInsets.all(16.0),
@@ -173,7 +192,6 @@ class _CategoryMenuPageState extends State<CategoryMenuPage> {
               ],
             ),
           ),
-
           // Menu items
           Expanded(
             child: _isLoading
@@ -279,12 +297,6 @@ class _CategoryMenuPageState extends State<CategoryMenuPage> {
         content: Text(message),
         backgroundColor: Colors.red, // Red background
         behavior: SnackBarBehavior.floating,
-        duration: Duration(seconds: 2),
-        action: SnackBarAction(
-          label: 'OK',
-          textColor: Colors.white, // White action text
-          onPressed: () {},
-        ),
       ),
     );
   }

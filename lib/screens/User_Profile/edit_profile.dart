@@ -1,22 +1,36 @@
 import 'package:flutter/material.dart';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class EditProfilePage extends StatefulWidget {
+  final String fullName;
+  final String email;
+
+  EditProfilePage({required this.fullName, required this.email});
+
   @override
   _EditProfilePageState createState() => _EditProfilePageState();
 }
 
 class _EditProfilePageState extends State<EditProfilePage> {
   final _formKey = GlobalKey<FormState>();
-  String _name = '';
-  String _email = '';
+  late String fullName;
+  late String password;
+
+  @override
+  void initState() {
+    super.initState();
+    fullName = widget.fullName;
+    password = ''; // Initialize password with an empty string
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Edit Profile',
-        style: TextStyle(color: Colors.white)),
+        title: Text(
+          'Edit Profile',
+          style: TextStyle(color: Colors.white),
+        ),
         backgroundColor: Colors.red,
       ),
       body: Padding(
@@ -26,6 +40,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
           child: Column(
             children: [
               TextFormField(
+                initialValue: fullName,
                 decoration: InputDecoration(labelText: 'Full Name'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -33,24 +48,37 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   }
                   return null;
                 },
-                onSaved: (value) => _name = value!,
+                onSaved: (value) => fullName = value!,
               ),
               TextFormField(
-                decoration: InputDecoration(labelText: 'Email'),
+                initialValue: widget.email,
+                decoration: InputDecoration(
+                  labelText: 'Email',
+                  enabled: false, // Disable email field
+                ),
+                readOnly: true, // Make email field read-only
+                onTap: () {
+                  // Show error message when the email field is tapped
+                  _showEmailEditError();
+                },
+              ),
+              TextFormField(
+                decoration: InputDecoration(labelText: 'Password'),
+                obscureText: true,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please enter your email';
+                    return 'Please enter your password';
                   }
                   return null;
                 },
-                onSaved: (value) => _email = value!,
+                onSaved: (value) => password = value!,
               ),
               SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
                     _formKey.currentState!.save();
-                    // Update user profile in Firestore or your database
+                    _updateUserProfile(); // Call the function to update the profile
                   }
                 },
                 child: Text('Update Profile'),
@@ -58,6 +86,65 @@ class _EditProfilePageState extends State<EditProfilePage> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  void _showEmailEditError() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Email cannot be edited.'),
+        backgroundColor: Colors.red,
+        duration: Duration(seconds: 2),
+      ),
+    );
+  }
+
+  Future<void> _updateUserProfile() async {
+    try {
+      // Find the user document ID using email
+      QuerySnapshot snapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .where('email', isEqualTo: widget.email)
+          .get();
+
+      if (snapshot.docs.isNotEmpty) {
+        // Get the document ID
+        String docId = snapshot.docs.first.id;
+
+        // Update user profile in Firestore
+        await FirebaseFirestore.instance.collection('users').doc(docId).update({
+          'fullName': fullName,
+          'password': password, // Ensure to hash the password before saving
+        });
+        
+        // Show success message
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Profile updated successfully!'),
+            backgroundColor: Colors.red,
+            duration: Duration(seconds: 2),
+          ),
+        );
+
+        // Optionally navigate back or refresh the page
+        Navigator.pop(context);
+      } else {
+        // Handle case when user document is not found
+        _showErrorMessage('User not found.');
+      }
+    } catch (e) {
+      print('Error updating profile: $e');
+      _showErrorMessage('Error updating profile: $e');
+    }
+  }
+
+  void _showErrorMessage(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.red,
+        duration: Duration(seconds: 2),
       ),
     );
   }

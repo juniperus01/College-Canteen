@@ -79,7 +79,7 @@ class CartModel extends ChangeNotifier {
   void clearCart(BuildContext context) {
     _items.clear();
     notifyListeners();
-    _showNotification(context, 'Cart cleared!'); // Show notification
+    // _showNotification(context, 'Cart cleared!'); // Show notification
   }
 
   void _showNotification(BuildContext context, String message) {

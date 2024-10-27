@@ -124,7 +124,7 @@ class GeofenceManager {
     const LatLng somaiyaCoords = LatLng(19.0728, 72.8999);
 
     const LatLng geofenceCenter = societyCoords;
-    const double radius = 600; // Geofence radius in meters
+    const double radius = 800; // Geofence radius in meters
 
     // Calculate the distance from the geofence center to the user's location
     double distance = _haversineDistance(

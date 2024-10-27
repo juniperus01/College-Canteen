@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:somato/screens/Orders_on_Admin_UI/orders.dart';
 
 import '../models/theme_model.dart';
 import './User_Profile/profile_screen.dart';
+import './Orders_on_Admin_UI/orders.dart'; // Import your OrdersOnAdminPage
 import 'cart_page.dart';
 import 'category_menu_page.dart';
 import '../widgets/custom_search_bar.dart';
@@ -11,9 +13,16 @@ class MenuPage extends StatefulWidget {
   final String fullName;
   final String email;
   final String role;
-  final bool isInside, locationAbleToTrack;
+  final bool isInside;
+  final bool locationAbleToTrack;
 
-  MenuPage({required this.fullName, required this.email, required this.role, required this.isInside, required this.locationAbleToTrack});
+  MenuPage({
+    required this.fullName,
+    required this.email,
+    required this.role,
+    required this.isInside,
+    required this.locationAbleToTrack,
+  });
 
   @override
   _MenuPageState createState() => _MenuPageState();
@@ -21,14 +30,28 @@ class MenuPage extends StatefulWidget {
 
 class _MenuPageState extends State<MenuPage> {
   int _selectedIndex = 0;
-  final List<Widget> _pages = [];
+  late List<Widget> _pages;
 
   @override
   void initState() {
     super.initState();
-    _pages.add(MenuPageContent(user_email: widget.email, user_role: widget.role, isInside: widget.isInside, locationAbleToTrack: widget.locationAbleToTrack));
-    _pages.add(UserProfilePage(fullName: widget.fullName, email: widget.email, isInside: widget.isInside, locationAbleToTrack: widget.locationAbleToTrack));
-    _pages.add(CartPage(email: widget.email));
+    _pages = [
+      MenuPageContent(
+        user_email: widget.email,
+        user_role: widget.role,
+        isInside: widget.isInside,
+        locationAbleToTrack: widget.locationAbleToTrack,
+      ),
+      widget.role == 'admin'
+          ? OrdersOnAdminPage() // Show OrdersOnAdminPage for admin
+          : UserProfilePage(
+              fullName: widget.fullName,
+              email: widget.email,
+              isInside: widget.isInside,
+              locationAbleToTrack: widget.locationAbleToTrack,
+            ),
+      CartPage(email: widget.email),
+    ];
   }
 
   @override
@@ -38,14 +61,14 @@ class _MenuPageState extends State<MenuPage> {
         return Scaffold(
           body: _pages[_selectedIndex],
           bottomNavigationBar: BottomNavigationBar(
-            items: const <BottomNavigationBarItem>[
+            items: <BottomNavigationBarItem>[
               BottomNavigationBarItem(
                 icon: Icon(Icons.home),
                 label: 'Home',
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.person),
-                label: 'Profile',
+                icon: Icon(widget.role == 'admin' ? Icons.list : Icons.person),
+                label: widget.role == 'admin' ? 'Orders' : 'Profile',
               ),
             ],
             currentIndex: _selectedIndex,
@@ -53,8 +76,15 @@ class _MenuPageState extends State<MenuPage> {
             onTap: (index) {
               setState(() {
                 _selectedIndex = index;
-                if (index == 1) {
-                  _pages[1] = UserProfilePage(fullName: widget.fullName, email: widget.email, isInside: widget.isInside, locationAbleToTrack: widget.locationAbleToTrack);
+                if (index == 1 && widget.role == 'admin') {
+                  _pages[1] = OrdersOnAdminPage(); // Load OrdersOnAdminPage for admin
+                } else if (index == 1) {
+                  _pages[1] = UserProfilePage(
+                    fullName: widget.fullName,
+                    email: widget.email,
+                    isInside: widget.isInside,
+                    locationAbleToTrack: widget.locationAbleToTrack,
+                  );
                 }
               });
             },
@@ -68,9 +98,15 @@ class _MenuPageState extends State<MenuPage> {
 class MenuPageContent extends StatefulWidget {
   final String user_email;
   final String user_role;
-  final bool isInside, locationAbleToTrack;
+  final bool isInside;
+  final bool locationAbleToTrack;
 
-  MenuPageContent({required this.user_email, required this.user_role, required this.isInside, required this.locationAbleToTrack});
+  MenuPageContent({
+    required this.user_email,
+    required this.user_role,
+    required this.isInside,
+    required this.locationAbleToTrack,
+  });
 
   @override
   _MenuPageContentState createState() => _MenuPageContentState();
@@ -86,7 +122,6 @@ class _MenuPageContentState extends State<MenuPageContent> {
     'hot_Items': 'Hot Items',
     'sandwiches': 'Sandwiches',
   };
-  
 
   final List<Map<String, String>> categories = [
     {'title': 'dosa', 'image': 'assets/images/dosa.jpg', 'description': 'Crispy South Indian crepes'},
@@ -107,7 +142,6 @@ class _MenuPageContentState extends State<MenuPageContent> {
   }
 
   void _filterCategories(String query) {
-
     setState(() {
       filteredCategories = categories
           .where((category) =>
