@@ -3,7 +3,20 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart'; // Ensure to import intl for DateFormat
 import 'dart:async';
 
+import '../User_Profile/profile_screen.dart';
+
 class ManageOrdersPage extends StatefulWidget {
+  final String fullName;
+  final String email;
+  final String? imageUrl; // Nullable URL for the user's profile image
+
+  ManageOrdersPage({
+    required this.fullName,
+    required this.email,
+    this.imageUrl, // Optional parameter
+  });
+
+  
   @override
   _ManageOrdersPageState createState() => _ManageOrdersPageState();
 }
@@ -15,6 +28,7 @@ class _ManageOrdersPageState extends State<ManageOrdersPage> {
   bool _isLoading = true;
   Map<String, bool> _completedOrdersVisibility = {}; // Track visibility of completed orders
   Timer? _timer;
+  int _selectedIndex = 0; // Track the selected index for BottomNavigationBar
 
   @override
   void initState() {
@@ -29,7 +43,6 @@ class _ManageOrdersPageState extends State<ManageOrdersPage> {
 
   @override
   void dispose() {
-    // Cancel the timer when the widget is disposed to avoid memory leaks
     _timer?.cancel();
     super.dispose();
   }
@@ -49,30 +62,26 @@ class _ManageOrdersPageState extends State<ManageOrdersPage> {
         orderData['id'] = doc.id;
         String formattedDate = _formatDate(orderData['timestamp']);
         
-        // Organize orders by status and date
         if (orderData['status'] == 'pending') {
           pendingOrders.putIfAbsent(formattedDate, () => []).add(orderData);
         } else if (orderData['status'] == 'completed') {
           completedOrders.putIfAbsent(formattedDate, () => []);
           completedOrders[formattedDate]!.add(orderData);
-          _completedOrdersVisibility[formattedDate] = false; // Initialize visibility state
+          _completedOrdersVisibility[formattedDate] = false;
         }
       }
 
-      // Sort pending orders in ascending order for each date
       pendingOrders.forEach((key, orders) {
-        orders.sort((a, b) => a['timestamp'].compareTo(b['timestamp']));
+        orders.sort((a, b) => b['timestamp'].compareTo(a['timestamp']));
       });
 
-      // Sort completed orders in descending order for each date
       completedOrders.forEach((key, orders) {
         orders.sort((a, b) => b['timestamp'].compareTo(a['timestamp']));
       });
 
-      // Sort completed orders in descending order (recent dates on top)
       completedOrders = Map.fromEntries(
         completedOrders.entries.toList()
-          ..sort((a, b) => b.key.compareTo(a.key)), // Sort by keys (dates) in descending order
+          ..sort((a, b) => b.key.compareTo(a.key)),
       );
 
       setState(() {
@@ -90,7 +99,7 @@ class _ManageOrdersPageState extends State<ManageOrdersPage> {
     try {
       QuerySnapshot userSnapshot = await _firestore.collection('users').where('email', isEqualTo: email).get();
       if (userSnapshot.docs.isNotEmpty) {
-        return userSnapshot.docs.first['fullName']; // Assuming 'fullName' is the field containing the customer name
+        return userSnapshot.docs.first['fullName'];
       }
     } catch (e) {
       print('Error fetching customer name: $e');
@@ -105,13 +114,13 @@ class _ManageOrdersPageState extends State<ManageOrdersPage> {
 
   String _formatTime(Timestamp timestamp) {
     DateTime date = timestamp.toDate();
-    return DateFormat('hh:mm a').format(date); // Format time as hh:mm AM/PM
+    return DateFormat('hh:mm a').format(date);
   }
 
   Widget _buildOrderCard(Map<String, dynamic> order, int orderNumber, {bool isPending = false}) {
     final items = List<Map<String, dynamic>>.from(order['items']);
     final double totalPrice = order['totalPrice'];
-    final String userEmail = order['user_email']; // Assuming the email field in the order document
+    final String userEmail = order['user_email'];
 
     return FutureBuilder<String>(
       future: _fetchCustomerName(userEmail),
@@ -119,7 +128,7 @@ class _ManageOrdersPageState extends State<ManageOrdersPage> {
         String customerName = snapshot.connectionState == ConnectionState.waiting ? 'Loading...' : snapshot.data ?? 'Unknown Customer';
 
         return Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8.0), // Increased spacing
+          padding: const EdgeInsets.symmetric(vertical: 8.0),
           child: Card(
             elevation: 4,
             shape: RoundedRectangleBorder(
@@ -128,7 +137,6 @@ class _ManageOrdersPageState extends State<ManageOrdersPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                // Order number heading with red background and white font
                 Container(
                   padding: EdgeInsets.all(8.0),
                   decoration: BoxDecoration(
@@ -159,10 +167,10 @@ class _ManageOrdersPageState extends State<ManageOrdersPage> {
                             ),
                           ),
                           SizedBox(width: 8),
-                          if (isPending) // Show edit icon only for pending orders
+                          if (isPending)
                             InkWell(
                               onTap: () {
-                                _showEditDialog(order); // Show edit dialog on tap
+                                _showEditDialog(order);
                               },
                               child: Icon(
                                 Icons.edit,
@@ -178,14 +186,13 @@ class _ManageOrdersPageState extends State<ManageOrdersPage> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: ListTile(
-                    title: Text(customerName, style: TextStyle(fontWeight: FontWeight.bold)), // Display customer name
+                    title: Text(customerName, style: TextStyle(fontWeight: FontWeight.bold)),
                     subtitle: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Display all items in the order
                         ...items.map((item) {
                           final itemName = item['name'];
-                          final itemQuantity = item['quantity'] ?? 1; // Default to 1 if quantity is missing
+                          final itemQuantity = item['quantity'] ?? 1;
                           return Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
@@ -205,7 +212,6 @@ class _ManageOrdersPageState extends State<ManageOrdersPage> {
                     ),
                   ),
                 ),
-                // Total Price with red background and white font at the bottom
                 Container(
                   padding: EdgeInsets.all(8.0),
                   decoration: BoxDecoration(
@@ -264,7 +270,7 @@ class _ManageOrdersPageState extends State<ManageOrdersPage> {
     try {
       await _firestore.collection('orders').doc(documentId).update({'status': 'completed'});
       setState(() {
-        _isLoading = true; // Set loading state
+        _isLoading = true;
       });
       await Future.delayed(Duration(seconds: 5));
       await _fetchOrders();
@@ -285,84 +291,149 @@ class _ManageOrdersPageState extends State<ManageOrdersPage> {
         backgroundColor: Colors.red,
         actions: [
           IconButton(
-            icon: Icon(Icons.refresh, color: Colors.white), // Set icon color to white
-            onPressed: _refreshOrders, // Call refresh function on press
+            icon: Icon(Icons.refresh, color: Colors.white),
+            onPressed: _refreshOrders,
           ),
         ],
       ),
       body: _isLoading
           ? Center(child: CircularProgressIndicator())
           : ListView(
-              padding: EdgeInsets.all(16.0),
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               children: [
-                // Pending Orders Section
-                Text('Pending Orders', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                SizedBox(height: 24.0), // Triple space above the message
-                if (pendingOrders.isEmpty)
-                  Center(
-                    child: Text(
-                      'No order is pending!',
-                      style: TextStyle(fontSize: 14, color: Colors.red),
-                    ),
+                if (_selectedIndex == 0)
+                  _buildOrderSection(
+                    sectionTitle: 'Pending Orders',
+                    orders: pendingOrders,
+                    isPending: true,
                   ),
-                SizedBox(height: 24.0), // Triple space below the message
-                if (pendingOrders.isNotEmpty)
-                  ...pendingOrders.entries.map((entry) {
-                    String date = entry.key;
-                    List<Map<String, dynamic>> orders = entry.value;
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(date, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                        ...orders.asMap().entries.map((orderEntry) {
-                          int orderNumber = orderEntry.key + 1; // Incremental order number
-                          return _buildOrderCard(orderEntry.value, orderNumber, isPending: true);
-                        }).toList(),
-                        SizedBox(height: 8.0),
-                      ],
-                    );
-                  }).toList(),
-
-
-
-                // Completed Orders Section
-                Text('Completed Orders', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                SizedBox(height: 8.0),
-                ...completedOrders.entries.map((entry) {
-                  String date = entry.key;
-                  List<Map<String, dynamic>> orders = entry.value;
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Dropdown for completed orders visibility
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(date, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                          IconButton(
-                            icon: Icon(
-                              _completedOrdersVisibility[date] == true ? Icons.expand_less : Icons.expand_more,
-                              color: Colors.black,
-                            ),
-                            onPressed: () {
-                              setState(() {
-                                _completedOrdersVisibility[date] = !_completedOrdersVisibility[date]!;
-                              });
-                            },
-                          ),
-                        ],
-                      ),
-                      // Show completed orders only if visible
-                      if (_completedOrdersVisibility[date] == true) ...orders.asMap().entries.map((orderEntry) {
-                        int orderNumber = orderEntry.key + 1; // Incremental order number
-                        return _buildOrderCard(orderEntry.value, orderNumber);
-                      }).toList(),
-                      SizedBox(height: 8.0),
-                    ],
-                  );
-                }).toList(),
+                if (_selectedIndex == 1)
+                  _buildOrderSection(
+                    sectionTitle: 'Completed Orders',
+                    orders: completedOrders,
+                    isPending: false,
+                  ),
               ],
             ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTap: (int index) {
+          setState(() {
+            _selectedIndex = index;
+            if (index == 2) { // Profile tab
+              Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => UserProfilePage(
+                  fullName: widget.fullName,
+                  email: widget.email,
+                  imageUrl: widget.imageUrl,
+                  isInside: true,
+                  locationAbleToTrack: true,
+                ),
+              ));
+            }
+          });
+        },
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.pending),
+            label: 'Pending Orders',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.check_circle),
+            label: 'Completed Orders',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'Profile',
+          ),
+        ],
+      ),
     );
   }
+
+Widget _buildOrderSection({
+  required String sectionTitle,
+  required Map<String, List<Map<String, dynamic>>> orders,
+  bool isPending = false,
+}) {
+  // Check if there are no pending orders and display the message accordingly
+  if (isPending && orders.isEmpty) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 20.0),
+        child: Text(
+          'No pending orders!',
+          style: TextStyle(fontSize: 16, color: Colors.red, fontStyle: FontStyle.italic),
+        ),
+      ),
+    );
+  }
+
+  List<Widget> orderWidgets = [];
+
+  orders.forEach((date, ordersList) {
+    int pendingOrdersCnt = 0;
+    int completedOrdersCnt = 0;
+
+    for (var order in ordersList) {
+      if (order['status'] == 'pending') {
+        pendingOrdersCnt++;
+      } else {
+        completedOrdersCnt++;
+      }
+    }
+    // Sort orders by timestamp (assuming 'timestamp' is the key for the order time)
+    ordersList.sort((a, b) => b['timestamp'].compareTo(a['timestamp']));
+
+    // Add a header for each date with an inline dropdown icon for completed orders
+    orderWidgets.add(
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Padding(
+            padding: EdgeInsets.symmetric(vertical: 8),
+            child: Text(
+              date,
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+          ),
+          // Show the dropdown icon for completed orders
+          if (!isPending)
+            IconButton(
+              icon: Icon(
+                _completedOrdersVisibility[date] == true ? Icons.expand_less : Icons.expand_more,
+              ),
+              onPressed: () {
+                setState(() {
+                  _completedOrdersVisibility[date] = !_completedOrdersVisibility[date]!;
+                });
+              },
+            ),
+        ],
+      ),
+    );
+
+    // Show orders under this date
+    if (isPending || (_completedOrdersVisibility[date] == true)) {
+      // Initialize order number for each date
+      int orderNumber = ordersList.length; // Start from 1 for each date
+      for (var order in ordersList) {
+        if (order['status'] == 'pending'){
+          orderWidgets.add(_buildOrderCard(order, completedOrdersCnt + orderNumber, isPending: isPending));
+        }
+        else {
+          orderWidgets.add(_buildOrderCard(order, orderNumber, isPending: isPending));
+        }
+        orderNumber--; // Increment for each order
+      }
+    }
+  });
+
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    children: orderWidgets,
+  );
+}
+
+
 }

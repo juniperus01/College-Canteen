@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 
 import '../menu_page.dart'; // For Customer
 import 'registration_page.dart';
+import '../Counter_Manager/orders.dart'; // Import the ManageOrdersPage
+
 
 class LoginPage extends StatefulWidget {
   final bool isInside, locationAbleToTrack;
@@ -71,21 +73,33 @@ class _LoginPageState extends State<LoginPage> {
           String userRole = userDetails['role'];
           String userName = userDetails['name'];
 
-          // Check if user role matches the selected role
+          // Navigate based on user role
           if (userRole.toLowerCase() == _selectedRole.toLowerCase()) {
             // Redirect to respective pages based on the role
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) => MenuPage(
-                  email: user.email!,
-                  fullName: userName,
-                  role: userRole,
-                  isInside: widget.isInside,
-                  locationAbleToTrack: widget.locationAbleToTrack,
+            if (userRole.toLowerCase() == 'customer' || userRole.toLowerCase() == 'admin') {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => MenuPage(
+                    email: user.email!,
+                    fullName: userName,
+                    role: userRole,
+                    isInside: widget.isInside,
+                    locationAbleToTrack: widget.locationAbleToTrack,
+                  ),
                 ),
-              ),
-            );
+              );
+            } else if (userRole.toLowerCase() == 'counter manager') {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ManageOrdersPage(
+                    fullName: userName,
+                    email: user.email!,
+                  ),
+                ),
+              );
+            }
           } else {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
@@ -124,6 +138,7 @@ class _LoginPageState extends State<LoginPage> {
       }
     }
   }
+
 
   @override
   Widget build(BuildContext context) {

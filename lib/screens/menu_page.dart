@@ -43,7 +43,10 @@ class _MenuPageState extends State<MenuPage> {
         locationAbleToTrack: widget.locationAbleToTrack,
       ),
       widget.role == 'admin'
-          ? ManageOrdersPage() // Show OrdersOnAdminPage for admin
+          ? ManageOrdersPage(
+            fullName: widget.fullName,
+            email: widget.email,
+          ) // Show OrdersOnAdminPage for admin
           : UserProfilePage(
               fullName: widget.fullName,
               email: widget.email,
@@ -77,7 +80,10 @@ class _MenuPageState extends State<MenuPage> {
               setState(() {
                 _selectedIndex = index;
                 if (index == 1 && widget.role == 'admin') {
-                  _pages[1] = ManageOrdersPage(); // Load OrdersOnAdminPage for admin
+                  _pages[1] = ManageOrdersPage(
+                    fullName: widget.fullName,
+                    email: widget.email,
+                  ); // Load OrdersOnAdminPage for admin
                 } else if (index == 1) {
                   _pages[1] = UserProfilePage(
                     fullName: widget.fullName,
