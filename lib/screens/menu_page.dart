@@ -4,6 +4,7 @@ import 'package:somato/screens/Counter_Manager/orders.dart';
 
 import '../models/theme_model.dart';
 import './User_Profile/profile_screen.dart';
+import 'Admin/manage_admins.dart';
 import 'Counter_Manager/orders.dart'; // Import your OrdersOnAdminPage
 import 'cart_page.dart';
 import 'category_menu_page.dart';
@@ -42,21 +43,16 @@ class _MenuPageState extends State<MenuPage> {
         isInside: widget.isInside,
         locationAbleToTrack: widget.locationAbleToTrack,
       ),
-      widget.role == 'admin'
-          ? ManageOrdersPage(
-            fullName: widget.fullName,
-            email: widget.email,
-          ) // Show OrdersOnAdminPage for admin
-          : UserProfilePage(
-              fullName: widget.fullName,
-              email: widget.email,
-              isInside: widget.isInside,
-              locationAbleToTrack: widget.locationAbleToTrack,
-            ),
-      CartPage(email: widget.email),
+      if (widget.email == "master.admin@somaiya.edu")
+        ManageStaffPage(), // Add ManageAdminsPage if the user is the master admin
+      UserProfilePage(
+        fullName: widget.fullName,
+        email: widget.email,
+        isInside: widget.isInside,
+        locationAbleToTrack: widget.locationAbleToTrack,
+      ),
     ];
   }
-
   @override
   Widget build(BuildContext context) {
     return Consumer<ThemeModel>(
@@ -69,23 +65,24 @@ class _MenuPageState extends State<MenuPage> {
                 icon: Icon(Icons.home),
                 label: 'Home',
               ),
-              BottomNavigationBarItem(
-                icon: Icon(widget.role == 'admin' ? Icons.list : Icons.person),
-                label: widget.role == 'admin' ? 'Orders' : 'Profile',
+              if (widget.email == "master.admin@somaiya.edu")
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.admin_panel_settings), // Icon for 'Admins' section
+                  label: 'Staff',
               ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.person),
+                label: 'Profile',
+              ),
+              
             ],
             currentIndex: _selectedIndex,
             selectedItemColor: Theme.of(context).primaryColor,
             onTap: (index) {
               setState(() {
                 _selectedIndex = index;
-                if (index == 1 && widget.role == 'admin') {
-                  _pages[1] = ManageOrdersPage(
-                    fullName: widget.fullName,
-                    email: widget.email,
-                  ); // Load OrdersOnAdminPage for admin
-                } else if (index == 1) {
-                  _pages[1] = UserProfilePage(
+                if (index == 2) {
+                  _pages[2] = UserProfilePage(
                     fullName: widget.fullName,
                     email: widget.email,
                     isInside: widget.isInside,

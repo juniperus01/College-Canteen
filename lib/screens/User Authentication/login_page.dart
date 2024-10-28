@@ -141,100 +141,104 @@ class _LoginPageState extends State<LoginPage> {
 
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Color(0xFFFF5252),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SizedBox(height: 80),
-                Container(
-                  width: 100,
-                  height: 100,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.white,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        blurRadius: 10,
-                        spreadRadius: 5,
-                      ),
-                    ],
-                  ),
-                  child: Center(
-                    child: ClipOval(
-                      child: Image.asset(
-                        'assets/images/somato_logo.webp',
-                        width: 100,
-                        height: 100,
-                        fit: BoxFit.cover,
-                      ),
+Widget build(BuildContext context) {
+  return Scaffold(
+    backgroundColor: Color(0xFFFF5252),
+    body: SafeArea(
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(height: 80),
+              Container(
+                width: 100,
+                height: 100,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 10,
+                      spreadRadius: 5,
+                    ),
+                  ],
+                ),
+                child: Center(
+                  child: ClipOval(
+                    child: Image.asset(
+                      'assets/images/somato_logo.webp',
+                      width: 100,
+                      height: 100,
+                      fit: BoxFit.cover,
                     ),
                   ),
                 ),
-                SizedBox(height: 60),
-                Card(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  elevation: 5,
-                  child: Padding(
-                    padding: const EdgeInsets.all(24),
-                    child: Form(
-                      key: _formKey,
-                      child: Column(
-                        children: [
-                          TextFormField(
-                            controller: _emailController,
-                            decoration: InputDecoration(
-                              labelText: 'Email',
-                              prefixIcon: Icon(Icons.email, color: Color(0xFFFF5252)),
-                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(8),
-                                borderSide: BorderSide(color: Color(0xFFFF5252)),
-                              ),
+              ),
+              SizedBox(height: 60),
+              Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                elevation: 5,
+                child: Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      children: [
+                        TextFormField(
+                          controller: _emailController,
+                          decoration: InputDecoration(
+                            labelText: 'Email',
+                            prefixIcon: Icon(Icons.email, color: Color(0xFFFF5252)),
+                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(color: Color(0xFFFF5252)),
                             ),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter your email';
-                              }
-                              return null;
-                            },
                           ),
-                          SizedBox(height: 20),
-                          TextFormField(
-                            controller: _passwordController,
-                            decoration: InputDecoration(
-                              labelText: 'Password',
-                              prefixIcon: Icon(Icons.lock, color: Color(0xFFFF5252)),
-                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(8),
-                                borderSide: BorderSide(color: Color(0xFFFF5252)),
-                              ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter your email';
+                            }
+                            return null;
+                          },
+                        ),
+                        SizedBox(height: 20),
+                        TextFormField(
+                          controller: _passwordController,
+                          decoration: InputDecoration(
+                            labelText: 'Password',
+                            prefixIcon: Icon(Icons.lock, color: Color(0xFFFF5252)),
+                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(color: Color(0xFFFF5252)),
                             ),
-                            obscureText: true,
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter your password';
-                              }
-                              return null;
-                            },
                           ),
-                          SizedBox(height: 30),
+                          obscureText: true,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter your password';
+                            }
+                            return null;
+                          },
+                        ),
+                        SizedBox(height: 30),
 
-                          // Role selection dropdown
-                          DropdownButtonFormField<String>(
+                        // Role selection dropdown with alignment adjustments
+                        Container(
+                          width: double.infinity,
+                          child: DropdownButtonFormField<String>(
                             value: _selectedRole,
+                            isExpanded: true,
                             decoration: InputDecoration(
                               labelText: 'Login as',
-                              prefixIcon: Icon(Icons.person, color: Color(0xFFFF5252)), // Icon for role field
+                              isDense: true,
+                              prefixIcon: Icon(Icons.person, color: Color(0xFFFF5252)),
                               border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8),
@@ -254,47 +258,54 @@ class _LoginPageState extends State<LoginPage> {
                               });
                             },
                           ),
-                          SizedBox(height: 30), // Triple space below role selection
+                        ),
+                        SizedBox(height: 30),
 
-                          ElevatedButton(
-                            onPressed: _isLoading ? null : _login,
-                            child: _isLoading
-                                ? CircularProgressIndicator(color: Colors.white)
-                                : Text(
-                                    'Login',
-                                    style: TextStyle(color: Colors.white), // White text color
-                                  ),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Color(0xFFFF5252),
-                              padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
-                              ),
+                        ElevatedButton(
+                          onPressed: _isLoading ? null : _login,
+                          child: _isLoading
+                              ? CircularProgressIndicator(color: Colors.white)
+                              : Text(
+                                  'Login',
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Color(0xFFFF5252),
+                            padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
                             ),
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
-                SizedBox(height: 20),
-                TextButton(
-                  child: Text(
-                    'Don\'t have an account? Sign Up',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => RegistrationPage(isInside: widget.isInside, locationAbleToTrack: widget.locationAbleToTrack)),
-                    );
-                  },
+              ),
+              SizedBox(height: 20),
+              TextButton(
+                child: Text(
+                  'Don\'t have an account? Sign Up',
+                  style: TextStyle(color: Colors.white),
                 ),
-              ],
-            ),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => RegistrationPage(
+                        isInside: widget.isInside,
+                        locationAbleToTrack: widget.locationAbleToTrack,
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ],
           ),
         ),
       ),
-    );
-  }
+    ),
+  );
+}
+
 }
