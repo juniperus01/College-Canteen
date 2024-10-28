@@ -179,35 +179,33 @@ class _ManageStaffPageState extends State<ManageStaffPage> {
                     ),
                   ),
                   subtitle: Column(
-  crossAxisAlignment: CrossAxisAlignment.start,
-  children: [
-    // Display email in italic
-    Text(
-      staffMember['email'],
-      style: TextStyle(
-        fontStyle: FontStyle.italic, // Italics for email
-      ),
-    ),
-    SizedBox(height: 16), // Add space above the role block
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Display email in italic
+                      Text(
+                        staffMember['email'],
+                        style: TextStyle(
+                          fontStyle: FontStyle.italic, // Italics for email
+                        ),
+                      ),
+                      SizedBox(height: 16), // Add space above the role block
 
-    // Role display with red background and white text
-    Container(
-      padding: EdgeInsets.all(8), // Padding around the text
-      color: Colors.white, // Red background
-      child: Text(
-        'Role  :   ${staffMember['role']?.toLowerCase().split(' ').map((word) => word.isNotEmpty ? word[0].toUpperCase() + word.substring(1) : '').join(' ') ?? ''}', // Format role to lower case with capitalized first letter
-        style: TextStyle(
-          color: Colors.black, // White text color
-          fontWeight: FontWeight.bold,
-          fontSize: 16, // Increased font size for better visibility
-        ),
-      ),
-    ),
-  ],
-),
-
-
-                  trailing: staffMember['authorised'] == false
+                      // Role display with white background and black text
+                      Container(
+                        padding: EdgeInsets.all(8), // Padding around the text
+                        color: Colors.white, // White background
+                        child: Text(
+                          'Role: ${staffMember['role']?.toLowerCase().split(' ').map((word) => word.isNotEmpty ? word[0].toUpperCase() + word.substring(1) : '').join(' ') ?? ''}', // Format role to lower case with capitalized first letter
+                          style: TextStyle(
+                            color: Colors.black, // Black text color
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16, // Increased font size for better visibility
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  trailing: staffMember['email'] == 'master.admin@somaiya.edu'
                       ? ElevatedButton(
                           onPressed: () async {
                             await _authorizeUser(staffMember['id']);
@@ -225,32 +223,51 @@ class _ManageStaffPageState extends State<ManageStaffPage> {
                             foregroundColor: Colors.white, // White text
                           ),
                         )
-                      : PopupMenuButton(
-                          icon: Icon(Icons.more_horiz),
-                          itemBuilder: (context) => [
-                            PopupMenuItem(
-                              value: 'edit',
-                              child: Text('Edit Access'),
-                            ),
-                            PopupMenuItem(
-                              value: 'remove',
-                              child: Text('Remove Member'),
-                            ),
-                          ],
-                          onSelected: (value) async {
-                            if (value == 'edit') {
-                              _showEditAccessDialog(context, staffMember['id'], staffMember['role']);
-                            } else if (value == 'remove') {
-                              await _removeMember(staffMember['id']);
-                              setState(() {}); // Refresh the staff list
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text('User removed successfully!'),
-                                  backgroundColor: Colors.red,
+                      : (staffMember['authorised'] == false
+                          ? ElevatedButton(
+                              onPressed: () async {
+                                await _authorizeUser(staffMember['id']);
+                                setState(() {}); // Refresh the staff list
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text('User authorised successfully!'),
+                                    backgroundColor: Colors.red,
+                                  ),
+                                );
+                              },
+                              child: Text('Authorise'),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.red, // Red background
+                                foregroundColor: Colors.white, // White text
+                              ),
+                            )
+                          : PopupMenuButton(
+                              icon: Icon(Icons.more_horiz),
+                              itemBuilder: (context) => [
+                                PopupMenuItem(
+                                  value: 'edit',
+                                  child: Text('Edit Access'),
                                 ),
-                              );
-                            }
-                          },
+                                PopupMenuItem(
+                                  value: 'remove',
+                                  child: Text('Remove Member'),
+                                ),
+                              ],
+                              onSelected: (value) async {
+                                if (value == 'edit') {
+                                  _showEditAccessDialog(context, staffMember['id'], staffMember['role']);
+                                } else if (value == 'remove') {
+                                  await _removeMember(staffMember['id']);
+                                  setState(() {}); // Refresh the staff list
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text('User removed successfully!'),
+                                      backgroundColor: Colors.red,
+                                    ),
+                                  );
+                                }
+                              },
+                            )
                         ),
                 ),
               );

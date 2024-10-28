@@ -49,13 +49,21 @@ class _RegistrationPageState extends State<RegistrationPage> {
       if (user != null) {
         await user.updateDisplayName(_name);
 
-        // Store user data with selected role
-        await _firestore.collection('users').doc(user.uid).set({
+        // Prepare data for Firestore
+        Map<String, dynamic> userData = {
           'fullName': _name,
           'email': _email,
           'role': _selectedRole, // Store the selected role in Firestore
           'createdAt': FieldValue.serverTimestamp(),
-        });
+        };
+
+        // Add 'authorised' field only for Admin and Counter Manager
+        if (_selectedRole == 'Admin' || _selectedRole == 'Counter Manager') {
+          userData['authorised'] = false; // Set default to false
+        }
+
+        // Store user data in Firestore
+        await _firestore.collection('users').doc(user.uid).set(userData);
 
         // After registration, navigate to LoginPage
         Navigator.pushReplacement(
