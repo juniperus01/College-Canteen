@@ -5,7 +5,7 @@ import 'package:somato/screens/User_Profile/expense_tracker.dart';
 import 'package:somato/screens/User_Profile/past_orders.dart';
 import 'package:somato/screens/User_Profile/money_settings.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:somato/screens/login_page.dart';
+import 'package:somato/screens/User%20Authentication/login_page.dart';
 
 class UserProfilePage extends StatelessWidget {
   final String fullName;

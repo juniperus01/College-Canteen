@@ -2,8 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import 'admin_page.dart'; // For Admin
-import 'menu_page.dart'; // For Customer
+import '../menu_page.dart'; // For Customer
 import 'registration_page.dart';
 
 class LoginPage extends StatefulWidget {

@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart'; // Import FirebaseAuth
 import 'package:cloud_firestore/cloud_firestore.dart'; // Import Firestore
 import 'package:somato/screens/User_Profile/profile_screen.dart';
-import 'package:somato/screens/login_page.dart';
-import 'menu_page.dart'; // Import your MenuPage
-import './User_Profile/profile_screen.dart'; // Import your UserProfilePage
+import 'package:somato/screens/User%20Authentication/login_page.dart';
+import '../menu_page.dart'; // Import your MenuPage
+import '../User_Profile/profile_screen.dart'; // Import your UserProfilePage
 
 class RegistrationPage extends StatefulWidget {
   final bool isInside, locationAbleToTrack;
