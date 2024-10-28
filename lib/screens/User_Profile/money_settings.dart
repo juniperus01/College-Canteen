@@ -8,6 +8,7 @@ class MoneySettingsPage extends StatelessWidget {
         title: Text('Money',
         style: TextStyle(color: Colors.white)),
         backgroundColor: Colors.red,
+        iconTheme: IconThemeData(color: Colors.white),
       ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),

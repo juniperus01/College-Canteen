@@ -20,6 +20,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
   String _name = '';
   String _email = '';
   String _password = '';
+  String _selectedRole = 'Customer'; // Default role
   bool _isLoading = false;
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -31,7 +32,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
   }
 
   // Register function with role parameter
-  Future<void> _register(String role) async {
+  Future<void> _register() async {
     setState(() {
       _isLoading = true;
     });
@@ -52,7 +53,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
         await _firestore.collection('users').doc(user.uid).set({
           'fullName': _name,
           'email': _email,
-          'role': role, // Store the selected role in Firestore
+          'role': _selectedRole, // Store the selected role in Firestore
           'createdAt': FieldValue.serverTimestamp(),
         });
 
@@ -91,6 +92,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
           style: TextStyle(color: Colors.white), // Set text color to white
         ),
         backgroundColor: Colors.red,
+        iconTheme: IconThemeData(color: Colors.white),
       ),
       body: SingleChildScrollView(
         child: Container(
@@ -126,7 +128,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                       return 'Please enter a valid email';
                     }
                     if (!_isSomaiyaEmail(value)) {
-                      return 'Please use you Somaiya email address';
+                      return 'Please use your Somaiya email address';
                     }
                     return null;
                   },
@@ -150,49 +152,54 @@ class _RegistrationPageState extends State<RegistrationPage> {
                   },
                   onSaved: (value) => _password = value!,
                 ),
+                SizedBox(height: 20),
+
+                // Role Selection Dropdown
+                DropdownButtonFormField<String>(
+                  value: _selectedRole,
+                  decoration: InputDecoration(
+                    labelText: 'Select Role',
+                    prefixIcon: Icon(Icons.group),
+                  ),
+                  items: ['Customer', 'Admin', 'Counter Manager']
+                      .map((role) => DropdownMenuItem(
+                            value: role,
+                            child: Text(role),
+                          ))
+                      .toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      _selectedRole = value!;
+                    });
+                  },
+                  validator: (value) {
+                    if (value == null) {
+                      return 'Please select a role';
+                    }
+                    return null;
+                  },
+                ),
+
                 SizedBox(height: 30),
 
-                // Role Selection Buttons in a Row
+                // Register Button
                 _isLoading
                     ? CircularProgressIndicator() // Show loading indicator
-                    : Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          ElevatedButton(
-                            onPressed: () {
-                              if (_formKey.currentState!.validate()) {
-                                _formKey.currentState!.save();
-                                _register('customer'); // Register as customer
-                              }
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.red,
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 30, vertical: 15),
-                            ),
-                            child: Text(
-                              'Register as Customer',
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          ),
-                          ElevatedButton(
-                            onPressed: () {
-                              if (_formKey.currentState!.validate()) {
-                                _formKey.currentState!.save();
-                                _register('admin'); // Register as admin
-                              }
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.red,
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 30, vertical: 15),
-                            ),
-                            child: Text(
-                              'Register as Admin',
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          ),
-                        ],
+                    : ElevatedButton(
+                        onPressed: () {
+                          if (_formKey.currentState!.validate()) {
+                            _formKey.currentState!.save();
+                            _register(); // Register with selected role
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.red,
+                          padding: EdgeInsets.symmetric(horizontal: 100, vertical: 15),
+                        ),
+                        child: Text(
+                          'Register',
+                          style: TextStyle(color: Colors.white),
+                        ),
                       ),
               ],
             ),

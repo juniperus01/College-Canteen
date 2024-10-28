@@ -32,6 +32,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
           style: TextStyle(color: Colors.white),
         ),
         backgroundColor: Colors.red,
+        iconTheme: IconThemeData(color: Colors.white),
       ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),

@@ -27,6 +27,10 @@ class _PastOrdersPageState extends State<PastOrdersPage> {
   }
 
   Future<void> _fetchPastOrders() async {
+    setState(() {
+      _isLoading = true; // Show loading indicator during refresh
+    });
+    
     try {
       QuerySnapshot snapshot = await _firestore
           .collection('orders')
@@ -36,7 +40,6 @@ class _PastOrdersPageState extends State<PastOrdersPage> {
           .get();
 
       setState(() {
-        // Directly populate the orders list
         orders = snapshot.docs
             .map((doc) => doc.data() as Map<String, dynamic>)
             .toList();
@@ -59,8 +62,15 @@ class _PastOrdersPageState extends State<PastOrdersPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Past Orders', style: TextStyle(color: Colors.white)),
+        title: Text('Your Orders', style: TextStyle(color: Colors.white)),
         backgroundColor: Colors.red,
+        iconTheme: IconThemeData(color: Colors.white), // Set back arrow to white
+        actions: [
+          IconButton(
+            icon: Icon(Icons.refresh, color: Colors.white),
+            onPressed: _fetchPastOrders, // Call refresh function on tap
+          ),
+        ],
       ),
       body: _isLoading
           ? Center(child: CircularProgressIndicator())

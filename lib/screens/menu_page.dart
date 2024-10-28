@@ -161,6 +161,7 @@ class _MenuPageContentState extends State<MenuPageContent> {
             floating: false,
             pinned: true,
             backgroundColor: Colors.red, // Set the background color for SliverAppBar
+            iconTheme: IconThemeData(color: Colors.white),
             flexibleSpace: FlexibleSpaceBar(
               title: Text(
                 'Somato Menu',

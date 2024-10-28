@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:somato/screens/User_Profile/appearance.dart';
 import 'package:somato/screens/User_Profile/edit_profile.dart';
 import 'package:somato/screens/User_Profile/expense_tracker.dart';
-import 'package:somato/screens/User_Profile/past_orders.dart';
+import 'package:somato/screens/User_Profile/user_orders.dart';
 import 'package:somato/screens/User_Profile/money_settings.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:somato/screens/User%20Authentication/login_page.dart';
@@ -28,7 +28,8 @@ class UserProfilePage extends StatelessWidget {
         title:  Text(
         'Profile',
         style: TextStyle(color: Colors.white), // Correctly placed within the Text widget
-      ),backgroundColor: Colors.red,),
+      ),backgroundColor: Colors.red,
+      iconTheme: IconThemeData(color: Colors.white),),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(
@@ -69,7 +70,7 @@ class UserProfilePage extends StatelessWidget {
               },
             ),
             ListTile(
-              title: Text('Past Orders'),
+              title: Text('Your Orders'),
               onTap: () {
                 Navigator.push(
                   context,

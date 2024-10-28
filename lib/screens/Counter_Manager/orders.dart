@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart'; // Ensure to import intl for DateFormat
+import 'dart:async';
 
 class ManageOrdersPage extends StatefulWidget {
   @override
@@ -13,11 +14,24 @@ class _ManageOrdersPageState extends State<ManageOrdersPage> {
   Map<String, List<Map<String, dynamic>>> completedOrders = {};
   bool _isLoading = true;
   Map<String, bool> _completedOrdersVisibility = {}; // Track visibility of completed orders
+  Timer? _timer;
 
   @override
   void initState() {
     super.initState();
     _fetchOrders();
+
+    // Set up the timer to call _fetchOrders every 10 seconds
+    _timer = Timer.periodic(Duration(seconds: 10), (Timer t) {
+      _fetchOrders();
+    });
+  }
+
+  @override
+  void dispose() {
+    // Cancel the timer when the widget is disposed to avoid memory leaks
+    _timer?.cancel();
+    super.dispose();
   }
 
   Future<void> _fetchOrders() async {
@@ -283,22 +297,33 @@ class _ManageOrdersPageState extends State<ManageOrdersPage> {
               children: [
                 // Pending Orders Section
                 Text('Pending Orders', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                SizedBox(height: 8.0),
-                ...pendingOrders.entries.map((entry) {
-                  String date = entry.key;
-                  List<Map<String, dynamic>> orders = entry.value;
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(date, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                      ...orders.asMap().entries.map((orderEntry) {
-                        int orderNumber = orderEntry.key + 1; // Incremental order number
-                        return _buildOrderCard(orderEntry.value, orderNumber, isPending: true);
-                      }).toList(),
-                      SizedBox(height: 8.0),
-                    ],
-                  );
-                }).toList(),
+                SizedBox(height: 24.0), // Triple space above the message
+                if (pendingOrders.isEmpty)
+                  Center(
+                    child: Text(
+                      'No order is pending!',
+                      style: TextStyle(fontSize: 14, color: Colors.red),
+                    ),
+                  ),
+                SizedBox(height: 24.0), // Triple space below the message
+                if (pendingOrders.isNotEmpty)
+                  ...pendingOrders.entries.map((entry) {
+                    String date = entry.key;
+                    List<Map<String, dynamic>> orders = entry.value;
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(date, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                        ...orders.asMap().entries.map((orderEntry) {
+                          int orderNumber = orderEntry.key + 1; // Incremental order number
+                          return _buildOrderCard(orderEntry.value, orderNumber, isPending: true);
+                        }).toList(),
+                        SizedBox(height: 8.0),
+                      ],
+                    );
+                  }).toList(),
+
+
 
                 // Completed Orders Section
                 Text('Completed Orders', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),

@@ -19,17 +19,17 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _isLoading = false;
-  String _loginRole = 'customer'; // By default, user logs in as customer
+  String _selectedRole = 'Customer'; // Default selected role
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  // Fetch the role and name (customer/admin) from Firestore
+  // Fetch the role and name (customer/admin/counter manager) from Firestore
   Future<Map<String, dynamic>> _fetchUserDetails(String uid) async {
     DocumentSnapshot userDoc = await _firestore.collection('users').doc(uid).get();
     return {
-      'role': userDoc['role'],   // Assuming Firestore stores 'role' as a field
-      'name': userDoc['fullName'],   // Assuming Firestore stores 'name' as a field
+      'role': userDoc['role'],
+      'name': userDoc['fullName'],
     };
   }
 
@@ -39,7 +39,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   // Login method that checks the user role and navigates accordingly
-  Future<void> _login(String role) async {
+  Future<void> _login() async {
     if (_formKey.currentState!.validate()) {
       // Validate email domain
       if (!_isSomaiyaEmail(_emailController.text)) {
@@ -71,8 +71,8 @@ class _LoginPageState extends State<LoginPage> {
           String userRole = userDetails['role'];
           String userName = userDetails['name'];
 
-          // Check if user wants to log in with the correct role
-          if (userRole == role) {
+          // Check if user role matches the selected role
+          if (userRole.toLowerCase() == _selectedRole.toLowerCase()) {
             // Redirect to respective pages based on the role
             Navigator.pushReplacement(
               context,
@@ -83,7 +83,7 @@ class _LoginPageState extends State<LoginPage> {
                   role: userRole,
                   isInside: widget.isInside,
                   locationAbleToTrack: widget.locationAbleToTrack,
-                ), // Passing name to MenuPage
+                ),
               ),
             );
           } else {
@@ -213,43 +213,49 @@ class _LoginPageState extends State<LoginPage> {
                             },
                           ),
                           SizedBox(height: 30),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              ElevatedButton(
-                                onPressed: _isLoading ? null : () => _login('customer'),
-                                child: _isLoading
-                                    ? CircularProgressIndicator(color: Colors.white)
-                                    : Text(
-                                        'Login as Customer',
-                                        style: TextStyle(color: Colors.white), // White text color
-                                      ),
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Color(0xFFFF5252),
-                                  padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                ),
+
+                          // Role selection dropdown
+                          DropdownButtonFormField<String>(
+                            value: _selectedRole,
+                            decoration: InputDecoration(
+                              labelText: 'Login as',
+                              prefixIcon: Icon(Icons.person, color: Color(0xFFFF5252)), // Icon for role field
+                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide: BorderSide(color: Color(0xFFFF5252)),
                               ),
-                              SizedBox(width: 20),
-                              ElevatedButton(
-                                onPressed: _isLoading ? null : () => _login('admin'),
-                                child: _isLoading
-                                    ? CircularProgressIndicator(color: Colors.white)
-                                    : Text(
-                                        'Login as Admin',
-                                        style: TextStyle(color: Colors.white), // White text color
-                                      ),
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Color(0xFFFF5252),
-                                  padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8),
+                            ),
+                            items: <String>['Customer', 'Admin', 'Counter Manager']
+                                .map<DropdownMenuItem<String>>((String value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(value),
+                              );
+                            }).toList(),
+                            onChanged: (String? newValue) {
+                              setState(() {
+                                _selectedRole = newValue!;
+                              });
+                            },
+                          ),
+                          SizedBox(height: 30), // Triple space below role selection
+
+                          ElevatedButton(
+                            onPressed: _isLoading ? null : _login,
+                            child: _isLoading
+                                ? CircularProgressIndicator(color: Colors.white)
+                                : Text(
+                                    'Login',
+                                    style: TextStyle(color: Colors.white), // White text color
                                   ),
-                                ),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Color(0xFFFF5252),
+                              padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
                               ),
-                            ],
+                            ),
                           ),
                         ],
                       ),

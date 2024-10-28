@@ -67,6 +67,7 @@ class _ExpenseTrackerPageState extends State<ExpenseTrackerPage> {
       appBar: AppBar(
         title: Text('Track Your Expenses', style: TextStyle(color: Colors.white)),
         backgroundColor: Colors.red,
+        iconTheme: IconThemeData(color: Colors.white),
       ),
       body: Column(
         children: [
