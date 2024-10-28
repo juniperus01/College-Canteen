@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart'; // Ensure to import intl for DateFormat
 
-class OrdersOnAdminPage extends StatefulWidget {
+class ManageOrdersPage extends StatefulWidget {
   @override
-  _OrdersOnAdminPageState createState() => _OrdersOnAdminPageState();
+  _ManageOrdersPageState createState() => _ManageOrdersPageState();
 }
 
-class _OrdersOnAdminPageState extends State<OrdersOnAdminPage> {
+class _ManageOrdersPageState extends State<ManageOrdersPage> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   Map<String, List<Map<String, dynamic>>> pendingOrders = {};
   Map<String, List<Map<String, dynamic>>> completedOrders = {};
@@ -22,14 +22,12 @@ class _OrdersOnAdminPageState extends State<OrdersOnAdminPage> {
 
   Future<void> _fetchOrders() async {
     setState(() {
-      // Reset loading state and clear previous orders
       _isLoading = true;
       pendingOrders.clear();
       completedOrders.clear();
     });
 
     try {
-      // Fetching all orders
       QuerySnapshot ordersSnapshot = await _firestore.collection('orders').get();
 
       for (var doc in ordersSnapshot.docs) {
@@ -47,9 +45,14 @@ class _OrdersOnAdminPageState extends State<OrdersOnAdminPage> {
         }
       }
 
-      // Sort pending orders in ascending order
+      // Sort pending orders in ascending order for each date
       pendingOrders.forEach((key, orders) {
         orders.sort((a, b) => a['timestamp'].compareTo(b['timestamp']));
+      });
+
+      // Sort completed orders in descending order for each date
+      completedOrders.forEach((key, orders) {
+        orders.sort((a, b) => b['timestamp'].compareTo(a['timestamp']));
       });
 
       // Sort completed orders in descending order (recent dates on top)
@@ -226,7 +229,6 @@ class _OrdersOnAdminPageState extends State<OrdersOnAdminPage> {
           actions: [
             TextButton(
               onPressed: () {
-                // Handle update order status
                 _updateOrderStatus(order['id']);
                 Navigator.of(context).pop();
               },
@@ -247,25 +249,32 @@ class _OrdersOnAdminPageState extends State<OrdersOnAdminPage> {
   Future<void> _updateOrderStatus(String documentId) async {
     try {
       await _firestore.collection('orders').doc(documentId).update({'status': 'completed'});
-      // Set loading state before fetching orders again
       setState(() {
         _isLoading = true; // Set loading state
       });
-      // Delay for 5 seconds before refreshing
       await Future.delayed(Duration(seconds: 5));
-      // Refresh orders after update
       await _fetchOrders();
     } catch (e) {
       print('Error updating order status: $e');
     }
   }
 
+  Future<void> _refreshOrders() async {
+    await _fetchOrders();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(' All Orders', style: TextStyle(color: Colors.white)),
+        title: Text('All Orders', style: TextStyle(color: Colors.white)),
         backgroundColor: Colors.red,
+        actions: [
+          IconButton(
+            icon: Icon(Icons.refresh, color: Colors.white), // Set icon color to white
+            onPressed: _refreshOrders, // Call refresh function on press
+          ),
+        ],
       ),
       body: _isLoading
           ? Center(child: CircularProgressIndicator())
@@ -274,74 +283,59 @@ class _OrdersOnAdminPageState extends State<OrdersOnAdminPage> {
               children: [
                 // Pending Orders Section
                 Text('Pending Orders', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                SizedBox(height: 8),
-                // Check if there are pending orders
-                if (pendingOrders.isEmpty)
-                  Center(
-                    child: Text(
-                      'No pending orders',
-                      style: TextStyle(color: Colors.red, fontSize: 14),
-                    ),
-                  )
-                else
-                  ...pendingOrders.entries.expand((entry) {
-                    String dateKey = entry.key;
-                    List<Map<String, dynamic>> ordersForDate = entry.value;
-                    return [
-                      Text(dateKey, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                      ...ordersForDate.asMap().entries.map((entry) {
-                        int index = entry.key;
-                        Map<String, dynamic> order = entry.value;
-                        return _buildOrderCard(order, index + 1, isPending: true);
+                SizedBox(height: 8.0),
+                ...pendingOrders.entries.map((entry) {
+                  String date = entry.key;
+                  List<Map<String, dynamic>> orders = entry.value;
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(date, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                      ...orders.asMap().entries.map((orderEntry) {
+                        int orderNumber = orderEntry.key + 1; // Incremental order number
+                        return _buildOrderCard(orderEntry.value, orderNumber, isPending: true);
                       }).toList(),
-                    ];
-                  }).toList(),
-                SizedBox(height: 16),
+                      SizedBox(height: 8.0),
+                    ],
+                  );
+                }).toList(),
+
                 // Completed Orders Section
                 Text('Completed Orders', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                SizedBox(height: 8),
-                // Check if there are completed orders
-                if (completedOrders.isEmpty)
-                  Center(
-                    child: Text(
-                      'No completed orders',
-                      style: TextStyle(color: Colors.green, fontSize: 14),
-                    ),
-                  )
-                else
-                  ...completedOrders.entries.map((entry) {
-                    String dateKey = entry.key;
-                    List<Map<String, dynamic>> ordersForDate = entry.value;
-
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(dateKey, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                            IconButton(
-                              icon: Icon(
-                                _completedOrdersVisibility[dateKey] == true ? Icons.arrow_drop_up : Icons.arrow_drop_down,
-                                color: Colors.red,
-                              ),
-                              onPressed: () {
-                                setState(() {
-                                  _completedOrdersVisibility[dateKey] = !_completedOrdersVisibility[dateKey]!;
-                                });
-                              },
+                SizedBox(height: 8.0),
+                ...completedOrders.entries.map((entry) {
+                  String date = entry.key;
+                  List<Map<String, dynamic>> orders = entry.value;
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Dropdown for completed orders visibility
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(date, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                          IconButton(
+                            icon: Icon(
+                              _completedOrdersVisibility[date] == true ? Icons.expand_less : Icons.expand_more,
+                              color: Colors.black,
                             ),
-                          ],
-                        ),
-                        if (_completedOrdersVisibility[dateKey] == true)
-                          ...ordersForDate.asMap().entries.map((entry) {
-                            int index = entry.key;
-                            Map<String, dynamic> order = entry.value;
-                            return _buildOrderCard(order, index + 1);
-                          }).toList(),
-                      ],
-                    );
-                  }).toList(),
+                            onPressed: () {
+                              setState(() {
+                                _completedOrdersVisibility[date] = !_completedOrdersVisibility[date]!;
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+                      // Show completed orders only if visible
+                      if (_completedOrdersVisibility[date] == true) ...orders.asMap().entries.map((orderEntry) {
+                        int orderNumber = orderEntry.key + 1; // Incremental order number
+                        return _buildOrderCard(orderEntry.value, orderNumber);
+                      }).toList(),
+                      SizedBox(height: 8.0),
+                    ],
+                  );
+                }).toList(),
               ],
             ),
     );

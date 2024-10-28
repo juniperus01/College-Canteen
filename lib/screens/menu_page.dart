@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:somato/screens/Orders_on_Admin_UI/orders.dart';
+import 'package:somato/screens/Counter_Manager/orders.dart';
 
 import '../models/theme_model.dart';
 import './User_Profile/profile_screen.dart';
-import './Orders_on_Admin_UI/orders.dart'; // Import your OrdersOnAdminPage
+import 'Counter_Manager/orders.dart'; // Import your OrdersOnAdminPage
 import 'cart_page.dart';
 import 'category_menu_page.dart';
 import '../widgets/custom_search_bar.dart';
@@ -43,7 +43,7 @@ class _MenuPageState extends State<MenuPage> {
         locationAbleToTrack: widget.locationAbleToTrack,
       ),
       widget.role == 'admin'
-          ? OrdersOnAdminPage() // Show OrdersOnAdminPage for admin
+          ? ManageOrdersPage() // Show OrdersOnAdminPage for admin
           : UserProfilePage(
               fullName: widget.fullName,
               email: widget.email,
@@ -77,7 +77,7 @@ class _MenuPageState extends State<MenuPage> {
               setState(() {
                 _selectedIndex = index;
                 if (index == 1 && widget.role == 'admin') {
-                  _pages[1] = OrdersOnAdminPage(); // Load OrdersOnAdminPage for admin
+                  _pages[1] = ManageOrdersPage(); // Load OrdersOnAdminPage for admin
                 } else if (index == 1) {
                   _pages[1] = UserProfilePage(
                     fullName: widget.fullName,
