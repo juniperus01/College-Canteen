@@ -15,7 +15,7 @@ class _ExpenseTrackerPageState extends State<ExpenseTrackerPage> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   Map<String, List<Map<String, dynamic>>> groupedExpenses = {};
   bool _isLoading = true;
-  double _totalMonthlyExpenses = 0.0;
+  Map<String, double> monthlyTotalExpenses = {}; // To track total expenses per month
 
   @override
   void initState() {
@@ -35,15 +35,17 @@ class _ExpenseTrackerPageState extends State<ExpenseTrackerPage> {
       setState(() {
         for (var doc in snapshot.docs) {
           Map<String, dynamic> orderData = doc.data() as Map<String, dynamic>;
-          String formattedDate = _formatDate(orderData['timestamp']);
-
-          if (!groupedExpenses.containsKey(formattedDate)) {
-            groupedExpenses[formattedDate] = [];
+          String formattedMonth = _formatMonth(orderData['timestamp']);
+          
+          if (!groupedExpenses.containsKey(formattedMonth)) {
+            groupedExpenses[formattedMonth] = [];
+            monthlyTotalExpenses[formattedMonth] = 0.0; // Initialize monthly total
           }
-          groupedExpenses[formattedDate]!.add(orderData);
+          groupedExpenses[formattedMonth]!.add(orderData);
 
           // Calculate total monthly expenses
-          _totalMonthlyExpenses += (orderData['totalPrice'] as double? ?? 0.0);
+          monthlyTotalExpenses[formattedMonth] = 
+              (monthlyTotalExpenses[formattedMonth] ?? 0.0) + (orderData['totalPrice'] as double? ?? 0.0);
         }
 
         _isLoading = false;
@@ -56,9 +58,9 @@ class _ExpenseTrackerPageState extends State<ExpenseTrackerPage> {
     }
   }
 
-  String _formatDate(Timestamp timestamp) {
+  String _formatMonth(Timestamp timestamp) {
     DateTime date = timestamp.toDate();
-    return DateFormat('d MMMM yyyy').format(date);
+    return DateFormat('MMMM yyyy').format(date); // Format to "Month Year"
   }
 
   @override
@@ -71,14 +73,6 @@ class _ExpenseTrackerPageState extends State<ExpenseTrackerPage> {
       ),
       body: Column(
         children: [
-          // Display total expenses of the month
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Text(
-              'Total Expenses: ₹${_totalMonthlyExpenses.toStringAsFixed(2)}',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.red),
-            ),
-          ),
           Expanded(
             child: _isLoading
                 ? Center(child: CircularProgressIndicator())
@@ -88,12 +82,8 @@ class _ExpenseTrackerPageState extends State<ExpenseTrackerPage> {
                         padding: EdgeInsets.all(16.0),
                         itemCount: groupedExpenses.keys.length,
                         itemBuilder: (context, index) {
-                          final dateKey = groupedExpenses.keys.elementAt(index);
-                          final expensesForDate = groupedExpenses[dateKey]!;
-
-                          // Calculate total price for this date
-                          double totalPriceForDate = expensesForDate.fold(
-                              0.0, (sum, order) => sum + (order['totalPrice'] as double? ?? 0.0));
+                          final monthKey = groupedExpenses.keys.elementAt(index);
+                          final expensesForMonth = groupedExpenses[monthKey]!;
 
                           return Card(
                             elevation: 4,
@@ -103,7 +93,7 @@ class _ExpenseTrackerPageState extends State<ExpenseTrackerPage> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
-                                // Date heading
+                                // Month heading
                                 Container(
                                   padding: EdgeInsets.all(8.0),
                                   decoration: BoxDecoration(
@@ -114,7 +104,7 @@ class _ExpenseTrackerPageState extends State<ExpenseTrackerPage> {
                                     ),
                                   ),
                                   child: Text(
-                                    dateKey,
+                                    monthKey,
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontSize: 16,
@@ -128,8 +118,8 @@ class _ExpenseTrackerPageState extends State<ExpenseTrackerPage> {
                                     subtitle: Column(
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                        // Display all expenses for this date
-                                        ...expensesForDate.map((order) {
+                                        // Display all expenses for this month
+                                        ...expensesForMonth.map((order) {
                                           // Ensure 'items' is a List of Maps
                                           final items = (order['items'] as List<dynamic>? ?? []);
 
@@ -165,7 +155,7 @@ class _ExpenseTrackerPageState extends State<ExpenseTrackerPage> {
                                     ),
                                   ),
                                 ),
-                                // Total Price for the date
+                                // Total Price for the month
                                 Container(
                                   padding: EdgeInsets.all(8.0),
                                   decoration: BoxDecoration(
@@ -176,7 +166,7 @@ class _ExpenseTrackerPageState extends State<ExpenseTrackerPage> {
                                     ),
                                   ),
                                   child: Text(
-                                    'Total: ₹${totalPriceForDate.toStringAsFixed(2)}',
+                                    'Total: ₹${monthlyTotalExpenses[monthKey]!.toStringAsFixed(2)}',
                                     style: TextStyle(
                                       color: Colors.red,
                                       fontSize: 16,
