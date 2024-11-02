@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+
 class CartModel extends ChangeNotifier {
   List<Map<String, dynamic>> _items = [];
 
@@ -47,8 +48,39 @@ class CartModel extends ChangeNotifier {
 
   double get totalPrice => _items.fold(0, (sum, item) => sum + (item['price'] as num) * item['quantity']);
 
+  Future<int> getNextOrderNumber() async {
+    // Get the current date in a consistent format
+    final String today = DateTime.now().toIso8601String().split('T')[0];
+
+    // Reference to the document for today's order count
+    DocumentReference orderCountRef =
+        FirebaseFirestore.instance.collection('orderCounts').doc(today);
+
+    int orderNumber = 0;
+
+    // Run transaction
+    await FirebaseFirestore.instance.runTransaction((transaction) async {
+      // Try to get the document for today
+      DocumentSnapshot snapshot = await transaction.get(orderCountRef);
+
+      if (!snapshot.exists) {
+        // If the document does not exist, create it with count 1
+        transaction.set(orderCountRef, {'date': today, 'count': 1});
+        orderNumber = 1;
+      } else {
+        // Increment the count field
+        int currentCount = snapshot['count'];
+        orderNumber = currentCount + 1;
+        transaction.update(orderCountRef, {'count': orderNumber});
+      }
+    });
+
+    return orderNumber;
+  }
+
   Future<void> placeOrder(BuildContext context, String userEmail) async {
     if (_items.isEmpty) return;
+    int orderNumber = await getNextOrderNumber();
 
     // Prepare order data with quantities
     final orderData = {
@@ -61,6 +93,7 @@ class CartModel extends ChangeNotifier {
       'user_email': userEmail,
       'timestamp': FieldValue.serverTimestamp(),
       'status' : "pending",
+      'orderNumber' : orderNumber,
     };
 
     try {

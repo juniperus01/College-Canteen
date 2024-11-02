@@ -26,15 +26,18 @@ class _LoginPageState extends State<LoginPage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  // Fetch the role and name (customer/admin/counter manager) from Firestore
   Future<Map<String, dynamic>> _fetchUserDetails(String uid) async {
     DocumentSnapshot userDoc = await _firestore.collection('users').doc(uid).get();
+    Map<String, dynamic> userData = userDoc.data() as Map<String, dynamic>;
+
     return {
-      'role': userDoc['role'],
-      'name': userDoc['fullName'],
-      'authorised': userDoc['authorised'], // Fetch the 'authorised' field
+      'role': userData['role'],
+      'name': userData['fullName'],
+      'authorised': userData.containsKey('authorised') ? userData['authorised'] : true, // Use a default value if the field is missing
     };
   }
+
+
 
   // Email validation to ensure it belongs to Somaiya domain
   bool _isSomaiyaEmail(String email) {
@@ -138,6 +141,7 @@ class _LoginPageState extends State<LoginPage> {
           duration: Duration(seconds: 2),
         ));
       } catch (e) {
+        print(e);
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text(
             'An error occurred. Please try again!',

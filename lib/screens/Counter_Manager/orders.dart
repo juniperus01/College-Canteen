@@ -1,7 +1,8 @@
-import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:intl/intl.dart'; // Ensure to import intl for DateFormat
 import 'dart:async';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart'; // Ensure to import intl for DateFormat
 
 import '../User_Profile/profile_screen.dart';
 
@@ -47,53 +48,60 @@ class _ManageOrdersPageState extends State<ManageOrdersPage> {
     super.dispose();
   }
 
-  Future<void> _fetchOrders() async {
-    setState(() {
-      _isLoading = true;
-      pendingOrders.clear();
-      completedOrders.clear();
+ Future<void> _fetchOrders() async {
+  setState(() {
+    _isLoading = true;
+    pendingOrders.clear();
+    completedOrders.clear();
+  });
+
+  try {
+    QuerySnapshot ordersSnapshot = await _firestore.collection('orders').get();
+
+    for (var doc in ordersSnapshot.docs) {
+      Map<String, dynamic> orderData = doc.data() as Map<String, dynamic>;
+      orderData['id'] = doc.id;
+
+      // Convert the Timestamp to DateTime
+      DateTime timestamp = (orderData['timestamp'] as Timestamp).toDate();
+      String formattedDate = _formatDate(timestamp); // Now this will work as _formatDate accepts DateTime
+
+      if (orderData['status'] == 'pending') {
+        pendingOrders.putIfAbsent(formattedDate, () => []).add(orderData);
+      } else if (orderData['status'] == 'completed') {
+        completedOrders.putIfAbsent(formattedDate, () => []);
+        completedOrders[formattedDate]!.add(orderData);
+        _completedOrdersVisibility[formattedDate] = false;
+      }
+    }
+
+    // Sort pending orders by timestamp
+    pendingOrders.forEach((key, orders) {
+      orders.sort((a, b) => (b['timestamp'] as Timestamp).toDate().compareTo((a['timestamp'] as Timestamp).toDate()));
     });
 
-    try {
-      QuerySnapshot ordersSnapshot = await _firestore.collection('orders').get();
+    // Sort completed orders by timestamp
+    completedOrders.forEach((key, orders) {
+      orders.sort((a, b) => (b['timestamp'] as Timestamp).toDate().compareTo((a['timestamp'] as Timestamp).toDate()));
+    });
 
-      for (var doc in ordersSnapshot.docs) {
-        Map<String, dynamic> orderData = doc.data() as Map<String, dynamic>;
-        orderData['id'] = doc.id;
-        String formattedDate = _formatDate(orderData['timestamp']);
-        
-        if (orderData['status'] == 'pending') {
-          pendingOrders.putIfAbsent(formattedDate, () => []).add(orderData);
-        } else if (orderData['status'] == 'completed') {
-          completedOrders.putIfAbsent(formattedDate, () => []);
-          completedOrders[formattedDate]!.add(orderData);
-          _completedOrdersVisibility[formattedDate] = false;
-        }
-      }
+    // Sort completed orders map by date
+    completedOrders = Map.fromEntries(
+      completedOrders.entries.toList()
+        ..sort((a, b) => DateTime.parse(b.key).compareTo(DateTime.parse(a.key))),
+    );
 
-      pendingOrders.forEach((key, orders) {
-        orders.sort((a, b) => b['timestamp'].compareTo(a['timestamp']));
-      });
-
-      completedOrders.forEach((key, orders) {
-        orders.sort((a, b) => b['timestamp'].compareTo(a['timestamp']));
-      });
-
-      completedOrders = Map.fromEntries(
-        completedOrders.entries.toList()
-          ..sort((a, b) => b.key.compareTo(a.key)),
-      );
-
-      setState(() {
-        _isLoading = false;
-      });
-    } catch (e) {
-      print('Error fetching orders: $e');
-      setState(() {
-        _isLoading = false;
-      });
-    }
+    setState(() {
+      _isLoading = false;
+    });
+  } catch (e) {
+    print('Error fetching orders: $e');
+    setState(() {
+      _isLoading = false;
+    });
   }
+}
+
 
   Future<String> _fetchCustomerName(String email) async {
     try {
@@ -107,10 +115,18 @@ class _ManageOrdersPageState extends State<ManageOrdersPage> {
     return 'Unknown Customer';
   }
 
-  String _formatDate(Timestamp timestamp) {
-    DateTime date = timestamp.toDate();
-    return DateFormat('d MMMM yyyy').format(date);
+  String _formatDate(DateTime dateTime) {
+    // Use DateFormat to format the DateTime to your desired format
+    return DateFormat('yyyy-MM-dd').format(dateTime);
   }
+
+  String convertDateFormat(String date) {
+    // Parse the input string into a DateTime object
+    DateTime dateTime = DateTime.parse(date);
+    // Format the DateTime object into the desired string format
+    return DateFormat('d MMMM yyyy').format(dateTime);
+  }
+
 
   String _formatTime(Timestamp timestamp) {
     DateTime date = timestamp.toDate();
@@ -121,6 +137,7 @@ class _ManageOrdersPageState extends State<ManageOrdersPage> {
     final items = List<Map<String, dynamic>>.from(order['items']);
     final double totalPrice = order['totalPrice'];
     final String userEmail = order['user_email'];
+    final int _orderNumber = order.containsKey('orderNumber') ? order['orderNumber'] : orderNumber;
 
     return FutureBuilder<String>(
       future: _fetchCustomerName(userEmail),
@@ -150,7 +167,7 @@ class _ManageOrdersPageState extends State<ManageOrdersPage> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'Order #$orderNumber',
+                        'Order #$_orderNumber',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 16,
@@ -393,7 +410,7 @@ Widget _buildOrderSection({
           Padding(
             padding: EdgeInsets.symmetric(vertical: 8),
             child: Text(
-              date,
+              convertDateFormat(date),
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
           ),
