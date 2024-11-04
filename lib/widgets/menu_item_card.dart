@@ -50,7 +50,7 @@ class MenuItemCard extends StatelessWidget {
     );
   }
 
-  Widget _buildMenuItemCard(BuildContext context) {
+   Widget _buildMenuItemCard(BuildContext context) {
     final String name = item['name'] ?? 'Unnamed Item'; // Default if 'name' is null
     final double price = item['price'] != null ? item['price'].toDouble() : 0.0; // Default price
     final String itemId = item['id'] ?? ''; // Handle null 'id'
@@ -106,31 +106,30 @@ class MenuItemCard extends StatelessWidget {
                     'Price: ₹$price',
                     style: TextStyle(color: textColor),
                   ),
-                  FutureBuilder<double>(
-                    future: isAvailable ? fetchEstimatedWaitTime(name) : Future.value(null),
-                    builder: (context, snapshot) {
-                      if (!isAvailable) {
-                        return Text(
-                          'Unavailable',
-                          style: TextStyle(color: Colors.red),
-                        );
-                      }
-
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return Text('Estimating...', style: TextStyle(color: textColor));
-                      } else if (snapshot.hasError) {
-                        print(snapshot.error);
-                        return Text('Error: ${snapshot.error}', style: TextStyle(color: Colors.red));
-                      } else {
-                        return Text(
-                          'Estimated Time: ${snapshot.data?.toStringAsFixed(2)} mins',
-                          style: TextStyle(color: textColor),
-                        );
-                      }
-                    },
-                  ),
-
-                  if (!isAvailable) Text('Unavailable', style: TextStyle(color: Colors.red)),
+                  // Display estimated wait time only for non-admin users and available items
+                  if (!isAdmin && isAvailable) ...[
+                    FutureBuilder<double>(
+                      future: fetchEstimatedWaitTime(name),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.waiting) {
+                          return Text('Estimating...', style: TextStyle(color: textColor));
+                        } else if (snapshot.hasError) {
+                          print(snapshot.error);
+                          return Text('Error: ${snapshot.error}', style: TextStyle(color: Colors.red));
+                        } else {
+                          return Text(
+                            'Estimated Time: ${snapshot.data?.toStringAsFixed(2)} mins',
+                            style: TextStyle(color: textColor),
+                          );
+                        }
+                      },
+                    ),
+                  ] else if (!isAvailable) ...[
+                    Text(
+                      'Unavailable',
+                      style: TextStyle(color: Colors.red),
+                    ),
+                  ],
                 ],
               ),
             ),
