@@ -3,7 +3,6 @@ import 'package:somato/screens/User_Profile/appearance.dart';
 import 'package:somato/screens/User_Profile/edit_profile.dart';
 import 'package:somato/screens/User_Profile/expense_tracker.dart';
 import 'package:somato/screens/User_Profile/user_orders.dart';
-import 'package:somato/screens/User_Profile/money_settings.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:somato/screens/User_Authentication/login_page.dart';
 
@@ -25,11 +24,13 @@ class UserProfilePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title:  Text(
-        'Profile',
-        style: TextStyle(color: Colors.white), // Correctly placed within the Text widget
-      ),backgroundColor: Colors.red,
-      iconTheme: IconThemeData(color: Colors.white),),
+        title: Text(
+          'Profile',
+          style: TextStyle(color: Colors.white), // Correctly placed within the Text widget
+        ),
+        backgroundColor: Colors.red,
+        iconTheme: IconThemeData(color: Colors.white),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(
@@ -74,7 +75,7 @@ class UserProfilePage extends StatelessWidget {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => PastOrdersPage(email: email,)),
+                  MaterialPageRoute(builder: (context) => PastOrdersPage(email: email)),
                 );
               },
             ),
@@ -83,16 +84,7 @@ class UserProfilePage extends StatelessWidget {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => ExpenseTrackerPage(email: email,)),
-                );
-              },
-            ),
-            ListTile(
-              title: Text('Money'),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => MoneySettingsPage()),
+                  MaterialPageRoute(builder: (context) => ExpenseTrackerPage(email: email)),
                 );
               },
             ),
@@ -102,7 +94,7 @@ class UserProfilePage extends StatelessWidget {
                 await FirebaseAuth.instance.signOut(); // Log out from Firebase
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (context) => LoginPage(isInside: isInside, locationAbleToTrack: locationAbleToTrack,)), // Navigate to Login Page
+                  MaterialPageRoute(builder: (context) => LoginPage(isInside: isInside, locationAbleToTrack: locationAbleToTrack)), // Navigate to Login Page
                 );
               },
             ),

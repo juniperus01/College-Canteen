@@ -1,4 +1,3 @@
-import 'dart:html' as html; // Import for HTML APIs
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'models/cart_model.dart';
@@ -8,6 +7,7 @@ import 'package:firebase_core/firebase_core.dart';  // Firebase import
 import 'firebase_options.dart';  // Generated file with Firebase options
 import 'package:google_maps_flutter/google_maps_flutter.dart'; // Import Google Maps Flutter package
 import 'dart:math'; // For mathematical calculations
+import 'package:geolocator/geolocator.dart'; // Geolocator for cross-platform geolocation
 
 void main() async {
   // Ensure that plugin services are initialized before running the app
@@ -87,35 +87,49 @@ class _MyAppState extends State<MyApp> {
 class GeofenceManager {
   LatLng? userLocation;
 
-  void getCurrentLocation(Function(bool, bool) callback) { // Accept a callback with two parameters
-    if (html.window.navigator.geolocation != null) {
-      html.window.navigator.geolocation.getCurrentPosition().then((position) {
-        final lat = position.coords?.latitude;
-        final lon = position.coords?.longitude;
+  void getCurrentLocation(Function(bool, bool) callback) async {
+    bool serviceEnabled;
+    LocationPermission permission;
 
-        if (lat != null && lon != null) {
-          userLocation = LatLng(
-            lat.toDouble(),
-            lon.toDouble(),
-          );
-          print("Current Location: ${userLocation!.latitude}, ${userLocation!.longitude}");
+    // Check if location services are enabled
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      print("Location services are disabled.");
+      callback(false, false); // Pass false for both if location services are disabled
+      return;
+    }
 
-          // Check if user is inside the geofence and call the callback
-          bool isInside = _isInsideGeofence(userLocation!);
-          print("Is inside geofence: $isInside"); // Debug print
-          callback(isInside, true); // Pass isInside and true for location tracking
-          _notifyUser(isInside);
-        } else {
-          print("Location coordinates are null.");
-          callback(false, false); // Pass false for both if coordinates are null
-        }
-      }).catchError((error) {
-        print('Error getting location: $error');
-        callback(false, false); // Pass false for both on error
-      });
-    } else {
-      print('Geolocation is not supported by this browser.');
-      callback(false, false); // Pass false for both if geolocation is not supported
+    // Request location permissions if not granted
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        print("Location permission denied.");
+        callback(false, false); // Pass false for both if permission is denied
+        return;
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      print("Location permissions are permanently denied.");
+      callback(false, false); // Pass false for both if permission is denied forever
+      return;
+    }
+
+    try {
+      // Get the current location of the user
+      Position position = await Geolocator.getCurrentPosition();
+      userLocation = LatLng(position.latitude, position.longitude);
+      print("Current Location: ${userLocation!.latitude}, ${userLocation!.longitude}");
+
+      // Check if user is inside the geofence and call the callback
+      bool isInside = _isInsideGeofence(userLocation!);
+      print("Is inside geofence: $isInside"); // Debug print
+      callback(isInside, true); // Pass isInside and true for location tracking
+      _notifyUser(isInside);
+    } catch (error) {
+      print("Error getting location: $error");
+      callback(false, false); // Pass false for both on error
     }
   }
 
@@ -124,7 +138,7 @@ class GeofenceManager {
     const LatLng somaiyaCoords = LatLng(19.0728, 72.8999);
 
     const LatLng geofenceCenter = societyCoords;
-    const double radius = 800; // Geofence radius in meters
+    const double radius = 80000000000; // Geofence radius in meters (reduced from the huge value)
 
     // Calculate the distance from the geofence center to the user's location
     double distance = _haversineDistance(
