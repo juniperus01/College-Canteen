@@ -9,7 +9,11 @@
 .history
 .svn/
 migrate_working_dir/
+<<<<<<< HEAD
 venv/
+=======
+
+>>>>>>> origin/main
 # IntelliJ related
 *.iml
 *.ipr
