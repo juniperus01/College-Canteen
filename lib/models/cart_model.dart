@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-
 class CartModel extends ChangeNotifier {
   List<Map<String, dynamic>> _items = [];
 
@@ -32,7 +31,7 @@ class CartModel extends ChangeNotifier {
     if (_items[index]['quantity'] > 1) {
       // If quantity is more than 1, decrement it
       _items[index]['quantity']--;
-      _showNotification(context, 'Item removed from cart!');
+      _showNotification(context, 'Item quantity decreased!');
     } else {
       // If quantity is 1, remove the item
       removeItem(index, context);
@@ -80,6 +79,7 @@ class CartModel extends ChangeNotifier {
 
   Future<void> placeOrder(BuildContext context, String userEmail) async {
     if (_items.isEmpty) return;
+
     int orderNumber = await getNextOrderNumber();
 
     // Prepare order data with quantities
@@ -92,8 +92,8 @@ class CartModel extends ChangeNotifier {
       'totalPrice': totalPrice,
       'user_email': userEmail,
       'timestamp': FieldValue.serverTimestamp(),
-      'status' : "pending",
-      'orderNumber' : orderNumber,
+      'status': "pending",
+      'orderNumber': orderNumber,
     };
 
     try {
@@ -107,13 +107,12 @@ class CartModel extends ChangeNotifier {
     }
 
     // Clear the cart after successful order placement
-    clearCart(context);
+    clearCart();
   }
 
-  void clearCart(BuildContext context) {
+  void clearCart() {
     _items.clear();
     notifyListeners();
-    // _showNotification(context, 'Cart cleared!'); // Show notification
   }
 
   void _showNotification(BuildContext context, String message) {
