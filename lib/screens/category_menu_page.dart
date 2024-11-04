@@ -89,28 +89,37 @@ class _CategoryMenuPageState extends State<CategoryMenuPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.red,
-        title: Text(
-          '${capitalize(widget.category)} Menu',
-          style: TextStyle(color: Colors.white),
-        ),
-        iconTheme: IconThemeData(
-          color: Colors.white, // Sets back arrow icon color to white
-        ),
-        actions: [
-          if (role == 'customer') // Show cart icon for customer only
-            IconButton(
-              icon: Icon(Icons.shopping_cart, color: Colors.white), // Cart icon color set to white
-              onPressed: () {
-                // Navigate to the CartPage
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => CartPage(email: email)),
-                );
-              },
-            ),
-        ],
+  backgroundColor: Colors.red,
+  title: Text(
+    '${capitalize(widget.category)} Menu',
+    style: TextStyle(color: Colors.white),
+  ),
+  iconTheme: IconThemeData(
+    color: Colors.white, // Sets back arrow icon color to white
+  ),
+  actions: [
+    if (role == 'customer') // Show cart icon for customer only
+      IconButton(
+        icon: Icon(Icons.shopping_cart, color: Colors.white), // Cart icon color set to white
+        onPressed: () {
+          // Navigate to the CartPage
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => CartPage(email: email)),
+          );
+        },
       ),
+    // Refresh button
+    IconButton(
+      icon: Icon(Icons.refresh, color: Colors.white), // Refresh icon color set to white
+      onPressed: () {
+        // Fetch the menu items to refresh the data
+        _fetchMenuItems();
+      },
+    ),
+  ],
+),
+
       body: Column(
         children: [
           // Show warning message if the user is outside the campus

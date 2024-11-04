@@ -32,64 +32,65 @@ class _RegistrationPageState extends State<RegistrationPage> {
   }
 
   // Register function with role parameter
-  Future<void> _register() async {
-    setState(() {
-      _isLoading = true;
-    });
+Future<void> _register() async {
+  setState(() {
+    _isLoading = true;
+  });
 
-    try {
-      UserCredential userCredential =
-          await _auth.createUserWithEmailAndPassword(
-        email: _email,
-        password: _password,
-      );
+  try {
+    UserCredential userCredential =
+        await _auth.createUserWithEmailAndPassword(
+      email: _email,
+      password: _password,
+    );
 
-      User? user = userCredential.user;
+    User? user = userCredential.user;
 
-      if (user != null) {
-        await user.updateDisplayName(_name);
+    if (user != null) {
+      await user.updateDisplayName(_name);
 
-        // Prepare data for Firestore
-        Map<String, dynamic> userData = {
-          'fullName': _name,
-          'email': _email,
-          'role': _selectedRole, // Store the selected role in Firestore
-          'createdAt': FieldValue.serverTimestamp(),
-        };
+      // Prepare data for Firestore
+      Map<String, dynamic> userData = {
+        'fullName': _name,
+        'email': _email,
+        'role': _selectedRole.toLowerCase(), // Convert to lowercase
+        'createdAt': FieldValue.serverTimestamp(),
+      };
 
-        // Add 'authorised' field only for Admin and Counter Manager
-        if (_selectedRole == 'Admin' || _selectedRole == 'Counter Manager') {
-          userData['authorised'] = false; // Set default to false
-        }
-
-        // Store user data in Firestore
-        await _firestore.collection('users').doc(user.uid).set(userData);
-
-        // After registration, navigate to LoginPage
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => LoginPage(isInside: widget.isInside, locationAbleToTrack: widget.locationAbleToTrack),
-          ),
-        );
-      }
-    } on FirebaseAuthException catch (e) {
-      String message = 'An error occurred. Please try again.';
-      if (e.code == 'email-already-in-use') {
-        message = 'The email address is already in use.';
-      } else if (e.code == 'weak-password') {
-        message = 'The password is too weak.';
+      // Add 'authorised' field only for Admin and Counter Manager
+      if (_selectedRole == 'Admin' || _selectedRole == 'Counter Manager') {
+        userData['authorised'] = false; // Set default to false
       }
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(message)),
+      // Store user data in Firestore
+      await _firestore.collection('users').doc(user.uid).set(userData);
+
+      // After registration, navigate to LoginPage
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => LoginPage(isInside: widget.isInside, locationAbleToTrack: widget.locationAbleToTrack),
+        ),
       );
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
     }
+  } on FirebaseAuthException catch (e) {
+    String message = 'An error occurred. Please try again.';
+    if (e.code == 'email-already-in-use') {
+      message = 'The email address is already in use.';
+    } else if (e.code == 'weak-password') {
+      message = 'The password is too weak.';
+    }
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
+  } finally {
+    setState(() {
+      _isLoading = false;
+    });
   }
+}
+
 
   @override
   Widget build(BuildContext context) {
