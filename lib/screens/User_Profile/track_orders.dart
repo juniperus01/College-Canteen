@@ -75,6 +75,11 @@ class TrackOrdersPage extends StatelessWidget {
                 String formattedDate = DateFormat('d MMM yyyy, hh:mm a').format(timestamp.toDate());
                 double totalPrice = order['totalPrice'] ?? 0.0;
                 List<Map<String, dynamic>> items = List<Map<String, dynamic>>.from(order['items']);
+                String status = order['status'] ?? 'pending';
+                int orderNumber = order['orderNumber'] ?? 0; // Replace with your field name
+
+                // Determine heading color based on status
+                Color headingColor = status == 'completed' ? Colors.green : Colors.orange;
 
                 return Card(
                   elevation: 4,
@@ -84,24 +89,36 @@ class TrackOrdersPage extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      // Date and time heading with red background and white font, left-aligned
+                      // Heading with dynamic background color, order number, and formatted date
                       Container(
                         padding: EdgeInsets.all(8.0),
                         decoration: BoxDecoration(
-                          color: Colors.red,
+                          color: headingColor,
                           borderRadius: BorderRadius.only(
                             topLeft: Radius.circular(15),
                             topRight: Radius.circular(15),
                           ),
                         ),
-                        child: Text(
-                          formattedDate,
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          textAlign: TextAlign.left,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Order #$orderNumber',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              formattedDate,
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 14,
+                                fontWeight: FontWeight.normal,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                       Padding(
