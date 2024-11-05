@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart'; // Add this line for FirebaseAuth
 
 class EditProfilePage extends StatefulWidget {
   final String fullName;
@@ -103,7 +104,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   Future<void> _updateUserProfile() async {
     try {
-      // Find the user document ID using email
+      // First, find the user document ID using email
       QuerySnapshot snapshot = await FirebaseFirestore.instance
           .collection('users')
           .where('email', isEqualTo: widget.email)
@@ -113,23 +114,34 @@ class _EditProfilePageState extends State<EditProfilePage> {
         // Get the document ID
         String docId = snapshot.docs.first.id;
 
-        // Update user profile in Firestore
+        // Update user full name in Firestore
         await FirebaseFirestore.instance.collection('users').doc(docId).update({
           'fullName': fullName,
-          'password': password, // Ensure to hash the password before saving
+          // Remove password here since we don't save it in Firestore anymore
         });
-        
-        // Show success message
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Profile updated successfully!'),
-            backgroundColor: Colors.red,
-            duration: Duration(seconds: 2),
-          ),
-        );
 
-        // Optionally navigate back or refresh the page
-        Navigator.pop(context);
+        // Update user password in Firebase Authentication
+        User? user = FirebaseAuth.instance.currentUser;
+
+        if (user != null) {
+          await user.updatePassword(password);
+          // Password successfully updated in Firebase Auth
+
+          // Show success message
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Profile updated successfully!'),
+              backgroundColor: Colors.green,
+              duration: Duration(seconds: 2),
+            ),
+          );
+
+          // Optionally navigate back or refresh the page
+          Navigator.pop(context);
+        } else {
+          // Handle the case where the user is not logged in
+          _showErrorMessage('User is not logged in.');
+        }
       } else {
         // Handle case when user document is not found
         _showErrorMessage('User not found.');
