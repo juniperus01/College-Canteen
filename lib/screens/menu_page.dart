@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:somato/screens/Counter_Manager/orders.dart';
+import 'package:somato/screens/User_Profile/track_orders.dart';
 
 import '../models/theme_model.dart';
 import './User_Profile/profile_screen.dart';
@@ -44,7 +45,9 @@ class _MenuPageState extends State<MenuPage> {
         locationAbleToTrack: widget.locationAbleToTrack,
       ),
       if (widget.email == "master.admin@somaiya.edu")
-        ManageStaffPage(), // Add ManageAdminsPage if the user is the master admin
+        ManageStaffPage(), // Add ManageStaffPage if the user is the master admin
+      if (widget.role == "customer")
+        TrackOrdersPage(email: widget.email),
       UserProfilePage(
         fullName: widget.fullName,
         email: widget.email,
@@ -53,6 +56,7 @@ class _MenuPageState extends State<MenuPage> {
       ),
     ];
   }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<ThemeModel>(
@@ -67,28 +71,24 @@ class _MenuPageState extends State<MenuPage> {
               ),
               if (widget.email == "master.admin@somaiya.edu")
                 BottomNavigationBarItem(
-                  icon: Icon(Icons.admin_panel_settings), // Icon for 'Admins' section
+                  icon: Icon(Icons.admin_panel_settings),
                   label: 'Staff',
-              ),
+                ),
+              if (widget.role == "customer")
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.fastfood),
+                  label: 'Track Orders',
+                ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.person),
                 label: 'Profile',
               ),
-              
             ],
             currentIndex: _selectedIndex,
             selectedItemColor: Theme.of(context).primaryColor,
             onTap: (index) {
               setState(() {
-                _selectedIndex = index;
-                if (index == 2) {
-                  _pages[2] = UserProfilePage(
-                    fullName: widget.fullName,
-                    email: widget.email,
-                    isInside: widget.isInside,
-                    locationAbleToTrack: widget.locationAbleToTrack,
-                  );
-                }
+                _selectedIndex = index; // Update selected index
               });
             },
           ),
@@ -116,7 +116,6 @@ class MenuPageContent extends StatefulWidget {
 }
 
 class _MenuPageContentState extends State<MenuPageContent> {
-  // Map to link collection names to menu titles
   final Map<String, String> categoryTitles = {
     'dosa': 'Dosa',
     'chat': 'Chat',
@@ -163,7 +162,7 @@ class _MenuPageContentState extends State<MenuPageContent> {
             expandedHeight: 200.0,
             floating: false,
             pinned: true,
-            backgroundColor: Colors.red, // Set the background color for SliverAppBar
+            backgroundColor: Colors.red,
             iconTheme: IconThemeData(color: Colors.white),
             flexibleSpace: FlexibleSpaceBar(
               title: Text(
@@ -172,7 +171,6 @@ class _MenuPageContentState extends State<MenuPageContent> {
               ),
             ),
             actions: [
-              // Show cart icon only if the user role is not Admin
               if (widget.user_role != 'admin')
                 IconButton(
                   icon: Icon(Icons.shopping_cart, color: Colors.white),

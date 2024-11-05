@@ -98,6 +98,15 @@ class _CategoryMenuPageState extends State<CategoryMenuPage> {
     color: Colors.white, // Sets back arrow icon color to white
   ),
   actions: [
+    // Refresh button
+    IconButton(
+      icon: Icon(Icons.refresh, color: Colors.white), // Refresh icon color set to white
+      onPressed: () {
+        // Fetch the menu items to refresh the data
+        _fetchMenuItems();
+      },
+    ),
+    
     if (role == 'customer') // Show cart icon for customer only
       IconButton(
         icon: Icon(Icons.shopping_cart, color: Colors.white), // Cart icon color set to white
@@ -109,14 +118,6 @@ class _CategoryMenuPageState extends State<CategoryMenuPage> {
           );
         },
       ),
-    // Refresh button
-    IconButton(
-      icon: Icon(Icons.refresh, color: Colors.white), // Refresh icon color set to white
-      onPressed: () {
-        // Fetch the menu items to refresh the data
-        _fetchMenuItems();
-      },
-    ),
   ],
 ),
 
