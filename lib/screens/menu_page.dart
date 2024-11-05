@@ -53,6 +53,7 @@ class _MenuPageState extends State<MenuPage> {
         email: widget.email,
         isInside: widget.isInside,
         locationAbleToTrack: widget.locationAbleToTrack,
+        user_role: widget.role,
       ),
     ];
   }

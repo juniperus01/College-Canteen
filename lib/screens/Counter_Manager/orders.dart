@@ -296,8 +296,8 @@ class _ManageOrdersPageState extends State<ManageOrdersPage> {
     }
   }
 
-  Future<void> _refreshOrders() async {
-    await _fetchOrders();
+  Future<void> _refreshOrders(BuildContext context) async {
+    await Future.delayed(Duration(seconds: 1)); // Simulate a delay for loading
   }
 
   @override
@@ -308,9 +308,9 @@ class _ManageOrdersPageState extends State<ManageOrdersPage> {
         backgroundColor: Colors.red,
         actions: [
           IconButton(
-            icon: Icon(Icons.refresh, color: Colors.white),
-            onPressed: _refreshOrders,
-          ),
+          icon: Icon(Icons.refresh, color: Colors.white),
+          onPressed: () => _refreshOrders(context),
+        ),
         ],
       ),
       body: _isLoading
@@ -345,6 +345,7 @@ class _ManageOrdersPageState extends State<ManageOrdersPage> {
                   imageUrl: widget.imageUrl,
                   isInside: true,
                   locationAbleToTrack: true,
+                  user_role: "counter manager",
                 ),
               ));
             }

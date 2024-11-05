@@ -84,6 +84,10 @@ class _CategoryMenuPageState extends State<CategoryMenuPage> {
           item['description'].toString().toLowerCase().contains(query.toLowerCase())).toList();
     });
   }
+  
+  Future<void> _refreshOrders(BuildContext context) async {
+    await Future.delayed(Duration(seconds: 1)); // Simulate a delay for loading
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -101,10 +105,7 @@ class _CategoryMenuPageState extends State<CategoryMenuPage> {
     // Refresh button
     IconButton(
       icon: Icon(Icons.refresh, color: Colors.white), // Refresh icon color set to white
-      onPressed: () {
-        // Fetch the menu items to refresh the data
-        _fetchMenuItems();
-      },
+      onPressed: () => _refreshOrders(context),
     ),
     
     if (role == 'customer') // Show cart icon for customer only

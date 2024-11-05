@@ -11,12 +11,14 @@ class UserProfilePage extends StatelessWidget {
   final String email;
   final String? imageUrl; // Nullable URL for the user's profile image
   final bool isInside, locationAbleToTrack;
+  final String user_role;
 
   UserProfilePage({
     required this.fullName,
     required this.email,
     required this.isInside,
     required this.locationAbleToTrack,
+    required this.user_role,
     this.imageUrl, // Optional parameter
   });
 
@@ -70,24 +72,27 @@ class UserProfilePage extends StatelessWidget {
                 );
               },
             ),
-            ListTile(
-              title: Text('Your Orders'),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => PastOrdersPage(email: email)),
-                );
-              },
-            ),
-            ListTile(
-              title: Text('Track Expenses'),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => ExpenseTrackerPage(email: email)),
-                );
-              },
-            ),
+            // Conditionally render 'Your Orders' and 'Track Expenses'
+            if (user_role == 'customer') ...[
+              ListTile(
+                title: Text('Your Orders'),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => PastOrdersPage(email: email)),
+                  );
+                },
+              ),
+              ListTile(
+                title: Text('Track Expenses'),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => ExpenseTrackerPage(email: email)),
+                  );
+                },
+              ),
+            ],
             ListTile(
               title: Text('Log Out'),
               onTap: () async {
