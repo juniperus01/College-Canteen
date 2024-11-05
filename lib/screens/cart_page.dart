@@ -14,6 +14,17 @@ class CartPage extends StatefulWidget {
   _CartPageState createState() => _CartPageState();
 }
 
+// Utility method for consistent SnackBar styling
+SnackBar createSnackBar(String message) {
+  return SnackBar(
+    content: Text(
+      message,
+      style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold), // Custom font style
+    ),
+    backgroundColor: Colors.red, // Red background
+  );
+}
+
 class _CartPageState extends State<CartPage> {
   late Razorpay _razorpay;
 
@@ -40,7 +51,7 @@ class _CartPageState extends State<CartPage> {
     var options = {
       'key': 'rzp_test_iRK7aDGG0C6UAR', // Replace with your Razorpay API key
       'amount': amount * 100, // Amount is in paise
-      'name': 'College Canteen',
+      'name': 'Somato',
       'description': 'Order Payment',
       'prefill': {
         'contact': '9876543210',
@@ -87,32 +98,42 @@ class _CartPageState extends State<CartPage> {
     }
   }
 
-  void _handlePaymentSuccessWeb(dynamic response) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text("Payment successful! Payment ID: ${response['razorpay_payment_id']}"),
-    ));
-    // Clear cart after successful payment
-    Provider.of<CartModel>(context, listen: false).clearCart();
-  }
+  void _handlePaymentSuccessWeb(dynamic response) async {
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: Text(
+        "We received your payment!",
+        style: TextStyle(color: Colors.white), // White text
+      ),
+      backgroundColor: Colors.red, // Red background
+    ),
+  );
+  // // Clear cart after successful payment
+  // Provider.of<CartModel>(context, listen: false).clearCart();
+  
+  // Assuming `cart.placeOrder` is an asynchronous method, we need to `await` it correctly
+  final cart = Provider.of<CartModel>(context, listen: false);
+  await cart.placeOrder(context, widget.email, response['razorpay_payment_id']);
+}
+
 
   void _handlePaymentSuccess(PaymentSuccessResponse response) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text("Payment successful! Payment ID: ${response.paymentId}"),
-    ));
-    // Clear cart after successful payment
-    Provider.of<CartModel>(context, listen: false).clearCart();
+    ScaffoldMessenger.of(context).showSnackBar(
+      createSnackBar("Payment successful! Payment ID: ${response.paymentId}"),
+    );
+    
   }
 
   void _handlePaymentError(PaymentFailureResponse response) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text("Payment failed. Error: ${response.message}"),
-    ));
+    ScaffoldMessenger.of(context).showSnackBar(
+      createSnackBar("Payment failed. Error: ${response.message}"),
+    );
   }
 
   void _handleExternalWallet(ExternalWalletResponse response) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text("External Wallet Selected: ${response.walletName}"),
-    ));
+    ScaffoldMessenger.of(context).showSnackBar(
+      createSnackBar("External Wallet Selected: ${response.walletName}"),
+    );
   }
 
   @override

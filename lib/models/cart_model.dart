@@ -77,7 +77,7 @@ class CartModel extends ChangeNotifier {
     return orderNumber;
   }
 
-  Future<void> placeOrder(BuildContext context, String userEmail) async {
+  Future<void> placeOrder(BuildContext context, String userEmail, String razorpayPaymentId) async {
     if (_items.isEmpty) return;
 
     int orderNumber = await getNextOrderNumber();
@@ -94,6 +94,7 @@ class CartModel extends ChangeNotifier {
       'timestamp': FieldValue.serverTimestamp(),
       'status': "pending",
       'orderNumber': orderNumber,
+      'razorpay_payment_id':razorpayPaymentId,
     };
 
     try {
