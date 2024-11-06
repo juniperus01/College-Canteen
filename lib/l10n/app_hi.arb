@@ -1,0 +1,180 @@
+{
+    "@@locale": "hi",
+    
+   
+    "appTitle": "सोमाटो",
+    "loading": "लोड हो रहा है...",
+    "error": "त्रुटि",
+    "success": "सफलता",
+    "retry": "पुनः प्रयास करें",
+    "cancel": "रद्द करें",
+    "confirm": "पुष्टि करें",
+    "save": "सहेजें",
+    "delete": "हटाएँ",
+    "edit": "संपादित करें",
+    "update": "अपडेट करें",
+    "add": "जोड़ें",
+    "remove": "निकालें",
+    "logout": "लॉग आउट",
+    "confirmLogout": "लॉग आउट की पुष्टि करें",
+    "logoutMessage": "क्या आप लॉग आउट करना चाहते हैं?",
+    "trackOrdersLabel": "ऑर्डर ट्रैक करें",
+    "staffLabel": "स्टाफ",
+
+    
+
+   
+    "loginTitle": "लॉगिन",
+    "registerTitle": "रजिस्टर करें",
+    "email": "ईमेल",
+    "password": "पासवर्ड",
+    "emailHint": "अपना सोमैया ईमेल दर्ज करें",
+    "passwordHint": "अपना पासवर्ड दर्ज करें (कम से कम 6 अक्षर)",
+    "loginButton": "लॉगिन",
+    "registerButton": "रजिस्टर करें",
+    "forgotPassword": "पासवर्ड भूल गए?",
+    "noAccount": "खाता नहीं है? रजिस्टर करें",
+    "haveAccount": "पहले से खाता है? लॉगिन करें",
+    "loginAs": "लॉगिन के रूप में",
+    "registerAs": "रजिस्टर के रूप में",
+    "customer": "ग्राहक",
+    "admin": "प्रशासक",
+    "counterManager": "काउंटर प्रबंधक",
+    "invalidEmail": "कृपया सोमैया ईमेल (@somaiya.edu) का उपयोग करें",
+    "invalidPassword": "पासवर्ड कम से कम 6 अक्षरों का होना चाहिए",
+    "loginError": "अमान्य जानकारी। कृपया पुनः प्रयास करें।",
+    "registerError": "रजिस्ट्रेशन विफल। कृपया पुनः प्रयास करें।",
+    "unauthorizedAccess": "आप {role} के रूप में अधिकृत नहीं हैं",
+    "@unauthorizedAccess": {
+        "placeholders": {
+            "role": {
+                "type": "String"
+            }
+        }
+    },
+
+    
+    "profileTitle": "प्रोफ़ाइल",
+    "yourProfile": "आपकी प्रोफ़ाइल",
+    "editProfile": "प्रोफ़ाइल संपादित करें",
+    "appearance": "दिखावट",
+    "language": "भाषा",
+    "selectLanguage": "भाषा चुनें",
+    "darkMode": "डार्क मोड",
+    "orderHistory": "ऑर्डर इतिहास",
+    "trackExpenses": "खर्च ट्रैक करें",
+    "logoutButton": "लॉग आउट",
+    "logoutConfirm": "क्या आप लॉग आउट करना चाहते हैं?",
+    "profileUpdateSuccess": "प्रोफ़ाइल सफलतापूर्वक अपडेट की गई",
+    "profileUpdateError": "प्रोफ़ाइल अपडेट करने में विफल",
+
+    
+    "menuTitle": "मेन्यू",
+    "searchHint": "डिश खोजें...",
+    "searchCategories": "श्रेणियाँ खोजें...",
+    
+    "addNewItem": "नया आइटम जोड़ें",
+    "modifyItem": "आइटम संशोधित करें",
+    "itemName": "आइटम का नाम",
+    "itemPrice": "कीमत",
+    "itemDescription": "विवरण",
+    "itemAvailability": "उपलब्धता",
+    "itemAdded": "आइटम सफलतापूर्वक जोड़ा गया",
+    "itemUpdated": "आइटम सफलतापूर्वक अपडेट किया गया",
+    "itemDeleted": "आइटम सफलतापूर्वक हटाया गया",
+    "confirmDelete": "क्या आप इस आइटम को हटाना चाहते हैं?",
+    "estimatedTime": "अनुमानित समय: {minutes} मिनट",
+    "@estimatedTime": {
+        "placeholders": {
+            "minutes": {
+                "type": "double"
+            }
+        }
+    },
+    
+   
+    "dosaCategory": "दोसा",
+    "chatCategory": "चाट",
+    "snacksCategory": "स्नैक्स",
+    "frankyCategory": "फ्रेंकी",
+    "hotItemsCategory": "गरम पेय",
+    "sandwichesCategory": "सैंडविच",
+    
+    "dosaDescription": "क्रिस्पी दक्षिण भारतीय डोसा",
+    "chatDescription": "स्वादिष्ट स्ट्रीट फूड चाट",
+    "snacksDescription": "हल्के स्नैक्स और एपेटाइज़र",
+    "frankyDescription": "भारतीय शैली के रैप्स",
+    "hotItemsDescription": "चाय और कॉफी",
+    "sandwichesDescription": "ताजा सैंडविच",
+    
+    
+    "cartTitle": "कार्ट",
+    "emptyCart": "आपकी कार्ट खाली है",
+    "addToCart": "कार्ट में जोड़ें",
+    "removeFromCart": "कार्ट से हटाएं",
+    "placeOrder": "ऑर्डर करें",
+    "total": "कुल: ₹{amount}",
+    "@total": {
+        "placeholders": {
+            "amount": {
+                "type": "double"
+            }
+        }
+    },
+    "orderConfirmed": "ऑर्डर सफलतापूर्वक दिया गया!",
+    "orderFailed": "ऑर्डर देने में विफल",
+    "orderProcessing": "आपका ऑर्डर प्रोसेस किया जा रहा है...",
+
+    
+    "ordersTitle": "ऑर्डर",
+    "pendingOrders": "लंबित ऑर्डर",
+    "completedOrders": "संपूर्ण ऑर्डर",
+    "noOrders": "कोई ऑर्डर नहीं मिला",
+    "orderNumber": "ऑर्डर # {number}",
+    "@orderNumber": {
+        "placeholders": {
+            "number": {
+                "type": "int"
+            }
+        }
+    },
+    "orderDate": "{date} को ऑर्डर किया गया",
+    "@orderDate": {
+        "placeholders": {
+            "date": {
+                "type": "String"
+            }
+        }
+    },
+    "orderStatus": "स्थिति: {status}",
+    "@orderStatus": {
+        "placeholders": {
+            "status": {
+                "type": "String"
+            }
+        }
+    },
+    "orderQuantity": "x{quantity}",
+    "@orderQuantity": {
+        "placeholders": {
+            "quantity": {
+                "type": "int"
+            }
+        }
+    },
+
+    
+    "locationWarning": "कृपया ऑर्डर करने के लिए कैंपस के अंदर सुनिश्चित करें।",
+    "locationServicesWarning": "ऐप का उपयोग करने के लिए स्थान सेवाएँ चालू करें।",
+    "outsideCampus": "आप कैंपस क्षेत्र के बाहर हैं",
+    "insideCampus": "आप कैंपस क्षेत्र के अंदर हैं",
+    "checkingLocation": "आपके स्थान की जाँच हो रही है...",
+
+   
+    "expenseTitle": "खर्च ट्रैकर",
+    "totalSpent": "कुल खर्च",
+    "monthlyExpenses": "मासिक खर्च",
+    "dailyExpenses": "दैनिक खर्च",
+    "noExpenses": "दिखाने के लिए कोई खर्च नहीं",
+    "viewDetails": "विवरण देखें"
+}

@@ -1,0 +1,332 @@
+{
+    "@@locale": "en",
+
+    "appTitle": "Somato",
+    "@appTitle": {
+        "description": "The name of the application"
+    },
+    "loading": "Loading...",
+    "@loading": {
+        "description": "Loading indicator text"
+    },
+    "error": "Error",
+    "@error": {
+        "description": "General error message"
+    },
+    "success": "Success",
+    "@success": {
+        "description": "General success message"
+    },
+    "retry": "Retry",
+    "@retry": {
+        "description": "Retry button text"
+    },
+    "cancel": "Cancel",
+    "@cancel": {
+        "description": "Cancel button text"
+    },
+    "confirm": "Confirm",
+    "@confirm": {
+        "description": "Confirm button text"
+    },
+    "save": "Save",
+    "@save": {
+        "description": "Save button text"
+    },
+    "delete": "Delete",
+    "@delete": {
+        "description": "Delete button text"
+    },
+    "edit": "Edit",
+    "@edit": {
+        "description": "Edit button text"
+    },
+    "update": "Update",
+    "@update": {
+        "description": "Update button text"
+    },
+    "add": "Add",
+    "@add": {
+        "description": "Add button text"
+    },
+    "remove": "Remove",
+    "@remove": {
+        "description": "Remove button text"
+    },
+
+    "loginTitle": "Login",
+    "@loginTitle": {
+        "description": "Login screen title"
+    },
+    "registerTitle": "Register",
+    "@registerTitle": {
+        "description": "Register screen title"
+    },
+    "staffLabel": "Staff",
+"@staffLabel": {
+    "description": "Label for the Staff section in the bottom navigation bar"
+},
+"trackOrdersLabel": "Track Orders",
+"@trackOrdersLabel": {
+    "description": "Label for the Track Orders section in the bottom navigation bar"
+},
+
+    "email": "Email",
+    "@email": {
+        "description": "Email input label"
+    },
+    "password": "Password",
+    "@password": {
+        "description": "Password input label"
+    },
+    "emailHint": "Enter your Somaiya email",
+    "@emailHint": {
+        "description": "Hint text for email input"
+    },
+    "passwordHint": "Enter your password (min. 6 characters)",
+    "@passwordHint": {
+        "description": "Hint text for password input"
+    },
+    "loginButton": "Login",
+    "@loginButton": {
+        "description": "Login button text"
+    },
+    "registerButton": "Register",
+    "@registerButton": {
+        "description": "Register button text"
+    },
+    "forgotPassword": "Forgot Password?",
+    "@forgotPassword": {
+        "description": "Forgot password link text"
+    },
+    "noAccount": "Don't have an account? Register",
+    "@noAccount": {
+        "description": "Text prompting user to register if no account"
+    },
+    "haveAccount": "Already have an account? Login",
+    "@haveAccount": {
+        "description": "Text prompting user to login if they have an account"
+    },
+    "loginAs": "Login as",
+    "@loginAs": {
+        "description": "Login as role text"
+    },
+    "registerAs": "Register as",
+    "@registerAs": {
+        "description": "Register as role text"
+    },
+    "customer": "Customer",
+    "@customer": {
+        "description": "Customer role text"
+    },
+    "admin": "Admin",
+    "@admin": {
+        "description": "Admin role text"
+    },
+    "counterManager": "Counter Manager",
+    "@counterManager": {
+        "description": "Counter Manager role text"
+    },
+    "invalidEmail": "Please use a Somaiya email (@somaiya.edu)",
+    "@invalidEmail": {
+        "description": "Error message for invalid email"
+    },
+    "invalidPassword": "Password must be at least 6 characters",
+    "@invalidPassword": {
+        "description": "Error message for invalid password"
+    },
+    "loginError": "Invalid credentials. Please try again.",
+    "@loginError": {
+        "description": "Error message for login failure"
+    },
+    "registerError": "Registration failed. Please try again.",
+    "@registerError": {
+        "description": "Error message for registration failure"
+    },
+    "unauthorizedAccess": "You are not authorized as {role}",
+    "@unauthorizedAccess": {
+        "description": "Unauthorized access error message with role placeholder",
+        "placeholders": {
+            "role": {
+                "type": "String"
+            }
+        }
+    },
+
+    "profileTitle": "Profile",
+    "@profileTitle": {
+        "description": "Profile screen title"
+    },
+    "yourProfile": "Your Profile",
+    "@yourProfile": {
+        "description": "Label for user's profile section"
+    },
+    "editProfile": "Edit Profile",
+    "@editProfile": {
+        "description": "Edit profile button text"
+    },
+    "appearance": "Appearance",
+    "@appearance": {
+        "description": "Appearance settings option"
+    },
+    "language": "Language",
+    "@language": {
+        "description": "Language settings option"
+    },
+    "selectLanguage": "Select Language",
+    "@selectLanguage": {
+        "description": "Select language dialog title"
+    },
+    "darkMode": "Dark Mode",
+    "@darkMode": {
+        "description": "Dark mode toggle label"
+    },
+    "orderHistory": "Order History",
+    "@orderHistory": {
+        "description": "Order history section label"
+    },
+    "trackExpenses": "Track Expenses",
+    "@trackExpenses": {
+        "description": "Expense tracking section label"
+    },
+    "logout": "Log Out",
+    "@logout": {
+        "description": "Logout button text"
+    },
+    "confirmLogout": "Confirm Logout",
+    "@confirmLogout": {
+        "description": "Logout confirmation dialog title"
+    },
+    "logoutMessage": "Are you sure you want to log out?",
+    "@logoutMessage": {
+        "description": "Logout confirmation message"
+    },
+    "logoutButton": "Logout",
+    "@logoutButton": {
+        "description": "Logout button label"
+    },
+    "logoutConfirm": "Are you sure you want to logout?",
+    "@logoutConfirm": {
+        "description": "Logout confirmation message"
+    },
+    "profileUpdateSuccess": "Profile updated successfully",
+    "@profileUpdateSuccess": {
+        "description": "Success message for profile update"
+    },
+    "profileUpdateError": "Failed to update profile",
+    "@profileUpdateError": {
+        "description": "Error message for profile update failure"
+    },
+
+    "menuTitle": "Menu",
+    "@menuTitle": {
+        "description": "Menu screen title"
+    },
+    "searchHint": "Search dishes...",
+    "@searchHint": {
+        "description": "Hint text for searching dishes"
+    },
+    "searchCategories": "Search categories...",
+    "@searchCategories": {
+        "description": "Hint text for searching categories"
+    },
+
+    "dosaCategory": "Dosa",
+    "@dosaCategory": {
+        "description": "Category name for Dosa"
+    },
+    "chatCategory": "Chat",
+    "@chatCategory": {
+        "description": "Category name for Chat"
+    },
+    "snacksCategory": "Snacks",
+    "@snacksCategory": {
+        "description": "Category name for Snacks"
+    },
+    "frankyCategory": "Franky",
+    "@frankyCategory": {
+        "description": "Category name for Franky"
+    },
+    "hotItemsCategory": "Hot Items",
+    "@hotItemsCategory": {
+        "description": "Category name for Hot Items like Tea and Coffee"
+    },
+    "sandwichesCategory": "Sandwiches",
+    "@sandwichesCategory": {
+        "description": "Category name for Sandwiches"
+    },
+
+    "dosaDescription": "Crispy South Indian crepes",
+    "@dosaDescription": {
+        "description": "Description for Dosa category"
+    },
+    "chatDescription": "Savory street food snacks",
+    "@chatDescription": {
+        "description": "Description for Chat category"
+    },
+    "snacksDescription": "Quick bites and appetizers",
+    "@snacksDescription": {
+        "description": "Description for Snacks category"
+    },
+    "frankyDescription": "Indian-style wraps",
+    "@frankyDescription": {
+        "description": "Description for Franky category"
+    },
+    "hotItemsDescription": "Tea and Coffee",
+    "@hotItemsDescription": {
+        "description": "Description for Hot Items category"
+    },
+    "sandwichesDescription": "Fresh sandwiches",
+    "@sandwichesDescription": {
+        "description": "Description for Sandwiches category"
+    },
+    "addNewItem": "Add New Item",
+    "@addNewItem": {
+        "description": "Button text to add a new menu item"
+    },
+    "modifyItem": "Modify Item",
+    "@modifyItem": {
+        "description": "Button text to modify an item"
+    },
+    "itemName": "Item Name",
+    "@itemName": {
+        "description": "Label for menu item name"
+    },
+    "itemPrice": "Price",
+    "@itemPrice": {
+        "description": "Label for menu item price"
+    },
+    "itemDescription": "Description",
+    "@itemDescription": {
+        "description": "Label for item description"
+    },
+    "itemAvailability": "Available",
+    "@itemAvailability": {
+        "description": "Label indicating item availability"
+    },
+    "itemAdded": "Item added successfully",
+    "@itemAdded": {
+        "description": "Success message when item is added"
+    },
+    "itemUpdated": "Item updated successfully",
+    "@itemUpdated": {
+        "description": "Success message when item is updated"
+    },
+    "itemDeleted": "Item removed successfully",
+    "@itemDeleted": {
+        "description": "Success message when item is removed"
+    },
+    "confirmDelete": "Are you sure you want to remove this item?",
+    "@confirmDelete": {
+        "description": "Confirmation message for item deletion"
+    },
+    "estimatedTime": "Estimated Time: {minutes} mins",
+    "@estimatedTime": {
+        "description": "Estimated time display with minutes placeholder",
+        "placeholders": {
+            "minutes": {
+                "type": "double"
+            }
+        }
+    }
+}
