@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:somato/screens/User_Profile/track_orders.dart';
 
 class CartModel extends ChangeNotifier {
   List<Map<String, dynamic>> _items = [];
@@ -78,38 +79,45 @@ class CartModel extends ChangeNotifier {
   }
 
   Future<void> placeOrder(BuildContext context, String userEmail, String razorpayPaymentId) async {
-    if (_items.isEmpty) return;
+  if (_items.isEmpty) return;
 
-    int orderNumber = await getNextOrderNumber();
+  int orderNumber = await getNextOrderNumber();
 
-    // Prepare order data with quantities
-    final orderData = {
-      'items': _items.map((item) => {
-        'name': item['name'],
-        'quantity': item['quantity'], // Include quantity here
-        'price': item['price'], // Optionally include the price for reference
-      }).toList(),
-      'totalPrice': totalPrice,
-      'user_email': userEmail,
-      'timestamp': FieldValue.serverTimestamp(),
-      'status': "pending",
-      'orderNumber': orderNumber,
-      'razorpay_payment_id':razorpayPaymentId,
-    };
+  // Prepare order data with quantities
+  final orderData = {
+    'items': _items.map((item) => {
+      'name': item['name'],
+      'quantity': item['quantity'], // Include quantity here
+      'price': item['price'], // Optionally include the price for reference
+    }).toList(),
+    'totalPrice': totalPrice,
+    'user_email': userEmail,
+    'timestamp': FieldValue.serverTimestamp(),
+    'status': "pending",
+    'orderNumber': orderNumber,
+    'razorpay_payment_id': razorpayPaymentId,
+  };
 
-    try {
-      // Save the order to Firestore
-      await FirebaseFirestore.instance.collection('orders').add(orderData);
-      _showNotification(context, 'Order Placed Successfully!');
-    } catch (e) {
-      print('Error placing order: $e');
-      _showNotification(context, 'Failed to place order!');
-      return;
-    }
-
-    // Clear the cart after successful order placement
-    clearCart();
+  try {
+    // Save the order to Firestore
+    await FirebaseFirestore.instance.collection('orders').add(orderData);
+    _showNotification(context, 'Order Placed Successfully!');
+  } catch (e) {
+    print('Error placing order: $e');
+    _showNotification(context, 'Failed to place order!');
+    return;
   }
+
+  // Clear the cart after successful order placement
+  clearCart();
+
+  // Navigate to TrackOrdersPage after clearing the cart
+  Navigator.pushReplacement(
+    context,
+    MaterialPageRoute(builder: (context) => TrackOrdersPage(email: userEmail,)), // Replace with actual constructor of TrackOrdersPage
+  );
+}
+
 
   void clearCart() {
     _items.clear();

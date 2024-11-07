@@ -20,7 +20,7 @@ class TrackOrdersPage extends StatelessWidget {
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
-            Navigator.pop(context); // Navigate back to the menu page
+            Navigator.pop(context); // Navigate back to the previous page
           },
         ),
         actions: [
@@ -50,14 +50,13 @@ class TrackOrdersPage extends StatelessWidget {
 
             final orders = snapshot.data!.docs;
 
-            // Sort orders by timestamp, with pending orders on top
+            // Sort orders by status (pending first) and then by timestamp (latest first)
             orders.sort((a, b) {
               var orderA = a.data() as Map<String, dynamic>;
               var orderB = b.data() as Map<String, dynamic>;
               Timestamp timestampA = orderA['timestamp'] as Timestamp;
               Timestamp timestampB = orderB['timestamp'] as Timestamp;
 
-              // Compare timestamps
               int statusComparison = (orderA['status'] == 'pending' ? 0 : 1)
                   .compareTo(orderB['status'] == 'pending' ? 0 : 1);
               if (statusComparison != 0) {
@@ -89,7 +88,7 @@ class TrackOrdersPage extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      // Heading with dynamic background color, order number, and formatted date
+                      // Heading with dynamic background color, order number, and formatted date or Processing message
                       Container(
                         padding: EdgeInsets.all(8.0),
                         decoration: BoxDecoration(
@@ -111,7 +110,7 @@ class TrackOrdersPage extends StatelessWidget {
                               ),
                             ),
                             Text(
-                              formattedDate,
+                              status == 'pending' ? 'Processing...' : formattedDate,
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 14,
