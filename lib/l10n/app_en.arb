@@ -13,6 +13,10 @@
     "@error": {
         "description": "General error message"
     },
+    "errorLoadingItems": "Error loading items. Please try again.",
+    "@errorLoadingItems": {
+        "description": "Error message shown when items fail to load"
+    },
     "success": "Success",
     "@success": {
         "description": "General success message"
@@ -63,13 +67,17 @@
         "description": "Register screen title"
     },
     "staffLabel": "Staff",
-"@staffLabel": {
+    "@staffLabel": {
     "description": "Label for the Staff section in the bottom navigation bar"
-},
-"trackOrdersLabel": "Track Orders",
-"@trackOrdersLabel": {
+    },
+    "trackOrdersLabel": "Track Orders",
+    "@trackOrdersLabel": {
     "description": "Label for the Track Orders section in the bottom navigation bar"
-},
+    },
+    "somatoMenu": "Somato Menu",
+    "@somatoMenu": {
+        "description": "Title for the main menu screen and app bar"
+    },
 
     "email": "Email",
     "@email": {
@@ -216,6 +224,60 @@
     "profileUpdateError": "Failed to update profile",
     "@profileUpdateError": {
         "description": "Error message for profile update failure"
+    },
+
+    "locationWarning": "Oops! Please ensure you're inside the campus to place an order.",
+    "@locationWarning": {
+        "description": "Warning message shown when user is outside campus boundaries"
+    },
+
+    "enableLocationWarning": "Oops! Please ensure you've enabled your location services.",
+    "@enableLocationWarning": {
+        "description": "Warning message shown when location services are not enabled"
+    },
+
+    "searchInCategory": "{category} में खोजें...",
+    "@searchInCategory": {
+        "description": "Search placeholder text for individual category pages",
+        "placeholders": {
+            "category": {
+                "type": "String",
+                "example": "Dosa"
+            }
+        }
+    },
+
+
+    "noItemsAvailable": "No items available",
+    "@noItemsAvailable": {
+        "description": "Message displayed when no items are found in a category"
+    },
+
+    "itemAddedSuccess": "Item added successfully!",
+    "@itemAddedSuccess": {
+        "description": "Success message shown after adding a new item"
+    },
+
+    "errorAddingItem": "Error adding item: {error}",
+    "@errorAddingItem": {
+        "description": "Error message displayed when item addition fails",
+        "placeholders": {
+            "error": {
+                "type": "String",
+                "example": "Network connection failed"
+            }
+        }
+    },
+
+
+    "name": "Name",
+    "@name": {
+        "description": "Label for name input field"
+    },
+
+    "price": "Price",
+    "@price": {
+        "description": "Label for price input field"
     },
 
     "menuTitle": "Menu",

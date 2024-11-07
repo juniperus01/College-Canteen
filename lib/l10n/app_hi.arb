@@ -9,6 +9,7 @@
     "retry": "पुनः प्रयास करें",
     "cancel": "रद्द करें",
     "confirm": "पुष्टि करें",
+    "somatoMenu": "सोमैटो मेनू",
     "save": "सहेजें",
     "delete": "हटाएँ",
     "edit": "संपादित करें",
@@ -99,6 +100,7 @@
     "frankyCategory": "फ्रेंकी",
     "hotItemsCategory": "गरम पेय",
     "sandwichesCategory": "सैंडविच",
+    "errorLoadingItems": "आइटम लोड करने में त्रुटि। कृपया पुनः प्रयास करें।",
     
     "dosaDescription": "क्रिस्पी दक्षिण भारतीय डोसा",
     "chatDescription": "स्वादिष्ट स्ट्रीट फूड चाट",
@@ -169,6 +171,8 @@
     "outsideCampus": "आप कैंपस क्षेत्र के बाहर हैं",
     "insideCampus": "आप कैंपस क्षेत्र के अंदर हैं",
     "checkingLocation": "आपके स्थान की जाँच हो रही है...",
+    "name": "नाम",
+    "price": "मूल्य",
 
    
     "expenseTitle": "खर्च ट्रैकर",

@@ -1,18 +1,16 @@
 import 'dart:convert';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-
 import '../models/cart_model.dart';
 
-// Function to call the Flask API
+// Keep the existing fetchEstimatedWaitTime function
 Future<double> fetchEstimatedWaitTime(String itemName) async {
   final now = DateTime.now();
-  String orderTime = DateFormat.Hm().format(now); // Format: "HH:mm"
-  String dayOfWeek = DateFormat('EEEE').format(now); // Get full day name
+  String orderTime = DateFormat.Hm().format(now);
+  String dayOfWeek = DateFormat('EEEE').format(now);
 
   Map<String, dynamic> requestBody = {
     'item_name': itemName,
@@ -21,7 +19,7 @@ Future<double> fetchEstimatedWaitTime(String itemName) async {
   };
 
   final response = await http.post(
-    Uri.parse('http://192.168.0.102:5000/estimate_wait_time'), // Replace with your server's URL if different
+    Uri.parse('http://192.168.0.102:5000/estimate_wait_time'),
     headers: {'Content-Type': 'application/json'},
     body: jsonEncode(requestBody),
   );
@@ -50,12 +48,16 @@ class MenuItemCard extends StatelessWidget {
     );
   }
 
-   Widget _buildMenuItemCard(BuildContext context) {
-    final String name = item['name'] ?? 'Unnamed Item'; // Default if 'name' is null
-    final double price = item['price'] != null ? item['price'].toDouble() : 0.0; // Default price
-    final String itemId = item['id'] ?? ''; // Handle null 'id'
-    bool isAvailable = item['available'] ?? true; // Default to true if not set
-    Color textColor = isAvailable ? Colors.black : Colors.grey.shade600; // Original color if available, lighter if unavailable
+  Widget _buildMenuItemCard(BuildContext context) {
+    final locale = Localizations.localeOf(context).languageCode;
+    // Get the appropriate name based on locale
+    final String name = (locale == 'hi' && item['name_hi'] != null)
+        ? item['name_hi'].toString()
+        : item['name'] ?? 'Unnamed Item';
+    final double price = item['price'] != null ? item['price'].toDouble() : 0.0;
+    final String itemId = item['id'] ?? '';
+    bool isAvailable = item['available'] ?? true;
+    Color textColor = isAvailable ? Colors.black : Colors.grey.shade600;
 
     return Card(
       elevation: 4,
@@ -106,10 +108,9 @@ class MenuItemCard extends StatelessWidget {
                     'Price: ₹$price',
                     style: TextStyle(color: textColor),
                   ),
-                  // Display estimated wait time only for non-admin users and available items
                   if (!isAdmin && isAvailable) ...[
                     FutureBuilder<double>(
-                      future: fetchEstimatedWaitTime(name),
+                      future: fetchEstimatedWaitTime(item['name']), // Use original name for API
                       builder: (context, snapshot) {
                         if (snapshot.connectionState == ConnectionState.waiting) {
                           return Text('Estimating...', style: TextStyle(color: textColor));
@@ -150,7 +151,11 @@ class MenuItemCard extends StatelessWidget {
                 : ElevatedButton(
                     onPressed: isInside && isAvailable
                         ? () {
-                            Provider.of<CartModel>(context, listen: false).addItem(item, context);
+                            // Add item with the localized name
+                            final localizedItem = Map<String, dynamic>.from(item);
+                            localizedItem['name'] = name; // Use the localized name
+                            Provider.of<CartModel>(context, listen: false)
+                                .addItem(localizedItem, context);
                           }
                         : null,
                     child: Text('Add'),
