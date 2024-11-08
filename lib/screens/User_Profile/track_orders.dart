@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class TrackOrdersPage extends StatelessWidget {
   final String email;
@@ -15,7 +17,10 @@ class TrackOrdersPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Track Your Orders', style: TextStyle(color: Colors.white)),
+        title: Text(
+          AppLocalizations.of(context)!.trackOrders, // Using localized string
+          style: TextStyle(color: Colors.white),
+        ),
         backgroundColor: Colors.red,
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.white),
@@ -45,7 +50,7 @@ class TrackOrdersPage extends StatelessWidget {
             }
 
             if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-              return Center(child: Text('No orders found'));
+              return Center(child: Text(AppLocalizations.of(context)!.noOrdersFound)); // Using localized string
             }
 
             final orders = snapshot.data!.docs;
@@ -76,7 +81,7 @@ class TrackOrdersPage extends StatelessWidget {
                 double totalPrice = order['totalPrice'] ?? 0.0;
                 List<Map<String, dynamic>> items = List<Map<String, dynamic>>.from(order['items']);
                 String status = order['status'] ?? 'pending';
-                int orderNumber = order['orderNumber'] ?? 0; // Replace with your field name
+                int orderNumber = order['orderNumber'] ?? 0;
 
                 // Determine heading color based on status
                 Color headingColor = status == 'completed' ? Colors.green : Colors.orange;
@@ -103,7 +108,7 @@ class TrackOrdersPage extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              'Order #$orderNumber',
+                              '${AppLocalizations.of(context)!.order} #$orderNumber', // Using localized string
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 16,
@@ -130,18 +135,18 @@ class TrackOrdersPage extends StatelessWidget {
                               // Display all items in the order
                               ...items.map((item) {
                                 final itemName = item['name'];
-                                final itemQuantity = item['quantity'] ?? 1; // Default to 1 if quantity is missing
+                                final itemQuantity = item['quantity'] ?? 1;
                                 return Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     Row(
                                       children: [
-                                        Icon(Icons.fastfood, color: Colors.grey), // Food icon
+                                        Icon(Icons.fastfood, color: Colors.grey),
                                         SizedBox(width: 8),
                                         Text(itemName),
                                       ],
                                     ),
-                                    Text('x$itemQuantity', style: TextStyle(color: Colors.grey)), // Quantity on the right
+                                    Text('x$itemQuantity', style: TextStyle(color: Colors.grey)),
                                   ],
                                 );
                               }).toList(),
@@ -161,13 +166,13 @@ class TrackOrdersPage extends StatelessWidget {
                           ),
                         ),
                         child: Text(
-                          'Total: ₹${totalPrice.toStringAsFixed(2)}',
+                          '${AppLocalizations.of(context)!.total}: ₹${totalPrice.toStringAsFixed(2)}', // Using localized string
                           style: TextStyle(
                             color: Colors.red,
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
                           ),
-                          textAlign: TextAlign.right, // Right-aligned text
+                          textAlign: TextAlign.right,
                         ),
                       ),
                     ],

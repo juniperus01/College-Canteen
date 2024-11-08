@@ -1,0 +1,12 @@
+{
+  "hi": [
+    "enableLocationWarning",
+    "searchInCategory",
+    "noItemsAvailable",
+    "itemAddedSuccess",
+    "errorAddingItem",
+    "refresh",
+    "quantityFormat",
+    "dropdownHint"
+  ]
+}

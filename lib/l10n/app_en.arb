@@ -1,5 +1,9 @@
 {
     "@@locale": "en",
+    "trackOrders": "Track Orders",
+    "noOrdersFound": "No orders found",
+    "order": "Order",
+    "total": "Total",
 
     "appTitle": "Somato",
     "@appTitle": {

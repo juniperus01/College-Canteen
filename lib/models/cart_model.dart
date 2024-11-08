@@ -47,7 +47,7 @@ class CartModel extends ChangeNotifier {
       AppLocalizations.of(context)?.removedFromCart ?? 'Item removed from cart!');
   }
 
-  double get totalPrice => _items.fold(0, 
+  double get totalPrice => _items.fold(0,
     (sum, item) => sum + (item['price'] as num) * item['quantity']);
 
   Future<int> getNextOrderNumber() async {

@@ -22,6 +22,11 @@
     "trackOrdersLabel": "ऑर्डर ट्रैक करें",
     "staffLabel": "स्टाफ",
 
+    "trackOrders": "आदेश ट्रैक करें",
+    "noOrdersFound": "कोई आदेश नहीं मिला",
+    "order": "आदेश",
+    "total": "कुल",
+
     
 
    
