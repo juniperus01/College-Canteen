@@ -4,7 +4,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import '/models/theme_model.dart';
-import '/models/language_model.dart';  
+import '/models/language_model.dart';
 import 'appearance.dart';
 import 'edit_profile.dart';
 import 'expense_tracker.dart';
@@ -17,6 +17,7 @@ class UserProfilePage extends StatelessWidget {
   final String? imageUrl;
   final bool isInside, locationAbleToTrack;
   final String user_role;
+  final String language;
 
   const UserProfilePage({
     required this.fullName,
@@ -24,6 +25,7 @@ class UserProfilePage extends StatelessWidget {
     required this.isInside,
     required this.locationAbleToTrack,
     required this.user_role,
+    required this.language,
     this.imageUrl,
   });
 
@@ -31,7 +33,7 @@ class UserProfilePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final themeModel = Provider.of<ThemeModel>(context);
-    final languageModel = Provider.of<LanguageModel>(context);  
+    final languageModel = Provider.of<LanguageModel>(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -127,7 +129,7 @@ class UserProfilePage extends StatelessWidget {
                           onTap: () => Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => PastOrdersPage(email: email),
+                              builder: (context) => PastOrdersPage(email: email, language: language),
                             ),
                           ),
                         ),
@@ -139,7 +141,7 @@ class UserProfilePage extends StatelessWidget {
                           onTap: () => Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => ExpenseTrackerPage(email: email),
+                              builder: (context) => ExpenseTrackerPage(email: email, language: language),
                             ),
                           ),
                         ),
@@ -203,14 +205,14 @@ class UserProfilePage extends StatelessWidget {
               ListTile(
                 title: const Text('English'),
                 onTap: () {
-                  languageModel.setLocale(const Locale('en'));  
+                  languageModel.setLocale(const Locale('en'));
                   Navigator.pop(context);
                 },
               ),
               ListTile(
                 title: const Text('हिंदी'),
                 onTap: () {
-                  languageModel.setLocale(const Locale('hi'));  
+                  languageModel.setLocale(const Locale('hi'));
                   Navigator.pop(context);
                 },
               ),

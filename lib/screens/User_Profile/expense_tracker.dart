@@ -3,9 +3,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 
 class ExpenseTrackerPage extends StatefulWidget {
-  final String email;
+  final String email, language;
 
-  ExpenseTrackerPage({required this.email});
+  ExpenseTrackerPage({required this.email, required this.language});
 
   @override
   _ExpenseTrackerPageState createState() => _ExpenseTrackerPageState();

@@ -10,23 +10,24 @@ class CartModel extends ChangeNotifier {
   int get itemCount => _items.length;
 
   void addItem(Map<String, dynamic> item, BuildContext context) {
-    final existingItemIndex = _items.indexWhere((existingItem) => 
-      existingItem['name'] == item['name'] && existingItem['name_hi'] == item['name_hi']);
+  final existingItemIndex = _items.indexWhere((existingItem) =>
+    existingItem['name'] == item['name'] && existingItem['name_hi'] == item['name_hi']);
 
-    if (existingItemIndex >= 0) {
-      _items[existingItemIndex]['quantity']++;
-    } else {
-      _items.add({
-        'name': item['name'],
-        'name_hi': item['name_hi'],
-        'price': item['price'],
-        'quantity': 1,
-      });
-    }
-    notifyListeners();
-    _showNotification(context, 
-      AppLocalizations.of(context)?.addedToCart ?? 'Item added to cart!');
+  if (existingItemIndex >= 0) {
+    _items[existingItemIndex]['quantity']++;
+  } else {
+    _items.add({
+      'name': item['name'],      // English name
+      'name_hi': item['name_hi'],  // Hindi name
+      'price': item['price'],
+      'quantity': 1,
+    });
   }
+  notifyListeners();
+  _showNotification(context, 
+    AppLocalizations.of(context)?.addedToCart ?? 'Item added to cart!');
+}
+
 
   void decreaseQuantity(int index, BuildContext context) {
     if (_items[index]['quantity'] > 1) {

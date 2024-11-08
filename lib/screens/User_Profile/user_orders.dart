@@ -3,12 +3,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart'; // Import for date formatting
 
 class PastOrdersPage extends StatefulWidget {
-  final String email;
+  final String email, language;
 
-  PastOrdersPage({required this.email});
+  PastOrdersPage({required this.email, required this.language});
 
   @override
-  _PastOrdersPageState createState() => _PastOrdersPageState(email: email);
+  _PastOrdersPageState createState() => _PastOrdersPageState(email: email, language: language);
 }
 
 class _PastOrdersPageState extends State<PastOrdersPage> {
@@ -16,9 +16,9 @@ class _PastOrdersPageState extends State<PastOrdersPage> {
   List<Map<String, dynamic>> orders = [];
   bool _isLoading = true;
 
-  final String email;
+  final String email, language;
 
-  _PastOrdersPageState({required this.email});
+  _PastOrdersPageState({required this.email, required this.language});
 
   @override
   void initState() {

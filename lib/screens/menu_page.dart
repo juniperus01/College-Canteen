@@ -17,6 +17,7 @@ class MenuPage extends StatefulWidget {
   final String role;
   final bool isInside;
   final bool locationAbleToTrack;
+  final String language;
 
   MenuPage({
     required this.fullName,
@@ -24,6 +25,7 @@ class MenuPage extends StatefulWidget {
     required this.role,
     required this.isInside,
     required this.locationAbleToTrack,
+    required this.language,
   });
 
   @override
@@ -43,6 +45,7 @@ class _MenuPageState extends State<MenuPage> {
         user_role: widget.role,
         isInside: widget.isInside,
         locationAbleToTrack: widget.locationAbleToTrack,
+        language: widget.language,
       ),
       if (widget.email == "master.admin@somaiya.edu")
         ManageStaffPage(),
@@ -54,6 +57,7 @@ class _MenuPageState extends State<MenuPage> {
         isInside: widget.isInside,
         locationAbleToTrack: widget.locationAbleToTrack,
         user_role: widget.role,
+        language: widget.language,
       ),
     ];
   }
@@ -106,12 +110,14 @@ class MenuPageContent extends StatefulWidget {
   final String user_role;
   final bool isInside;
   final bool locationAbleToTrack;
+  final String language;
 
   MenuPageContent({
     required this.user_email,
     required this.user_role,
     required this.isInside,
     required this.locationAbleToTrack,
+    required this.language,
   });
 
   @override
@@ -211,7 +217,7 @@ class _MenuPageContentState extends State<MenuPageContent> {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => CartPage(email: widget.user_email)),
+                      MaterialPageRoute(builder: (context) => CartPage(email: widget.user_email, language: widget.language)),
                     );
                   },
                 ),

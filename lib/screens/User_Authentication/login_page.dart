@@ -104,6 +104,7 @@ class _LoginPageState extends State<LoginPage> {
                     role: userRole,
                     isInside: widget.isInside,
                     locationAbleToTrack: widget.locationAbleToTrack,
+                    language: "english",
                   ),
                 ),
               );
@@ -114,6 +115,7 @@ class _LoginPageState extends State<LoginPage> {
                   builder: (context) => ManageOrdersPage(
                     fullName: userName,
                     email: user.email!,
+                    language: "english",
                   ),
                 ),
               );

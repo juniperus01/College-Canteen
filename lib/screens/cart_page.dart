@@ -8,8 +8,9 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class CartPage extends StatefulWidget {
   final String email;
+  final String language;
 
-  CartPage({required this.email});
+  CartPage({required this.email, this.language = 'english'});
 
   @override
   _CartPageState createState() => _CartPageState();
