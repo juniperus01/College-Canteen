@@ -366,16 +366,7 @@
     }
   },
 
-  "totalAmount": "Total: ₹{amount}",
-  "@totalAmount": {
-    "description": "Format for displaying total amount",
-    "placeholders": {
-      "amount": {
-        "type": "String",
-        "example": "150.00"
-      }
-    }
-  },
+
 
   "dropdownHint": "Tap to show/hide orders",
   "@dropdownHint": {
@@ -415,6 +406,41 @@
     "total": "Total",
     "@total": {
         "description": "Label for total amount"
+    },
+
+    "cartEmpty": "Your cart is empty",
+    "@cartEmpty": {
+        "description": "Message shown when cart has no items"
+    },
+
+    "cart": "Cart",
+    "@cart": {
+        "description": "Title for the cart page"
+    },
+
+    "price": "Price",
+    "@price": {
+        "description": "Label for item price"
+    },
+
+    "paymentReceived": "We received your payment!",
+    "@paymentReceived": {
+        "description": "Message shown when payment is received"
+    },
+
+    "paymentSuccessful": "Payment successful!",
+    "@paymentSuccessful": {
+        "description": "Message shown when payment is successful"
+    },
+
+    "paymentFailed": "Payment failed.",
+    "@paymentFailed": {
+        "description": "Message shown when payment fails"
+    },
+
+    "walletSelected": "Wallet selected:",
+    "@walletSelected": {
+        "description": "Message shown when wallet is selected"
     },
 
     "placeOrder": "Place Order",

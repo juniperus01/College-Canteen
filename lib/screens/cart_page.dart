@@ -3,7 +3,8 @@ import 'package:provider/provider.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import '../models/cart_model.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
-import 'dart:js' as js; // Import js for web support
+import 'dart:js' as js;
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class CartPage extends StatefulWidget {
   final String email;
@@ -12,17 +13,6 @@ class CartPage extends StatefulWidget {
 
   @override
   _CartPageState createState() => _CartPageState();
-}
-
-// Utility method for consistent SnackBar styling
-SnackBar createSnackBar(String message) {
-  return SnackBar(
-    content: Text(
-      message,
-      style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold), // Custom font style
-    ),
-    backgroundColor: Colors.red, // Red background
-  );
 }
 
 class _CartPageState extends State<CartPage> {
@@ -49,8 +39,8 @@ class _CartPageState extends State<CartPage> {
 
   void openCheckout(int amount) {
     var options = {
-      'key': 'rzp_test_iRK7aDGG0C6UAR', // Replace with your Razorpay API key
-      'amount': amount * 100, // Amount is in paise
+      'key': 'rzp_test_iRK7aDGG0C6UAR',
+      'amount': amount * 100,
       'name': 'Somato',
       'description': 'Order Payment',
       'prefill': {
@@ -63,7 +53,6 @@ class _CartPageState extends State<CartPage> {
     };
 
     if (kIsWeb) {
-      // Web Platform: Use JavaScript SDK via dart:js
       try {
         final razorpayOptions = js.JsObject.jsify({
           'key': options['key'],
@@ -75,7 +64,6 @@ class _CartPageState extends State<CartPage> {
             'email': (options['prefill'] as Map<String, dynamic>)['email'],
           },
           'handler': js.allowInterop((response) {
-            // Call Dart callback on successful payment
             _handlePaymentSuccessWeb(response);
           }),
           'modal': {
@@ -99,59 +87,110 @@ class _CartPageState extends State<CartPage> {
   }
 
   void _handlePaymentSuccessWeb(dynamic response) async {
-  ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(
-      content: Text(
-        "We received your payment!",
-        style: TextStyle(color: Colors.white), // White text
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          AppLocalizations.of(context)?.paymentReceived ?? "We received your payment!",
+          style: TextStyle(color: Colors.white),
+        ),
+        backgroundColor: Colors.red,
       ),
-      backgroundColor: Colors.red, // Red background
-    ),
-  );
-  // // Clear cart after successful payment
-  // Provider.of<CartModel>(context, listen: false).clearCart();
-  
-  // Assuming `cart.placeOrder` is an asynchronous method, we need to `await` it correctly
-  final cart = Provider.of<CartModel>(context, listen: false);
-  await cart.placeOrder(context, widget.email, response['razorpay_payment_id']);
-}
-
+    );
+    
+    final cart = Provider.of<CartModel>(context, listen: false);
+    await cart.placeOrder(context, widget.email, response['razorpay_payment_id']);
+  }
 
   void _handlePaymentSuccess(PaymentSuccessResponse response) {
     ScaffoldMessenger.of(context).showSnackBar(
-      createSnackBar("Payment successful! Payment ID: ${response.paymentId}"),
+      SnackBar(
+        content: Text(
+          "${AppLocalizations.of(context)?.paymentSuccessful ?? 'Payment successful!'} ID: ${response.paymentId}",
+          style: TextStyle(color: Colors.white),
+        ),
+        backgroundColor: Colors.red,
+      ),
     );
-    
   }
 
   void _handlePaymentError(PaymentFailureResponse response) {
     ScaffoldMessenger.of(context).showSnackBar(
-      createSnackBar("Payment failed. Error: ${response.message}"),
+      SnackBar(
+        content: Text(
+          "${AppLocalizations.of(context)?.paymentFailed ?? 'Payment failed.'} ${response.message}",
+          style: TextStyle(color: Colors.white),
+        ),
+        backgroundColor: Colors.red,
+      ),
     );
   }
 
   void _handleExternalWallet(ExternalWalletResponse response) {
     ScaffoldMessenger.of(context).showSnackBar(
-      createSnackBar("External Wallet Selected: ${response.walletName}"),
+      SnackBar(
+        content: Text(
+          "${AppLocalizations.of(context)?.walletSelected ?? 'Wallet selected:'} ${response.walletName}",
+          style: TextStyle(color: Colors.white),
+        ),
+        backgroundColor: Colors.red,
+      ),
+    );
+  }
+
+  Widget _buildIconButton({required IconData icon, required VoidCallback onPressed}) {
+    return Container(
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: Colors.red,
+      ),
+      child: IconButton(
+        icon: Icon(icon, color: Colors.white),
+        onPressed: onPressed,
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     final cart = Provider.of<CartModel>(context);
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Cart', style: TextStyle(color: Colors.white)),
+        title: Text(l10n.cart, style: TextStyle(color: Colors.white)),
         backgroundColor: Colors.red,
         iconTheme: IconThemeData(color: Colors.white),
       ),
       body: cart.items.isEmpty
-          ? Center(child: Text('Your cart is empty'))
+          ? Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.shopping_cart_outlined,
+                    size: 64,
+                    color: Colors.grey,
+                  ),
+                  SizedBox(height: 16),
+                  Text(
+                    l10n.cartEmpty,
+                    style: TextStyle(
+                      fontSize: 18,
+                      color: Colors.grey,
+                    ),
+                  ),
+                ],
+              ),
+            )
           : ListView.builder(
               padding: EdgeInsets.all(16.0),
               itemCount: cart.items.length,
               itemBuilder: (context, index) {
+                final currentLocale = Localizations.localeOf(context);
+                final itemName = currentLocale.languageCode == 'hi' 
+                    ? cart.items[index]['name_hi'] 
+                    : cart.items[index]['name'];
+
                 return Card(
                   elevation: 4,
                   shape: RoundedRectangleBorder(
@@ -159,8 +198,8 @@ class _CartPageState extends State<CartPage> {
                   ),
                   child: ListTile(
                     contentPadding: EdgeInsets.all(16.0),
-                    title: Text(cart.items[index]['name']),
-                    subtitle: Text('Price: ₹${cart.items[index]['price']}'),
+                    title: Text(itemName),
+                    subtitle: Text('${l10n.price}: ₹${cart.items[index]['price']}'),
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -189,42 +228,29 @@ class _CartPageState extends State<CartPage> {
               },
             ),
       bottomNavigationBar: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              'Total: ₹${cart.totalPrice.toStringAsFixed(2)}',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: cart.items.isEmpty
-                  ? null
-                  : () {
-                      openCheckout(cart.totalPrice.round());
-                    },
-              child: Text('Place Order', style: TextStyle(color: Colors.white)),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red,
-              ),
-            ),
-          ],
+  padding: const EdgeInsets.all(16.0),
+  child: Column(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      Text(
+          'Total: ₹${cart.totalPrice.toStringAsFixed(2)}',
+        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+      ),
+      SizedBox(height: 16),
+      ElevatedButton(
+        onPressed: cart.items.isEmpty
+            ? null
+            : () {
+                openCheckout(cart.totalPrice.round());
+              },
+        child: Text(l10n.placeOrder, style: TextStyle(color: Colors.white)),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.red,
         ),
       ),
-    );
-  }
-
-  Widget _buildIconButton({required IconData icon, required VoidCallback onPressed}) {
-    return Container(
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: Colors.red,
-      ),
-      child: IconButton(
-        icon: Icon(icon, color: Colors.white),
-        onPressed: onPressed,
-      ),
+    ],
+  ),
+),
     );
   }
 }

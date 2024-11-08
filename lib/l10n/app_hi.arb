@@ -136,6 +136,24 @@
     "total": "कुल",
     "placeOrder": "ऑर्डर करें",
 
+    "cart": "कार्ट",
+    
+
+    "price": "कीमत",
+   
+    "paymentReceived": "हमें आपका भुगतान मिल गया!",
+   
+
+    "paymentSuccessful": "भुगतान सफल!",
+   
+
+    "paymentFailed": "भुगतान विफल.",
+    
+
+    "walletSelected": "वॉलेट चयनित:",
+    "cartEmpty": "आपकी कार्ट खाली है",
+    
+
     "dosaDescription": "क्रिस्पी दक्षिण भारतीय डोसा",
     "chatDescription": "स्वादिष्ट स्ट्रीट फूड चाट",
     "snacksDescription": "हल्के स्नैक्स और एपेटाइज़र",
@@ -150,13 +168,7 @@
     "removeFromCart": "कार्ट से हटाएं",
     "placeOrder": "ऑर्डर करें",
     "total": "कुल: ₹{amount}",
-    "@total": {
-        "placeholders": {
-            "amount": {
-                "type": "double"
-            }
-        }
-    },
+    
     "orderConfirmed": "ऑर्डर सफलतापूर्वक दिया गया!",
     "orderFailed": "ऑर्डर देने में विफल",
     "orderProcessing": "आपका ऑर्डर प्रोसेस किया जा रहा है...",
