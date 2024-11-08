@@ -54,6 +54,9 @@ class MenuItemCard extends StatelessWidget {
     final String name = (locale == 'hi' && item['name_hi'] != null)
         ? item['name_hi'].toString()
         : item['name'] ?? 'Unnamed Item';
+    final String name_eng = item['name'];
+    final String name_hin = item['name_hi'].toString();
+    
     final double price = item['price'] != null ? item['price'].toDouble() : 0.0;
     final String itemId = item['id'] ?? '';
     bool isAvailable = item['available'] ?? true;
@@ -153,7 +156,8 @@ class MenuItemCard extends StatelessWidget {
                         ? () {
                             // Add item with the localized name
                             final localizedItem = Map<String, dynamic>.from(item);
-                            localizedItem['name'] = name; // Use the localized name
+                            localizedItem['name'] = name_eng; // Use the localized name
+                            localizedItem['name_hi'] = name_hin;
                             Provider.of<CartModel>(context, listen: false)
                                 .addItem(localizedItem, context);
                           }

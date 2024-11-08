@@ -11,7 +11,7 @@ class CartModel extends ChangeNotifier {
 
   void addItem(Map<String, dynamic> item, BuildContext context) {
   final existingItemIndex = _items.indexWhere((existingItem) =>
-    existingItem['name'] == item['name'] && existingItem['name_hi'] == item['name_hi']);
+    existingItem['name'] == item['name']);
 
   if (existingItemIndex >= 0) {
     _items[existingItemIndex]['quantity']++;
@@ -24,7 +24,7 @@ class CartModel extends ChangeNotifier {
     });
   }
   notifyListeners();
-  _showNotification(context, 
+  _showNotification(context,
     AppLocalizations.of(context)?.addedToCart ?? 'Item added to cart!');
 }
 
@@ -32,7 +32,7 @@ class CartModel extends ChangeNotifier {
   void decreaseQuantity(int index, BuildContext context) {
     if (_items[index]['quantity'] > 1) {
       _items[index]['quantity']--;
-      _showNotification(context, 
+      _showNotification(context,
         AppLocalizations.of(context)?.quantityDecreased ?? 'Item quantity decreased!');
     } else {
       removeItem(index, context);
@@ -95,11 +95,11 @@ class CartModel extends ChangeNotifier {
 
     try {
       await FirebaseFirestore.instance.collection('orders').add(orderData);
-      _showNotification(context, 
+      _showNotification(context,
         AppLocalizations.of(context)?.orderPlaced ?? 'Order Placed Successfully!');
     } catch (e) {
       print('Error placing order: $e');
-      _showNotification(context, 
+      _showNotification(context,
         AppLocalizations.of(context)?.orderFailed ?? 'Failed to place order!');
       return;
     }

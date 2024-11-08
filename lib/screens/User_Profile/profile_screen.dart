@@ -17,9 +17,9 @@ class UserProfilePage extends StatelessWidget {
   final String? imageUrl;
   final bool isInside, locationAbleToTrack;
   final String user_role;
-  final String language;
+  String language;
 
-  const UserProfilePage({
+  UserProfilePage({
     required this.fullName,
     required this.email,
     required this.isInside,
@@ -206,6 +206,7 @@ class UserProfilePage extends StatelessWidget {
                 title: const Text('English'),
                 onTap: () {
                   languageModel.setLocale(const Locale('en'));
+                  language = "english";
                   Navigator.pop(context);
                 },
               ),
@@ -213,6 +214,7 @@ class UserProfilePage extends StatelessWidget {
                 title: const Text('हिंदी'),
                 onTap: () {
                   languageModel.setLocale(const Locale('hi'));
+                  language = "hindi";
                   Navigator.pop(context);
                 },
               ),
