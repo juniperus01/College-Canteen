@@ -166,7 +166,7 @@ class TrackOrdersPage extends StatelessWidget {
                           ),
                         ),
                         child: Text(
-                          '${AppLocalizations.of(context)!.total}: ₹${totalPrice.toStringAsFixed(2)}', // Using localized string
+                           'Total: ₹${totalPrice.toStringAsFixed(2)}',
                           style: TextStyle(
                             color: Colors.red,
                             fontSize: 16,
