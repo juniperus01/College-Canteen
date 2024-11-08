@@ -269,6 +269,158 @@
         }
     },
 
+    "loading": "Loading...",
+  "@loading": {
+    "description": "Text shown while loading content"
+  },
+
+  "unknownCustomer": "Unknown Customer",
+  "@unknownCustomer": {
+    "description": "Text shown when customer name cannot be found"
+  },
+
+  "order": "Order",
+  "@order": {
+    "description": "Label for order number"
+  },
+
+  "quantity": "Quantity",
+  "@quantity": {
+    "description": "Label for item quantity"
+  },
+
+  "total": "Total",
+  "@total": {
+    "description": "Label for total amount"
+  },
+
+  "pendingOrders": "Pending Orders",
+  "@pendingOrders": {
+    "description": "Title for pending orders section"
+  },
+
+  "completedOrders": "Completed Orders",
+  "@completedOrders": {
+    "description": "Title for completed orders section"
+  },
+
+  "noPendingOrders": "No pending orders!",
+  "@noPendingOrders": {
+    "description": "Message shown when there are no pending orders"
+  },
+
+  "allOrders": "All Orders",
+  "@allOrders": {
+    "description": "Title for all orders page"
+  },
+
+  "editOrder": "Edit Order",
+  "@editOrder": {
+    "description": "Title for order editing dialog"
+  },
+
+  "isOrderReady": "Is the order ready?",
+  "@isOrderReady": {
+    "description": "Confirmation message for order completion"
+  },
+
+  "yes": "Yes",
+  "@yes": {
+    "description": "Affirmative response button"
+  },
+
+  "no": "No",
+  "@no": {
+    "description": "Negative response button"
+  },
+
+  "profile": "Profile",
+  "@profile": {
+    "description": "Label for profile tab"
+  },
+
+  "orderNumber": "Order #{number}",
+  "@orderNumber": {
+    "description": "Order number display format",
+    "placeholders": {
+      "number": {
+        "type": "int",
+        "example": "123"
+      }
+    }
+  },
+
+  "refresh": "Refresh",
+  "@refresh": {
+    "description": "Label for refresh button"
+  },
+
+  "quantityFormat": "x{number}",
+  "@quantityFormat": {
+    "description": "Format for displaying quantity",
+    "placeholders": {
+      "number": {
+        "type": "int",
+        "example": "2"
+      }
+    }
+  },
+
+  "totalAmount": "Total: ₹{amount}",
+  "@totalAmount": {
+    "description": "Format for displaying total amount",
+    "placeholders": {
+      "amount": {
+        "type": "String",
+        "example": "150.00"
+      }
+    }
+  },
+
+  "dropdownHint": "Tap to show/hide orders",
+  "@dropdownHint": {
+    "description": "Hint text for dropdown toggle button"
+  },
+
+  "addedToCart": "Item added to cart!",
+    "@addedToCart": {
+        "description": "Message shown when an item is added to cart"
+    },
+
+    "quantityDecreased": "Item quantity decreased!",
+    "@quantityDecreased": {
+        "description": "Message shown when item quantity is decreased"
+    },
+
+    "removedFromCart": "Item removed from cart!",
+    "@removedFromCart": {
+        "description": "Message shown when an item is removed from cart"
+    },
+
+    "orderFailed": "Failed to place order!",
+    "@orderFailed": {
+        "description": "Message shown when order placement fails"
+    },
+
+    "orderPlaced": "Order Placed Successfully!",
+    "@orderPlaced": {
+        "description": "Message shown when order is placed successfully"
+    },
+
+    "cartEmpty": "Your cart is empty",
+    "@cartEmpty": {
+        "description": "Message shown when cart is empty"
+    },
+
+    "total": "Total",
+    "@total": {
+        "description": "Label for total amount"
+    },
+
+    "placeOrder": "Place Order",
+    "@placeOrder": {
+        "description": "Button text for placing order"
+    },
 
     "name": "Name",
     "@name": {
@@ -309,7 +461,7 @@
     "@frankyCategory": {
         "description": "Category name for Franky"
     },
-    "hotItemsCategory": "Hot Items",
+    "hotItemsCategory": "Hot_Items",
     "@hotItemsCategory": {
         "description": "Category name for Hot Items like Tea and Coffee"
     },
@@ -317,6 +469,7 @@
     "@sandwichesCategory": {
         "description": "Category name for Sandwiches"
     },
+    
 
     "dosaDescription": "Crispy South Indian crepes",
     "@dosaDescription": {

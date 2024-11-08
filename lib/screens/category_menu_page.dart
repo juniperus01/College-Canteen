@@ -4,6 +4,8 @@ import 'dart:async'; // Import Timer package
 import '../widgets/menu_item_card.dart';
 import '../widgets/custom_search_bar.dart';
 import 'cart_page.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class CategoryMenuPage extends StatefulWidget {
   final String category;
@@ -77,6 +79,8 @@ class _CategoryMenuPageState extends State<CategoryMenuPage> {
   }
 }
 
+
+
   void _filterMenuItems(String query) {
     setState(() {
       filteredMenuItems = menuItems.where((item) =>
@@ -91,6 +95,7 @@ class _CategoryMenuPageState extends State<CategoryMenuPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
   backgroundColor: Colors.red,

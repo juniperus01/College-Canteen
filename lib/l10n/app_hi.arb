@@ -101,7 +101,41 @@
     "hotItemsCategory": "गरम पेय",
     "sandwichesCategory": "सैंडविच",
     "errorLoadingItems": "आइटम लोड करने में त्रुटि। कृपया पुनः प्रयास करें।",
+    "dosaTitle": "डोसा मेनू",
+    "chatTitle": "चाट मेनू",
+    "frankyTitle": "फ्रैंकी मेनू", 
+    "hotItemsTitle": "गरम पेय मेनू",
+    "snacksTitle": "स्नैक्स मेनू",
+    "sandwichesTitle": "सैंडविच मेनू",
+
+    "loading": "लोड हो रहा है...",
+  "unknownCustomer": "अज्ञात ग्राहक",
+  "order": "आदेश",
+  "quantity": "मात्रा",
+  "total": "कुल",
+  "pendingOrders": "लंबित आदेश",
+  "completedOrders": "पूर्ण आदेश",
+  "noPendingOrders": "कोई लंबित आदेश नहीं!",
+  "allOrders": "सभी आदेश",
+  "editOrder": "आदेश संपादित करें",
+  "isOrderReady": "क्या आदेश तैयार है?",
+  "yes": "हाँ",
+  "no": "नहीं",
+  "profile": "प्रोफ़ाइल",
     
+
+  "addedToCart": "आइटम कार्ट में जोड़ा गया!",
+    
+    "quantityDecreased": "आइटम की मात्रा घटाई गई!",
+    
+    "removedFromCart": "आइटम कार्ट से हटा दिया गया!",
+
+    "orderFailed": "ऑर्डर देने में विफल!",
+    "orderPlaced": "ऑर्डर सफलतापूर्वक रखा गया!",
+    "cartEmpty": "आपकी कार्ट खाली है",
+    "total": "कुल",
+    "placeOrder": "ऑर्डर करें",
+
     "dosaDescription": "क्रिस्पी दक्षिण भारतीय डोसा",
     "chatDescription": "स्वादिष्ट स्ट्रीट फूड चाट",
     "snacksDescription": "हल्के स्नैक्स और एपेटाइज़र",

@@ -163,7 +163,7 @@ class _MenuPageContentState extends State<MenuPageContent> {
         'title': l10n.hotItemsCategory,
         'image': 'assets/images/chai.jpeg',
         'description': l10n.hotItemsDescription,
-        'collection': 'hot_items'
+        'collection': 'hot_Items'
       },
       {
         'title': l10n.sandwichesCategory,
