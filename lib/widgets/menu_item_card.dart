@@ -21,7 +21,7 @@ Future<double> fetchEstimatedWaitTime(String itemName) async {
   };
 
   final response = await http.post(
-    Uri.parse('http://192.168.0.102:5000/estimate_wait_time'), // Replace with your server's URL if different
+    Uri.parse('https://college-canteen-python-server.onrender.com/estimate_wait_time'),
     headers: {'Content-Type': 'application/json'},
     body: jsonEncode(requestBody),
   );
