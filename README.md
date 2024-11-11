@@ -13,10 +13,14 @@ Somato is a mobile app designed to revolutionize the food ordering process withi
 - **Real-time Order Tracking**: Users can track the status of their orders in real-time.
 - **Expenditure Tracker**: Track and manage daily spending to avoid overspending.
 - **Geo-fencing**: Restrict order placement to within the college campus vicinity.
-- **Packaging Restriction**: Limit orders to packaged food items to minimize food wastage.
+- **Packaging Restriction**: Limit orders to packaged food items to minimize food wastage if customer is not inside college premises.
 - **Multi-lingual Support**: The app is available in English and Hindi to cater to diverse users.
+
+## Software Architecture
+
+![Screenshot 2024-11-11 at 8 37 07 PM](https://github.com/user-attachments/assets/ac91ad6f-2b7b-4d83-a728-dfd2be7d3a5b)
 
 ---
 
-Feel free to update or expand on any of these sections based on your specific app features!
+
 
