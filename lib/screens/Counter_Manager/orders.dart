@@ -76,9 +76,10 @@ class _ManageOrdersPageState extends State<ManageOrdersPage> {
     }
 
     // Sort pending orders by timestamp
-    pendingOrders.forEach((key, orders) {
-      orders.sort((a, b) => (b['timestamp'] as Timestamp).toDate().compareTo((a['timestamp'] as Timestamp).toDate()));
-    });
+   pendingOrders.forEach((key, orders) {
+    orders.sort((a, b) => (b['timestamp'] as Timestamp).compareTo(a['timestamp'] as Timestamp));
+  });
+
 
     // Sort completed orders by timestamp
     completedOrders.forEach((key, orders) {
